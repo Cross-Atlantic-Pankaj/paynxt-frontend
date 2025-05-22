@@ -1,0 +1,457 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* globals.css */
+
+/* Navbar Styles */
+.darkHeader {
+    background-color: #155392;
+    color: white;
+    position: relative;
+    z-index: 999;
+    width: 100%;
+    padding-bottom: 10px;
+}
+  
+.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+  
+.menuToggler {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+  
+.menuToggler li {
+    background-color: white;
+    height: 3px;
+    width: 25px;
+    margin: 3px 0;
+}
+  
+.topHeadMenu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: flex-end;
+}
+  
+.topHeadMenu li {
+    margin: 0 15px;
+}
+  
+.topHeadMenu li a {
+    color: white;
+    text-decoration: none;
+}
+  
+.cartBox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+  
+.cartBox svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    fill: white;
+}
+
+.cartNumber {
+    background-color: #FF6B00;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: normal;
+}
+  
+.whiteHRStyle {
+    border-top: 1px solid white;
+    margin: 0;
+}
+  
+.smallOrangeButton {
+    background-color: #FF6B00;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+  
+.smallOrangeButton:hover {
+    background-color: #E65C00;
+}
+  
+.transition {
+    transition: all 0.3s ease-in-out;
+}
+  
+/* Footer Styles */
+.blueBg {
+  background-color: #155392;
+  color: white;
+  width: 100%;
+  position: relative;
+  bottom: 0;
+}
+
+#footer {
+  font-size: 14px;
+  width: 100%;
+  position: relative;
+}
+
+#footer .container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 0 0 0;
+}
+
+#footer .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  align-items: stretch;
+  min-height: 200px;
+  padding: 0 2rem;
+}
+
+#footer .col-xl-4,
+#footer .col-xl-3,
+#footer .col-xl-2,
+#footer .col-lg-4,
+#footer .col-lg-3,
+#footer .col-lg-2 {
+  padding: 0 15px;
+  flex: 0 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 992px) {
+  #footer .col-lg-2 {
+    flex: 0 0 auto;
+    width: 10%;
+    margin-right: 250px;
+    padding-left: 0;
+  }
+  #footer .col-lg-10 {
+    flex: 0 0 auto;
+    width: calc(90% - 250px);
+  }
+  #footer .col-lg-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+  #footer .col-lg-4 {
+    flex: 0 0 auto;
+    width: 33.333333%;
+  }
+}
+
+#footer .head {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #FF6B00;
+}
+
+#footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#footer ul li {
+  margin-bottom: 12px;
+}
+
+#footer ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-weight: 300;
+  opacity: 0.7;
+}
+
+#footer ul li a:hover {
+  color: #FF6B00;
+  opacity: 1;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.socialLinks a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.socialLinks a:hover {
+  background-color: #FF6B00;
+}
+
+.socialLinks svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+@media (max-width: 991px) {
+  .mobileTop {
+    margin-top: 30px;
+  }
+  
+  #footer .col-lg-3,
+  #footer .col-lg-4,
+  #footer .col-lg-10,
+  #footer .col-lg-2 {
+    margin-bottom: 30px;
+  }
+}
+
+.backToTop {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  background-color: #FF6B00;
+  color: white;
+  width: 30px;
+  height: 50px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 0 10px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.backToTop span {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.paymentsSection {
+    background-color: #155392;
+    z-index: 1000;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(0);
+    transition: all 0.3s ease-in-out;
+}
+
+.paymentsSection.compact {
+    padding: 5px 0;
+    background-color: rgba(21, 83, 146, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.paymentsSection .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.paymentsSection .flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3.5rem;
+    padding: 0;
+}
+
+.paymentsSection ul {
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.paymentsSection ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.paymentsSection ul li a:hover {
+    color: #FF6B00;
+}
+
+.paymentsSection a {
+    font-size: 0.9rem;
+    padding: 4px 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.paymentsSection.compact a {
+    font-size: 0.85rem;
+    padding: 3px 0;
+}
+
+/* Add padding to the main content to prevent overlap */
+main {
+    padding-top: 0;
+}
+
+@media (max-width: 1024px) {
+    .paymentsSection .flex {
+        gap: 3rem;
+    }
+    
+    .paymentsSection .container {
+        padding: 0 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .paymentsSection {
+        padding: 5px 0;
+    }
+    
+    .paymentsSection .flex {
+        gap: 2rem;
+    }
+    
+    .paymentsSection .container {
+        padding: 0 1rem;
+    }
+    
+    .paymentsSection a {
+        font-size: 0.8rem;
+    }
+}
+
+/* Dropdown Link Hover Styles */
+.paymentsSection .group {
+  position: relative;
+}
+
+.paymentsSection .group .flex {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px; /* Space between text and arrow */
+}
+
+.paymentsSection .group .group\/link {
+  padding-left: 24px; /* Left gap */
+  padding-right: 16px; /* Matches original px-4 */
+  padding-top: 15px;
+  padding-bottom: 8px; /* Matches original py-2 */
+  margin-bottom: 0px; /* Space between links */
+}
+
+.paymentsSection .group .group\/link:last-child {
+  margin-bottom: 10px; /* No extra space after last link */
+}
+
+.paymentsSection .group .group\/link:hover {
+  background-color: white;
+  color: #155392;
+}
+
+.paymentsSection .group .group\/link:hover svg {
+  fill: white; /* Matches text color on hover */
+}
+
+.paymentsSection .group .arrow {
+  transform: translateX(10px); /* Start 10px to the right */
+  opacity: 0; /* Hidden by default */
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out; /* Smooth animation */
+}
+
+.paymentsSection .group .group\/link:hover .arrow {
+  transform: translateX(0); /* Move to final position */
+  opacity: 1; /* Fully visible */
+}
+
+.paymentsSection .group .dropdown {
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.paymentsSection .group .dropdown:hover,
+.paymentsSection .group .payments-link:hover ~ .dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.paymentsSection .group .underline-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Matches .flex gap */
+  position: relative;
+}
+
+.paymentsSection .group .dropdown:hover .underline-container::after,
+.paymentsSection .group .payments-link:hover ~ .dropdown .underline-container::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; /* Close to text for visibility */
+  left: 0;
+  width: 100%; /* Span text and arrow */
+  height: 1px; /* Uniform, thin underline */
+  background-color: #1F2937; /* Matches text-gray-800 */
+  transform: translateZ(0); /* Ensure consistent rendering */
+}
+
+.paymentsSection .group .group\/link:hover .underline-container::after {
+  background-color: #155392; /* Matches white text on hover */
+}
