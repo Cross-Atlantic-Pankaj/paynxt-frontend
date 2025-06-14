@@ -5,6 +5,8 @@ import { UserProvider } from '@/context/UserContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ClientLayout from '@/components/ClientLayout';
+import 'antd/dist/reset.css';
+
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

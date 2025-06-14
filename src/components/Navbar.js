@@ -226,7 +226,7 @@ const Navbar = () => {
             <Link href="/store" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               STORE
             </Link>
-            <Link href="/view-points" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
+            <Link href="/View-point" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               VIEW POINT
             </Link>
             {/* Search Icon */}
