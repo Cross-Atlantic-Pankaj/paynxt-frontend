@@ -1,14 +1,25 @@
 'use client';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { useUser } from '@/context/UserContext';
+import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
+import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 export default function BlogPage() {
+    const { user } = useUser();
+    const [blog, setBlog] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [banner, setBanner] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [sliders, setSliders] = useState([]);
+    const [relatedArticles, setRelatedArticles] = useState([]);
+    const [consults, setConsults] = useState([]);
+    const [featuredReports, setFeaturedReports] = useState([]);
 
     useEffect(() => {
         const fetchBanner = async () => {
@@ -22,11 +33,55 @@ export default function BlogPage() {
             const data = await res.json();
             setSliders(data);
         };
+        const fetchBlog = async () => {
+            try {
+                const res = await fetch('/api/blog-page/blogcontent');
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    setBlog(data[0]); // Show latest
+                }
+            } catch (err) {
+                console.error('Error fetching blog:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
+        const fetchRelatedArticles = async () => {
+            try {
+                const res = await fetch('/api/blog-page/relarticles'); // Adjust path if needed
+                const data = await res.json();
+                setRelatedArticles(data);
+            } catch (err) {
+                console.error('Error fetching related articles:', err);
+            }
+        };
+        const fetchConsults = async () => {
+            const res = await fetch('/api/blog-page/consult');
+            const data = await res.json();
+            setConsults(data);
+        };
+        const fetchFeaturedReports = async () => {
+            try {
+                const res = await fetch('/api/blog-page/featreport');
+                const data = await res.json();
+                setFeaturedReports(data);
+            } catch (error) {
+                console.error('Error fetching featured reports:', error);
+            }
+        };
 
         fetchBanner();
         fetchSliders();
+        fetchBlog();
+        fetchRelatedArticles();
+        fetchConsults();
+        fetchFeaturedReports();
+
     }, []);
+
+    if (loading) return <div className="text-center mt-10">Loading blog...</div>;
+    if (!blog) return <div className="text-center mt-10 text-red-500">Blog not found</div>;
 
     const handleSearch = () => {
         console.log('Search Term:', searchTerm);
@@ -154,6 +209,175 @@ export default function BlogPage() {
 
                 </div>
             </section>
+
+            <div className="max-w-7xl mx-auto py-10 flex flex-row gap-8">
+                {/* Left 3/4 */}
+                <div className="w-3/4">
+                    <h1 className="text-2xl font-bold mb-4">{blog.title}</h1>
+                    <p className="text-gray-700 mb-6">{blog.summary}</p>
+
+                    <div className="mb-8">
+                        {/* <h2 className="text-xl font-semibold mb-2">Article Part 1</h2> */}
+                        <p className="text-gray-800 leading-relaxed whitespace-pre-line">{blog.articlePart1}</p>
+                    </div>
+                    {blog.advertisement && (
+                        <div className="bg-gray-100 border border-gray-300 p-4 rounded shadow">
+                            <h3 className="text-lg font-semibold text-blue-800 mb-2">
+                                {blog.advertisement.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-2">
+                                {blog.advertisement.description}
+                            </p>
+                            <a
+                                href={blog.advertisement.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline text-sm"
+                            >
+                                Visit Advertisement
+                            </a>
+                        </div>
+                    )}
+
+                    {user ? (
+                        <div className="mt-6">
+                            {/* <h2 className="text-xl font-semibold mb-2">Article Part 2</h2> */}
+                            <p className="text-gray-800 leading-relaxed whitespace-pre-line">{blog.articlePart2}</p>
+                        </div>
+                    ) : (
+                        <div className="bg-orange-100 border border-orange-300 p-4 rounded mt-6 text-center">
+                            <p className="text-md text-gray-700 font-semibold mb-2">
+                                Register to view more
+                            </p>
+                            <p className="text-sm text-gray-700 mb-2">
+                                It's free and takes only a minute!
+                            </p>
+                            <div className="flex justify-center gap-4 mt-2">
+                                <Link href="/login" className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                                    Sign In
+                                </Link>
+                                <Link href="/signup" className="text-white bg-green-600 px-4 py-2 rounded hover:bg-green-700 text-sm">
+                                    Register Now
+                                </Link>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Right 1/4 */}
+                <div className="w-1/4">
+                    <div className="w-full lg:w-1/4">
+                        <h2 className="bg-[#155392] text-white text-lg px-4 py-2 font-bold mb-2">Related Articles</h2>
+
+                        <div className="bg-white border border-gray-200 ">
+                            {relatedArticles.length === 0 ? (
+                                <p className="text-gray-500 text-sm px-4 py-2">No related articles found.</p>
+                            ) : (
+                                relatedArticles.map((article) => (
+                                    <div key={article._id} className="px-4 py-3 group" title={moment(article.createdAt).fromNow()}>
+                                        <a
+                                            href={article.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-start gap-2 text-sm text-blue-700 group-hover:text-[#FF6B00]"
+                                        >
+                                            <span className="text-blue-700 group-hover:text-[#FF6B00]">&gt;</span>
+                                            <span>{article.title}</span>
+                                        </a>
+                                        {article.description && (
+                                            <p className="text-sm text-gray-600 mt-1">{article.description}</p>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                    <div className="mt-8">
+                        {/* <h2 className="bg-[#155392] text-white text-lg px-4 py-2 font-bold mb-2">
+                            Consult With Us
+                        </h2> */}
+                        {consults.length === 0 ? (
+                            <p className="text-gray-500 text-sm">No consult options available.</p>
+                        ) : (
+                            consults.map((consult) => (
+                                <div key={consult._id} className="bg-[#155392] border border-gray-200 p-4 mb-4 rounded shadow-sm">
+                                    <p className="text-xl text-white text-center mb-3">{consult.description}</p>
+                                    <h3 className="text-4xl font-semibold text-center text-white mb-1">{consult.title}</h3>
+                                    <div className="flex justify-center mt-4">
+                                        <a
+                                            href={consult.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-block text-center font-semibold text-white bg-[#FF6B00] hover:bg-[white] hover:text-[#FF6B00] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors"
+                                        >
+                                            CONSULT NOW
+                                        </a>
+                                    </div>
+
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <div className="mt-10 w-full">
+                <h2 className="text-2xl font-semibold bg-gray-300 mb-4 text-black px-20 py-10">FEATURED REPORTS</h2>
+
+                {featuredReports.length === 0 ? (
+                    <p className="text-gray-500 text-sm">No featured reports found.</p>
+                ) : (
+                    <Swiper
+                        modules={[Navigation, Pagination]}
+                        navigation
+                        pagination={{ clickable: true }}
+                        spaceBetween={20}
+                        className="w-full"
+                    >
+                        {featuredReports.map((report, index) =>
+                            Array.from({ length: Math.ceil(report.blogs.length / 3) }, (_, chunkIndex) => {
+                                const chunk = report.blogs.slice(chunkIndex * 3, chunkIndex * 3 + 3);
+                                return (
+                                    <SwiperSlide key={`${index}-${chunkIndex}`}>
+                                        <div className="grid grid-cols-3 gap-6 px-20 py-10">
+                                            {chunk.map((blog, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="border border-gray-200 p-4 bg-white flex flex-col justify-between"
+                                                >
+                                                    <div className="flex justify-center items-center">
+                                                        <img
+                                                            src={blog.imageIconurl}
+                                                            alt={blog.blogName}
+                                                            className="w-15 h-15 object-contain rounded"
+                                                        />
+                                                    </div>
+                                                    <h3 className="text-lg text-center font-semibold mt-10 text-[#155392]">
+                                                        {blog.blogName}
+                                                    </h3>
+                                                    <p className="text-sm text-gray-600 mt-2">{blog.description}</p>
+                                                    <div className="flex justify-center">
+                                                        <a
+                                                            href={"/google.com"}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="mt-4 w-fit inline-block text-center font-semibold text-white bg-[#FF6B00] hover:text-white hover:bg-[#155392] px-5 py-3 rounded-tr-xl rounded-bl-xl text-sm transition-colors"
+                                                        >
+                                                            VIEW DETAILS
+                                                        </a>
+                                                    </div>
+
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </SwiperSlide>
+                                );
+                            })
+                        )}
+                    </Swiper>
+                )}
+            </div>
+
 
             <section className="w-full bg-gray-100 h-160 py-12 px-6">
                 <div className="max-w-7xl mx-auto grid grid-rows-1 md:grid-cols-[30%_70%] items-center gap-4">
