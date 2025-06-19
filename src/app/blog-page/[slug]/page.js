@@ -3,14 +3,19 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/context/UserContext';
 import Link from 'next/link';
+import { usePathname, notFound, useParams } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import slugify from '@/lib/slugify';
+
 
 export default function BlogPage() {
+    const params = useParams();
+    const slug = params?.slug?.replace(/^\/blog-page\//, '');
     const { user } = useUser();
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -20,12 +25,26 @@ export default function BlogPage() {
     const [relatedArticles, setRelatedArticles] = useState([]);
     const [consults, setConsults] = useState([]);
     const [featuredReports, setFeaturedReports] = useState([]);
+    const pathname = usePathname();
 
     useEffect(() => {
+        if (!slug) return;
+
         const fetchBanner = async () => {
-            const res = await fetch('/api/blog-page/blogbanner');
-            const data = await res.json();
-            setBanner(data);
+            try {
+                const res = await fetch('/api/blog-page/blogbanner');
+                const data = await res.json();
+
+                if (!Array.isArray(data)) {
+                    console.error('Banner response is not an array:', data);
+                    return;
+                }
+
+                const matchedBanner = data.find(b => slugify(b.bannerTitle) === slug);
+                setBanner(matchedBanner || null);
+            } catch (err) {
+                console.error('Error fetching banner:', err);
+            }
         };
 
         const fetchSliders = async () => {
@@ -37,8 +56,9 @@ export default function BlogPage() {
             try {
                 const res = await fetch('/api/blog-page/blogcontent');
                 const data = await res.json();
-                if (Array.isArray(data) && data.length > 0) {
-                    setBlog(data[0]); // Show latest
+                if (Array.isArray(data)) {
+                    const matchedBlog = data.find(b => slugify(b.title) === params.slug);
+                    setBlog(matchedBlog || null);
                 }
             } catch (err) {
                 console.error('Error fetching blog:', err);
@@ -46,6 +66,7 @@ export default function BlogPage() {
                 setLoading(false);
             }
         };
+
 
         const fetchRelatedArticles = async () => {
             try {
@@ -217,8 +238,10 @@ export default function BlogPage() {
                     <p className="text-gray-700 mb-6">{blog.summary}</p>
 
                     <div className="mb-8">
-                        {/* <h2 className="text-xl font-semibold mb-2">Article Part 1</h2> */}
-                        <p className="text-gray-800 leading-relaxed whitespace-pre-line">{blog.articlePart1}</p>
+                        <div
+                            className="text-gray-800 leading-relaxed whitespace-pre-line"
+                            dangerouslySetInnerHTML={{ __html: blog.articlePart1 }}
+                        />
                     </div>
                     {blog.advertisement && (
                         <div className="bg-gray-100 border border-gray-300 p-4 rounded shadow">
@@ -241,8 +264,10 @@ export default function BlogPage() {
 
                     {user ? (
                         <div className="mt-6">
-                            {/* <h2 className="text-xl font-semibold mb-2">Article Part 2</h2> */}
-                            <p className="text-gray-800 leading-relaxed whitespace-pre-line">{blog.articlePart2}</p>
+                            <div
+                                className="text-gray-800 leading-relaxed whitespace-pre-line"
+                                dangerouslySetInnerHTML={{ __html: blog.articlePart2 }}
+                            />
                         </div>
                     ) : (
                         <div className="bg-orange-100 border border-orange-300 p-4 rounded mt-6 text-center">
@@ -253,12 +278,20 @@ export default function BlogPage() {
                                 It's free and takes only a minute!
                             </p>
                             <div className="flex justify-center gap-4 mt-2">
-                                <Link href="/login" className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                                <Link
+                                    href={`/login?callbackUrl=${encodeURIComponent(pathname)}`}
+                                    className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                                >
                                     Sign In
                                 </Link>
-                                <Link href="/signup" className="text-white bg-green-600 px-4 py-2 rounded hover:bg-green-700 text-sm">
+
+                                <Link
+                                    href={`/signup?callbackUrl=${encodeURIComponent(pathname)}`}
+                                    className="text-white bg-green-600 px-4 py-2 rounded hover:bg-green-700 text-sm"
+                                >
                                     Register Now
                                 </Link>
+
                             </div>
                         </div>
                     )}

@@ -1,20 +1,14 @@
 import connectDB from '@/lib/db';
 import BlogBanner from '@/models/blog-page/blogbanner';
 
+// Updated GET method
 export async function GET() {
   try {
     await connectDB();
 
-    const latestBanner = await BlogBanner.findOne().sort({ createdAt: -1 });
+    const banners = await BlogBanner.find().sort({ createdAt: -1 });
 
-    if (!latestBanner) {
-      return new Response(JSON.stringify({ message: 'No banner found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(JSON.stringify(latestBanner), {
+    return new Response(JSON.stringify(banners), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -26,3 +20,4 @@ export async function GET() {
     });
   }
 }
+

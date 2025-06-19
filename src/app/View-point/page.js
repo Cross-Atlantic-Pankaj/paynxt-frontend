@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination as SwiperPagination } from 'swiper/modules';
+import Link from 'next/link';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
@@ -10,13 +11,6 @@ import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 const { Option } = Select;
 const { Panel } = Collapse;
-
-// const categories = [
-//     { name: 'Fintech & Payments', subcategories: ['AI', 'Web Dev'] },
-//     { name: 'Telecoms & Connectivity', subcategories: ['Investing', 'Banking'] },
-//     { name: 'Sustainability & Smart Cities', subcategories: ['Fitness', 'Nutrition'] },
-//     { name: 'IoT & Emerging Technology', subcategories: ['E-learning', 'Courses'] }
-// ];
 
 export default function ViewPointPage() {
     const [banner, setBanner] = useState(null);
@@ -39,19 +33,17 @@ export default function ViewPointPage() {
             const data = await res.json();
             setSliders(data);
         };
-
         const fetchBlogs = async () => {
             const res = await fetch('/api/View-point/ViewBlogs');
             const data = await res.json();
             setBlogs(data);
         };
-
         const fetchCategories = async () => {
             const res = await fetch('/api/View-point/ViewCategories');
             const data = await res.json();
             setCategories(data);
         };
-        
+
         fetchCategories();
         fetchBanner();
         fetchSliders();
@@ -152,27 +144,52 @@ export default function ViewPointPage() {
         return (
             <div className="w-full">
                 <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
-                    {paginatedBlogs.map((blog, i) => (
-                        <div key={i} className="bg-white overflow-hidden">
-                            <img src={blog.imageIconurl} alt={blog.blogName} className="w-full h-40 object-cover" />
-                            <div className="p-4">
-                                <p className="text-sm text-gray-500">{blog.category}</p>
-                                <h3 className="text-md font-bold">{blog.blogName}</h3>
-                                <p className="text-sm text-gray-700">{blog.description}</p>
-                                <div className="mt-3">
-                                    <a
-                                        href={`/blog-page`}  //${encodeURIComponent(blog.blogName.replace(/\s+/g, '-').toLowerCase())}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-block text-sm font-medium text-[#155392] py-1"
-                                    >
-                                        View
-                                    </a>
-                                </div>
+                    {paginatedBlogs.map((blog, i) => {
+                        const blogUrl = `http://localhost:3000/blog-page/${blog.slug}`; // Replace with actual URL or dynamic slug
+                        const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(blogUrl)}&title=${encodeURIComponent(blog.blogName)}&summary=${encodeURIComponent(blog.description)}`;
 
+                        return (
+                            <div key={i} className='h-full'>
+                                <Link
+                                    key={i}
+                                    href={`/blog-page/${blog.slug}`} // Replace with dynamic route if available
+                                    className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition"
+                                >
+                                    <img
+                                        src={blog.imageIconurl}
+                                        alt={blog.blogName}
+                                        className="w-full h-40 object-cover"
+                                    />
+                                    <div className="p-4 flex flex-col justify-between h-full">
+                                        <div>
+                                            <p className="text-sm text-gray-500">{blog.category}</p>
+                                            <h3 className="text-md font-bold">{blog.blogName}</h3>
+                                            <p className="text-sm text-gray-700">{blog.description}</p>
+                                        </div>
+                                        <div className='mt-4'>
+                                            {/* LinkedIn Share Button */}
+                                            <a
+                                                href={linkedInShareUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={(e) => e.stopPropagation()} // Prevent Link navigation
+                                                className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
+                                            >
+                                                <svg
+                                                    className="w-4 h-4"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.7 8.5 8.7zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
+                                                </svg>
+                                                Share
+                                            </a>
+                                        </div>
+                                    </div>
+                                </Link>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <div className="mt-4 flex justify-center">
