@@ -34,13 +34,9 @@ export default function BlogPage() {
             try {
                 const res = await fetch('/api/blog-page/blogbanner');
                 const data = await res.json();
-
-                if (!Array.isArray(data)) {
-                    console.error('Banner response is not an array:', data);
-                    return;
-                }
-
-                const matchedBanner = data.find(b => slugify(b.bannerTitle) === slug);
+                const matchedBanner = Array.isArray(data)
+                    ? data.find(b => slugify(b.bannerTitle) === slug)
+                    : null;
                 setBanner(matchedBanner || null);
             } catch (err) {
                 console.error('Error fetching banner:', err);
@@ -52,12 +48,14 @@ export default function BlogPage() {
             const data = await res.json();
             setSliders(data);
         };
+
         const fetchBlog = async () => {
             try {
                 const res = await fetch('/api/blog-page/blogcontent');
                 const data = await res.json();
                 if (Array.isArray(data)) {
-                    const matchedBlog = data.find(b => slugify(b.title) === params.slug);
+                    const matchedBlog = data.find(b => slugify(b.title) === slug);
+                    console.log("Matched Blog (from content):", matchedBlog);
                     setBlog(matchedBlog || null);
                 }
             } catch (err) {
@@ -67,21 +65,12 @@ export default function BlogPage() {
             }
         };
 
-
-        const fetchRelatedArticles = async () => {
-            try {
-                const res = await fetch('/api/blog-page/relarticles'); // Adjust path if needed
-                const data = await res.json();
-                setRelatedArticles(data);
-            } catch (err) {
-                console.error('Error fetching related articles:', err);
-            }
-        };
         const fetchConsults = async () => {
             const res = await fetch('/api/blog-page/consult');
             const data = await res.json();
             setConsults(data);
         };
+
         const fetchFeaturedReports = async () => {
             try {
                 const res = await fetch('/api/blog-page/featreport');
@@ -95,11 +84,33 @@ export default function BlogPage() {
         fetchBanner();
         fetchSliders();
         fetchBlog();
-        fetchRelatedArticles();
         fetchConsults();
         fetchFeaturedReports();
+    }, [slug]); // ✅ run once based on slug
 
-    }, []);
+    useEffect(() => {
+        const fetchRelatedArticles = async () => {
+            if (!blog) {
+                console.log("Blog is not set yet");
+                return;
+            }
+
+            try {
+                console.log("Triggering related articles API using slug:", slug);
+                const res = await fetch(`/api/blog-page/relarticles?slug=${encodeURIComponent(slug)}`);
+                const data = await res.json();
+                console.log("Related articles response:", data);
+                if (Array.isArray(data)) {
+                    setRelatedArticles(data);
+                }
+            } catch (error) {
+                console.error('Error fetching related articles:', error);
+            }
+        };
+        fetchRelatedArticles();
+    }, [blog]);
+
+
 
     if (loading) return <div className="text-center mt-10">Loading blog...</div>;
     if (!blog) return <div className="text-center mt-10 text-red-500">Blog not found</div>;
@@ -307,11 +318,9 @@ export default function BlogPage() {
                                 <p className="text-gray-500 text-sm px-4 py-2">No related articles found.</p>
                             ) : (
                                 relatedArticles.map((article) => (
-                                    <div key={article._id} className="px-4 py-3 group" title={moment(article.createdAt).fromNow()}>
+                                    <div key={article._id} className="px-4 py-3 group" title={moment(article.date).fromNow()}>
                                         <a
-                                            href={article.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            href={`/blog-page/${article.slug}`} // ✅ Using slug-based URL
                                             className="flex items-start gap-2 text-sm text-blue-700 group-hover:text-[#FF6B00]"
                                         >
                                             <span className="text-blue-700 group-hover:text-[#FF6B00]">&gt;</span>
