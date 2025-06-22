@@ -137,7 +137,7 @@ export default function ViewPointPage() {
     };
 
     const BlogsGrid = ({ blogs, currentPage, setCurrentPage }) => {
-        const blogsPerPage = 3;
+        const blogsPerPage = 15;
         const start = (currentPage - 1) * blogsPerPage;
         const paginatedBlogs = blogs.slice(start, start + blogsPerPage);
 
@@ -145,7 +145,7 @@ export default function ViewPointPage() {
             <div className="w-full">
                 <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                     {paginatedBlogs.map((blog, i) => {
-                        const blogUrl = `http://localhost:3000/blog-page/${blog.slug}`; // Replace with actual URL or dynamic slug
+                        const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blog.slug}`; // Replace with actual URL or dynamic slug
                         const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(blogUrl)}&title=${encodeURIComponent(blog.blogName)}&summary=${encodeURIComponent(blog.description)}`;
 
                         return (

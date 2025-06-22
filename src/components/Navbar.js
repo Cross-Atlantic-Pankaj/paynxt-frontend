@@ -227,7 +227,7 @@ const Navbar = () => {
               STORE
             </Link>
             <Link href="/View-point" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
-              VIEW POINT
+              INSIGHTS
             </Link>
             {/* Search Icon */}
             <div className="cursor-pointer">
