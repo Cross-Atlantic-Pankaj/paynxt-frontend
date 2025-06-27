@@ -253,7 +253,7 @@ export default function BlogPage() {
                         {/* Open Graph */}
                         <meta property="og:title" content={blog.title} />
                         <meta property="og:description" content={blog.summary || ''} />
-                        <meta property="og:url" content={`https://pay-nxt360.vercel.app/blog-page/${slug}`} />
+                        <meta property="og:url" content={`https://pay-nxt360.vercel.app/blog-page/${blog.slug}`} />
                         <meta property="og:type" content="article" />
                         {/* If you have an image, replace with real field: e.g., blog.advertisement.imageIconurl */}
                         {/* <meta property="og:image" content={blog.imageUrl} /> */}
