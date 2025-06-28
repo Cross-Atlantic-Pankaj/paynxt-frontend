@@ -245,27 +245,6 @@ export default function BlogPage() {
             </section>
 
             <div className="max-w-7xl mx-auto py-10 flex flex-row gap-8">
-                {blog && (
-                    <Head>
-                        <title>{blog.title} | PayNxt360</title>
-                        <meta name="description" content={blog.summary || ''} />
-
-                        {/* Open Graph */}
-                        <meta property="og:title" content={blog.title} />
-                        <meta property="og:description" content={blog.summary || ''} />
-                        <meta property="og:url" content={`https://pay-nxt360.vercel.app/blog-page/${blog.slug}`} />
-                        <meta property="og:type" content="article" />
-                        {/* If you have an image, replace with real field: e.g., blog.advertisement.imageIconurl */}
-                        {/* <meta property="og:image" content={blog.imageUrl} /> */}
-
-                        {/* Twitter */}
-                        {/* <meta name="twitter:card" content="summary_large_image" />
-                        <meta name="twitter:title" content={blog.title} />
-                        <meta name="twitter:description" content={blog.summary || ''} /> */}
-                        {/* <meta name="twitter:image" content={blog.imageUrl} /> */}
-                    </Head>
-                )}
-
                 {/* Left 3/4 */}
                 <div className="w-3/4">
                     <h1 className="text-2xl font-bold mb-4">{blog.title}</h1>
