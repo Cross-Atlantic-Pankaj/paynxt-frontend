@@ -124,7 +124,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                 </Link>
-                <Link href="/b2b-payment-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/b2b-payment-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>B2B PAYMENT INTELLIGENCE</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -132,7 +132,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                 </Link>
-                <Link href="/mobile-payment-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/mobile-payment-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>MOBILE PAYMENT INTELLIGENCE</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -140,7 +140,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                 </Link>
-                <Link href="/prepaid-card-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/prepaid-card-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>PREPAID CARD & DIGITAL WALLET</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -148,7 +148,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                 </Link>
-                <Link href="/ecommerce-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/ecommerce-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>ECOMMERCE INTELLIGENCE</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -156,7 +156,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                 </Link>
-                <Link href="/social-commerce-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/social-commerce-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>SOCIAL COMMERCE INTELLIGENCE</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -171,7 +171,7 @@ const Navbar = () => {
                 GIFT & LOYALTY
               </Link>
               <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
-                <Link href="/gift-card-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/gift-card-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>GIFT CARD INTELLIGENCE</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -179,7 +179,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                 </Link>
-                <Link href="/loyalty-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/loyalty-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>LOYALTY INTELLIGENCE</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -195,7 +195,7 @@ const Navbar = () => {
                 LENDING
               </Link>
               <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
-                <Link href="/alternative-lending" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/alternative-lending" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>ALTERNATIVE LENDING</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -203,7 +203,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                 </Link>
-                <Link href="/buy-now-pay-later-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                <Link href="/category/buy-now-pay-later-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
                   <div className="underline-container">
                     <span>BUY NOW PAY LATER INTELLIGENCE</span>
                     <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
@@ -214,17 +214,17 @@ const Navbar = () => {
               </div>
             </div>
 
-            <Link href="/finance" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
+            <Link href="/category/finance" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               FINANCE
             </Link>
-            <Link href="/remittance" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
+            <Link href="/category/remittance" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               REMITTANCE
             </Link>
             <Link href="/consulting" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               CONSULTING
             </Link>
             <Link href="/store" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
-              STORE
+              REPORT STORE
             </Link>
             <Link href="/Insights" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               INSIGHTS

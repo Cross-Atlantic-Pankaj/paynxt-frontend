@@ -5,8 +5,12 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { useParams } from 'next/navigation';
+
 
 export default function B2CPaymentIntelligencePage() {
+  const { slug } = useParams();
+
   const [banner, setBanner] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sliders, setSliders] = useState([]);
@@ -16,8 +20,10 @@ export default function B2CPaymentIntelligencePage() {
   const [stats, setStats] = useState([]);
 
   useEffect(() => {
+    if (!slug) return;
+    
     const fetchBanner = async () => {
-      const res = await fetch('/api/category/b2c-payment-intelligence/topbanner');
+      const res = await fetch(`/api/category/${slug}/topbanner`);
       const data = await res.json();
       setBanner(data);
     };
@@ -59,7 +65,7 @@ export default function B2CPaymentIntelligencePage() {
     fetchSectorDynamics();
     fetchStats();
 
-  }, []);
+  }, [slug]);
 
   const handleSearch = () => {
     console.log('Search Term:', searchTerm);

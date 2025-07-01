@@ -1,11 +1,15 @@
 import connectDB from '@/lib/db';
 import BlogManager from '@/models/blog-page/blogcontent';
 
+console.log('✅ head.js file is loaded');
+
 export default async function Head({ params }) {
   const slug = params.slug;
+  console.log('Building head for slug:', slug);
 
   await connectDB();
   const blog = await BlogManager.findOne({ slug }).lean();
+  console.log('Blog found in head.js:', blog);
 
   // fallback title/description
   const title = blog ? `${blog.title} | PayNxt360` : 'PayNxt360';

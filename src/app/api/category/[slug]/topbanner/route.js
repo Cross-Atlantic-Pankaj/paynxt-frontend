@@ -1,14 +1,24 @@
 import dbConnect from '@/lib/db';
 import ProdTopBanner from '@/models/category/b2c-payment-intelligence/ProdTopBanner';
 
-export async function GET() {
+export async function GET(req, { params }) {
   try {
     await dbConnect();
 
-    const latestBanner = await ProdTopBanner.findOne().sort({ createdAt: -1 });
+    const { slug } = params;
+
+    if (!slug) {
+      return new Response(JSON.stringify({ message: 'Slug is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Find the latest banner for the given slug
+    const latestBanner = await ProdTopBanner.findOne({ slug }).sort({ createdAt: -1 });
 
     if (!latestBanner) {
-      return new Response(JSON.stringify({ message: 'No banner found' }), {
+      return new Response(JSON.stringify({ message: 'No banner found for this slug' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
       });
