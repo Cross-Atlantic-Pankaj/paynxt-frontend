@@ -1,19 +1,29 @@
 import dbConnect from '@/lib/db';
 import KeyStatistics from '@/models/category/b2c-payment-intelligence/KeyStatistics';
 
-export async function GET() {
+export async function GET(req, { params }) {
   try {
     await dbConnect();
 
-    const statistics = await KeyStatistics.find()
-      .sort({ createdAt: -1 })  // Sort by newest
-      .limit(10);                // Limit to top 4
+    const { slug } = params;
 
-    if (!statistics || statistics.length === 0) {
-      return new Response(JSON.stringify({ message: 'No key statistics found' }), {
-        status: 404,
+    if (!slug) {
+      return new Response(JSON.stringify({ message: 'Slug is required' }), {
+        status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
+    }
+
+    // First, try to get data for given slug
+    let statistics = await KeyStatistics.find({ slug })
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    // Fallback to global (slug: null) if nothing found
+    if (!statistics || statistics.length === 0) {
+      statistics = await KeyStatistics.find({ slug: null })
+        .sort({ createdAt: -1 })
+        .limit(10);
     }
 
     return new Response(JSON.stringify(statistics), {

@@ -223,7 +223,7 @@ const Navbar = () => {
             <Link href="/consulting" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               CONSULTING
             </Link>
-            <Link href="/store" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
+            <Link href="/report-store" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
               REPORT STORE
             </Link>
             <Link href="/Insights" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">

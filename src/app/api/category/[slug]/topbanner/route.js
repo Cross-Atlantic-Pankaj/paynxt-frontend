@@ -15,14 +15,21 @@ export async function GET(req, { params }) {
     }
 
     // Find the latest banner for the given slug
-    const latestBanner = await ProdTopBanner.findOne({ slug }).sort({ createdAt: -1 });
+    // Try to find the latest banner for the given slug
+    let latestBanner = await ProdTopBanner.findOne({ slug }).sort({ createdAt: -1 });
+
+    // If none found, fallback to global (slug: null)
+    if (!latestBanner) {
+      latestBanner = await ProdTopBanner.findOne({ slug: null }).sort({ createdAt: -1 });
+    }
 
     if (!latestBanner) {
-      return new Response(JSON.stringify({ message: 'No banner found for this slug' }), {
+      return new Response(JSON.stringify({ message: 'No banner found for this slug or global fallback' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
       });
     }
+
 
     return new Response(JSON.stringify(latestBanner), {
       status: 200,

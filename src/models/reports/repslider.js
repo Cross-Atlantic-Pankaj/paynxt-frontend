@@ -1,10 +1,8 @@
 import mongoose from 'mongoose';
 
-const ProdsliderSchema = new mongoose.Schema({
+const repsliderSchema = new mongoose.Schema({
   typeText: { type: String, required: true },
   title: { type: String, required: true },
-  slug: { type: String, default: null, index: true },
-  pageTitle: { type: String, default: null }, 
   shortDescription: { type: String },
   url: { type: String, required: true },
     createdAt: {
@@ -13,6 +11,6 @@ const ProdsliderSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const ProdSlider = mongoose.models.ProdSlider || mongoose.model('ProdSlider', ProdsliderSchema);
+const repSlider = mongoose.models.repSlider || mongoose.model('repSlider', repsliderSchema);
 
-export default ProdSlider; 
+export default repSlider; 

@@ -21,7 +21,7 @@ export default function B2CPaymentIntelligencePage() {
 
   useEffect(() => {
     if (!slug) return;
-    
+
     const fetchBanner = async () => {
       const res = await fetch(`/api/category/${slug}/topbanner`);
       const data = await res.json();
@@ -29,31 +29,34 @@ export default function B2CPaymentIntelligencePage() {
     };
 
     const fetchSliders = async () => {
-      const res = await fetch('/api/category/b2c-payment-intelligence/slider');
+      const res = await fetch(`/api/category/${slug}/slider`);
       const data = await res.json();
-      setSliders(data);
+      console.log('Fetched sliders data:', data);
+      if (Array.isArray(data)) setSliders(data);
+      else setSliders([]); // fallback to empty array
     };
 
+
     const fetchSectionThree = async () => {
-      const res = await fetch('/api/category/b2c-payment-intelligence/sectionthree');
+      const res = await fetch(`/api/category/${slug}/sectionthree`);
       const data = await res.json();
       setSectionThree(data[0]);
     };
 
     const fetchWhyPayNxt = async () => {
-      const res = await fetch('/api/category/b2c-payment-intelligence/whypaynxt');
+      const res = await fetch(`/api/category/${slug}/whypaynxt`);
       const data = await res.json();
       setWhyPayNxt(data);
     };
 
     const fetchSectorDynamics = async () => {
-      const res = await fetch('/api/category/b2c-payment-intelligence/sectordynamics');
+      const res = await fetch(`/api/category/${slug}/sectordynamics`);
       const data = await res.json();
       setSectorDynamics(data);
     };
 
     const fetchStats = async () => {
-      const res = await fetch('/api/category/b2c-payment-intelligence/keystatistics');
+      const res = await fetch(`/api/category/${slug}/keystatistics`);
       const data = await res.json();
       setStats(data);
     };
@@ -106,7 +109,7 @@ export default function B2CPaymentIntelligencePage() {
               <div>
                 <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {banner.tags.map((tag, index) => (
+                  {(banner.tags || []).map((tag, index) => (
                     <span
                       key={index}
                       className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
@@ -151,7 +154,7 @@ export default function B2CPaymentIntelligencePage() {
               spaceBetween={16}
               slidesPerView={1}
             >
-              {sliders.map((slide, index) => (
+              {(sliders || []).map((slide, index) => (
                 <SwiperSlide key={index}>
                   <div className="mb-4 border-b pb-4">
                     <p className="text-xs text-gray-500 uppercase mb-1">{slide.typeText}</p>
