@@ -1,14 +1,29 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
+import { Pagination as SwiperPagination } from 'swiper/modules';
+import Link from 'next/link';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 
-export default function HomePage() {
+const { Text } = Typography;
+const { Option } = Select;
+const { Panel } = Collapse;
+
+export default function ViewPointPage() {
     const [banner, setBanner] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [sliders, setSliders] = useState([]);
+    const [blogs, setBlogs] = useState([]);
+    const [selectedCat, setSelectedCat] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [categories, setCategories] = useState([]);
+    const [country, setCon] = useState([]);
+    const [selectedCon, setSelectedCon] = useState(null);
+    const [visibleCount, setVisibleCount] = useState(9); // initially show 9 blogs
+
 
     useEffect(() => {
         const fetchBanner = async () => {
@@ -22,11 +37,423 @@ export default function HomePage() {
             const data = await res.json();
             setSliders(data);
         };
+        const fetchBlogs = async () => {
+            const res = await fetch('/api/report-store/repcontent');
+            const data = await res.json();
+            setBlogs(data);
+        };
+        const fetchCategories = async () => {
+            const res = await fetch('/api/report-store/repcat');
+            const data = await res.json();
+            setCategories(data);
+        };
+        const fetchcountry = async () => {
+            const res = await fetch('/api/report-store/repcon');
+            const data = await res.json();
+            setCon(data);
+        };
 
-
+        fetchcountry();
+        fetchCategories();
         fetchBanner();
         fetchSliders();
+        fetchBlogs();
     }, []);
+
+
+    const CategoryFilter = ({ categories, selectedCat, onSelect }) => {
+        const [openKey, setOpenKey] = useState(null);
+
+        const handleCategoryClick = (catName) => {
+            if (selectedCat?.cat === catName && !selectedCat?.sub) {
+                onSelect(null); // Deselect
+            } else {
+                onSelect({ cat: catName }); // Select category
+            }
+        };
+
+        return (
+            <div className="bg-gray-100 overflow-hidden">
+                {/* Title */}
+                <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
+                    Filter by category
+                </div>
+
+                {/* Categories */}
+                <Collapse
+                    accordion
+                    activeKey={openKey}
+                    onChange={(key) => setOpenKey(key)}
+                    expandIconPosition="end"
+                    className="bg-gray-100 border-none shadow-none"
+                    expandIcon={({ isActive }) => (
+                        <div
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                                }`}
+                        >
+                            {isActive ? (
+                                <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
+                            ) : (
+                                <PlusOutlined style={{ fontSize: 10, color: 'white' }} />
+                            )}
+                        </div>
+                    )}
+                >
+                    {categories.map((cat) => (
+                        <Panel
+                            key={cat.name}
+                            className="!bg-gray-100 !border-0"
+                            header={
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevent collapse toggle
+                                        handleCategoryClick(cat.name);
+                                    }}
+                                    className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                        ? 'bg-[#155392] text-white font-semibold'
+                                        : 'text-gray-800 font-semibold'
+                                        }`}
+                                >
+                                    {cat.name}
+                                </div>
+                            }
+                        >
+                            <div className="bg-gray-100 p-0">
+                                {cat.subcategories.map((sub, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                        onClick={() => onSelect({ cat: cat.name, sub })}
+                                    >
+                                        {sub}
+                                    </div>
+                                ))}
+                            </div>
+                        </Panel>
+                    ))}
+                </Collapse>
+
+                {/* Remove white padding around dropdown */}
+                <style jsx global>{`
+        .ant-collapse-content {
+          background-color: #f3f4f6 !important; /* Tailwind gray-100 */
+        }
+        .ant-collapse-content-box {
+          padding: 0 !important;
+          background-color: #f3f4f6 !important;
+        }
+      `}</style>
+            </div>
+        );
+    };
+    const CountryFilter = ({ country, selectedCon, onSelect }) => {
+        const [openKey, setOpenKey] = useState(null);
+
+        const handleCountryClick = (conName) => {
+            if (selectedCon?.con === conName && !selectedCon?.sub) {
+                onSelect(null); // Deselect
+            } else {
+                onSelect({ con: conName }); // Select category
+            }
+        };
+
+        return (
+            <div className="bg-gray-100 overflow-hidden">
+                {/* Title */}
+                <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
+                    Filter by country
+                </div>
+
+                {/* Categories */}
+                <Collapse
+                    accordion
+                    activeKey={openKey}
+                    onChange={(key) => setOpenKey(key)}
+                    expandIconPosition="end"
+                    className="bg-gray-100 border-none shadow-none"
+                    expandIcon={({ isActive }) => (
+                        <div
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                                }`}
+                        >
+                            {isActive ? (
+                                <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
+                            ) : (
+                                <PlusOutlined style={{ fontSize: 10, color: 'white' }} />
+                            )}
+                        </div>
+                    )}
+                >
+                    {country.map((con) => (
+                        <Panel
+                            key={con.name}
+                            className="!bg-gray-100 !border-0"
+                            header={
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevent collapse toggle
+                                        handleCountryClick(con.name);
+                                    }}
+                                    className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
+                                        ? 'bg-[#155392] text-white font-semibold'
+                                        : 'text-gray-800 font-semibold'
+                                        }`}
+                                >
+                                    {con.name}
+                                </div>
+                            }
+                        >
+                            <div className="bg-gray-100 p-0">
+                                {(con.subcategories || []).map((sub, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                        onClick={() => onSelect({ con: con.name, sub })}
+                                    >
+                                        {sub}
+                                    </div>
+                                ))}
+                            </div>
+                        </Panel>
+                    ))}
+                </Collapse>
+
+                {/* Remove white padding around dropdown */}
+                <style jsx global>{`
+        .ant-collapse-content {
+          background-color: #f3f4f6 !important; /* Tailwind gray-100 */
+        }
+        .ant-collapse-content-box {
+          padding: 0 !important;
+          background-color: #f3f4f6 !important;
+        }
+      `}</style>
+            </div>
+        );
+    };
+
+    // const BlogsGrid = ({ blogs, currentPage, setCurrentPage }) => {
+    //     const blogsPerPage = 15;
+    //     const start = (currentPage - 1) * blogsPerPage;
+    //     const paginatedBlogs = blogs.slice(start, start + blogsPerPage);
+
+    //     return (
+    //         <div className="w-full">
+    //             <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
+    //                 {paginatedBlogs.map((blog, i) => {
+    //                     const reportUrl = `https://pay-nxt360.vercel.app/report/${blog.seo_url}`;
+    //                     const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(reportUrl)}&title=${encodeURIComponent(blog.report_title)}&summary=${encodeURIComponent(blog.report_summary)}`;
+
+
+    //                     return (
+    //                         <div key={i} className='h-full'>
+    //                             <Link
+    //                                 key={i}
+    //                                 href={`/blog-page/${blog.seo_url}`} // Replace with dynamic route if available
+    //                                 className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition"
+    //                             >
+    //                                 {/* <img
+    //                                     src={blog.imageIconurl}
+    //                                     alt={blog.blogName}
+    //                                     className="w-full h-40 object-cover"
+    //                                 /> */}
+    //                                 <div className="p-4 flex flex-col justify-between h-full">
+    //                                     <div>
+    //                                         {/* You might not have an image; skip or use placeholder */}
+    //                                         <h3 className="text-md font-bold">{blog.report_title}</h3>
+    //                                         <p className="text-sm text-gray-500">{blog.Product_category}</p>
+    //                                         <p className="text-sm text-gray-700">
+    //                                             {blog.report_summary && blog.report_summary.length > 100
+    //                                                 ? `${blog.report_summary.slice(0, 100)}...`
+    //                                                 : blog.report_summary}
+    //                                         </p>
+
+    //                                     </div>
+    //                                     <div className='mt-4'>
+    //                                         {/* LinkedIn Share Button */}
+    //                                         {/* <a
+    //                                             href={linkedInShareUrl}
+    //                                             target="_blank"
+    //                                             rel="noopener noreferrer"
+    //                                             onClick={(e) => e.stopPropagation()} // Prevent Link navigation
+    //                                             className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
+    //                                         >
+    //                                             <svg
+    //                                                 className="w-4 h-4"
+    //                                                 fill="currentColor"
+    //                                                 viewBox="0 0 24 24"
+    //                                             >
+    //                                                 <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.7 8.5 8.7zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
+    //                                             </svg>
+    //                                             Share
+    //                                         </a> */}
+    //                                     </div>
+    //                                 </div>
+    //                             </Link>
+    //                         </div>
+    //                     );
+    //                 })}
+    //             </div>
+
+    //             <div className="mt-4 flex justify-center">
+    //                 <Pagination
+    //                     current={currentPage}
+    //                     pageSize={blogsPerPage}
+    //                     total={blogs.length}
+    //                     onChange={page => setCurrentPage(page)}
+    //                 />
+    //             </div>
+    //             {paginatedBlogs.length === 0 ? (
+    //                 <p className="text-center text-gray-500">No blogs found for this category.</p>
+    //             ) : (
+    //                 <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
+    //                     {/* blog cards */}
+    //                 </div>
+    //             )}
+    //         </div>
+    //     );
+    // };
+
+    const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
+        <div className="w-full">
+            <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
+                {blogs.map((blog, i) => {
+                    const reportUrl = `https://pay-nxt360.vercel.app/report/${blog.seo_url}`;
+                    return (
+                        <div key={i} className='h-full'>
+                            <Link
+                                href={`/blog-page/${blog.seo_url}`}
+                                className="bg-white flex flex-col justify-between h-full overflow-hidden block"
+                            >
+                                <div className="p-4 flex flex-col justify-between h-full">
+                                    <div>
+                                        <h3 className="text-md font-bold">{blog.report_title}</h3>
+                                        <p className="text-sm text-gray-500">{blog.Product_category}</p>
+                                        <p className="text-sm text-gray-700">
+                                            {blog.report_summary?.length > 100
+                                                ? `${blog.report_summary.slice(0, 100)}...`
+                                                : blog.report_summary}
+                                        </p>
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {canLoadMore && (
+                <div className="mt-6 flex justify-center">
+                    <button
+                        onClick={onLoadMore}
+                        className="px-6 py-3 rounded bg-[#155392] text-[white] hover:bg-[#0e3a6f] focus:outline-none"
+                    >
+                        Load More
+                    </button>
+                </div>
+            )}
+
+            {blogs.length === 0 && (
+                <p className="text-center text-gray-500 mt-4">No blogs found for this filter.</p>
+            )}
+        </div>
+    );
+
+
+    const categoryOptions = useMemo(() => {
+        const categories = new Set();
+        blogs.forEach(blog => {
+            if (blog.blogs) {
+                blog.blogs.forEach(b => categories.add(b.category));
+            }
+        });
+        return Array.from(categories);
+    }, [blogs]);
+
+    const conOptions = useMemo(() => {
+        const countries = new Set();
+        blogs.forEach(blog => {
+            if (blog.blogs) {
+                blog.blogs.forEach(b => countries.add(b.country));
+            }
+        });
+        return Array.from(countries);
+    }, [blogs]);
+
+    const filteredReports = useMemo(() => {
+        if (!selectedCat) return blogs;
+        if (selectedCat.sub) {
+            return blogs.filter(report => report.Product_sub_Category === selectedCat.sub);
+        }
+        return blogs.filter(report => report.Product_category === selectedCat.cat);
+    }, [blogs, selectedCat]);
+
+    const filterReports = useMemo(() => {
+        if (!selectedCon) return blogs;
+        if (selectedCon.sub) {
+            return blogs.filter(report => report.Report_Geography_Region === selectedCon.sub);
+        }
+        return blogs.filter(report => report.Report_Geography_Country === selectedCon.con);
+    }, [blogs, selectedCon]);
+
+    const finalFilteredBlogs = useMemo(() => {
+        let data = blogs;
+
+        if (selectedCat) {
+            if (selectedCat.sub) {
+                data = data.filter(report => report.Product_sub_Category === selectedCat.sub);
+            } else {
+                data = data.filter(report => report.Product_category === selectedCat.cat);
+            }
+        }
+
+        if (selectedCon) {
+            if (selectedCon.sub) {
+                data = data.filter(report => report.Report_Geography_Region === selectedCon.sub);
+            } else {
+                data = data.filter(report => report.Report_Geography_Country === selectedCon.con);
+            }
+        }
+
+        return data
+            .slice()
+            .sort((a, b) => {
+                if (a.Featured_Report_Status === b.Featured_Report_Status) {
+                    return new Date(b.report_publish_date) - new Date(a.report_publish_date);
+                }
+                return b.Featured_Report_Status - a.Featured_Report_Status;
+            });
+    }, [blogs, selectedCat, selectedCon]);
+
+
+    const visibleBlogs = useMemo(() => {
+        return finalFilteredBlogs.slice(0, visibleCount);
+    }, [finalFilteredBlogs, visibleCount]);
+
+    useEffect(() => {
+        setVisibleCount(9); // reset to show first 9 when filters change
+    }, [selectedCat, selectedCon, searchTerm]);
+
+
+    const paginatedBlogs = useMemo(() => {
+        const chunkSize = 3;
+        const result = [];
+        for (let i = 0; i < filteredReports.length; i += chunkSize) {
+            result.push(filteredReports.slice(i, i + chunkSize));
+        }
+        return result;
+    }, [filteredReports]);
+
+    const pagilogs = useMemo(() => {
+        const chunkSize = 3;
+        const result = [];
+        for (let i = 0; i < filterReports.length; i += chunkSize) {
+            result.push(filterReports.slice(i, i + chunkSize));
+        }
+        return result;
+    }, [filterReports]);
+
+
 
     const handleSearch = () => {
         console.log('Search Term:', searchTerm);
@@ -58,21 +485,20 @@ export default function HomePage() {
                     <div className="w-2/3 text-left">
                         {banner ? (
                             <div>
-                                <h2 className="text-3xl font-bold text-white mb-6">{banner.bannerTitle}</h2>
+                                <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
+                                {/* <div className="flex flex-wrap gap-2 mb-6">
+                  {banner.tags?.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div> */}
                                 <p className="text-md text-white mt-1 mb-8">
                                     {banner.bannerDescription}
                                 </p>
-                                <div className="flex flex-wrap gap-2 mb-6">
-                                    {banner.tags.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-
 
                                 <div className="mt-2 flex items-center">
                                     <input
@@ -98,7 +524,7 @@ export default function HomePage() {
                     {/* Right Slider Section */}
                     <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
                         <Swiper
-                            modules={[Pagination]}
+                            modules={[SwiperPagination]}
                             pagination={{
                                 el: '.custom-pagination',
                                 clickable: true,
@@ -153,8 +579,36 @@ export default function HomePage() {
 
                 </div>
             </section>
+            <section className="bg-gray-100 py-10">
+                <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
+                    <div className="col-span-1 flex flex-col gap-4">
+                        <CategoryFilter
+                            categories={categories}
+                            selectedCat={selectedCat}
+                            onSelect={(selection) => {
+                                setSelectedCat(selection);
+                                setCurrentPage(1);
+                            }}
+                        />
+                        <CountryFilter
+                            country={country}
+                            selectedCon={selectedCon}
+                            onSelect={(selection) => {
+                                setSelectedCon(selection);
+                                setCurrentPage(1);
+                            }}
+                        />
+                    </div>
 
+                    <div className="col-span-3">
+                        <BlogsGrid
+                            blogs={visibleBlogs}
+                            onLoadMore={() => setVisibleCount(prev => prev + 9)}
+                            canLoadMore={visibleCount < finalFilteredBlogs.length}
+                        />
+                    </div>
+                </div>
+            </section>
         </main>
-    );
+    )
 }
-
