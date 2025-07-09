@@ -318,11 +318,11 @@ export default function ViewPointPage() {
         <div className="w-full">
             <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                 {blogs.map((blog, i) => {
-                    const reportUrl = `https://pay-nxt360.vercel.app/report/${blog.seo_url}`;
+                    const reportUrl = `https://pay-nxt360.vercel.app/report-store/${blog.seo_url}`;
                     return (
                         <div key={i} className='h-full'>
                             <Link
-                                href={`/blog-page/${blog.seo_url}`}
+                                href={`/report-store/${blog.seo_url}`}
                                 className="bg-white flex flex-col justify-between h-full overflow-hidden block"
                             >
                                 <div className="p-4 flex flex-col justify-between h-full">

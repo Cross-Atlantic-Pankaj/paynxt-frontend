@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ClientLayout from '@/components/ClientLayout';
 import 'antd/dist/reset.css';
-
+import { CartProvider } from '@/context/CartContext';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,13 +27,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <UserProvider>
-            <Navbar />
-            <ClientLayout>{children}</ClientLayout>
-            <Footer />
-          </UserProvider>
-        </Suspense>
+        <CartProvider>
+          <Suspense fallback={<div>Loading...</div>}>
+            <UserProvider>
+              <Navbar />
+              <ClientLayout>{children}</ClientLayout>
+              <Footer />
+            </UserProvider>
+          </Suspense>
+        </CartProvider>
       </body>
     </html>
   );

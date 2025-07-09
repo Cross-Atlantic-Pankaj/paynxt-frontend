@@ -6,11 +6,13 @@ import styles from "../styles/Styling.css";
 import { useRouter } from 'next/navigation';
 import { useUser } from '../context/UserContext';
 import toast, { Toaster } from 'react-hot-toast';
+import { useCart } from '@/context/CartContext';
 
 const Navbar = () => {
   const { user, logout } = useUser();
   const router = useRouter();
   const [isCompact, setIsCompact] = useState(false);
+  const { cartItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,7 +78,7 @@ const Navbar = () => {
                 <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
                   <path d="M4.19986 11.1996C3.42988 11.1996 2.8069 11.8296 2.8069 12.5996C2.8069 13.3695 3.42988 13.9995 4.19986 13.9995C4.96983 13.9995 5.59981 13.3695 5.59981 12.5996C5.59981 11.8296 4.96983 11.1996 4.19986 11.1996ZM0 0V1.39995H1.39995L3.91987 6.71277L2.9749 8.42771C2.8629 8.6237 2.7999 8.8547 2.7999 9.09969C2.7999 9.86966 3.42988 10.4996 4.19986 10.4996H12.5996V9.09969H4.49385C4.39585 9.09969 4.31885 9.02269 4.31885 8.92469L4.33985 8.8407L4.96983 7.69974H10.1847C10.7096 7.69974 11.1716 7.41275 11.4096 6.97876L13.9155 2.43592C13.9733 2.32909 14.0023 2.20911 13.9999 2.0877C13.9974 1.96629 13.9634 1.84759 13.9014 1.74321C13.8393 1.63883 13.7512 1.55233 13.6458 1.49217C13.5403 1.43201 13.421 1.40023 13.2995 1.39995H2.9469L2.28892 0H0ZM11.1996 11.1996C10.4296 11.1996 9.80666 11.8296 9.80666 12.5996C9.80666 13.3695 10.4296 13.9995 11.1996 13.9995C11.9696 13.9995 12.5996 12.5996C12.5996 11.8296 11.9696 11.1996 11.1996 11.1996Z"></path>
                 </svg>
-                <span className="cartNumber">0</span>
+                <span className="cartNumber">{cartItems.length}</span>
               </div>
 
               <div className="flex items-center gap-4">
