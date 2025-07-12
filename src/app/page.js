@@ -125,7 +125,7 @@ export default function HomePage() {
             {banner ? (
               <div>
                 <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerHeading}</h1>
-                <div className="flex flex-wrap gap-2 mb-6">
+                {/* <div className="flex flex-wrap gap-2 mb-6">
                   {banner.tags.map((tag, index) => (
                     <span
                       key={index}
@@ -134,12 +134,12 @@ export default function HomePage() {
                       {tag}
                     </span>
                   ))}
-                </div>
+                </div> */}
 
                 <div className="mt-2 flex items-center">
                   <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Search for market intelligence on fintech"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
@@ -150,6 +150,16 @@ export default function HomePage() {
                   >
                     Search
                   </button>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6 mt-4">
+                  {banner.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             ) : (
