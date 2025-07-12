@@ -26,7 +26,7 @@ export async function POST(req) {
 
     const otp = generateOTP();
     const otpExpiry = new Date();
-    otpExpiry.setMinutes(otpExpiry.getMinutes() + 4);
+    otpExpiry.setHours(otpExpiry.getHours() + 1);
 
     user.otp = {
       code: otp,

@@ -35,11 +35,8 @@ const userSchema = new mongoose.Schema({
   },
   phoneNumber: {
     type: String,
-    required: true,
     unique: true,
-        required: function () {
-      return !this.linkedinId;
-    }
+    sparse: true
   },
   country: {
     type: String

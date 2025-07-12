@@ -54,7 +54,6 @@ export default function SignupPage() {
       !form.email.trim() ||
       !form.password.trim() ||
       !form.confirmPassword.trim() ||
-      !form.phoneNumber.trim() ||
       !form.termsAccepted
     ) {
       setError('Please fill all required fields and accept terms.');
@@ -63,8 +62,8 @@ export default function SignupPage() {
     }
 
     if (!isCorporateEmail(form.email)) {
-      setError('Please use your corporate email address (not public email like Yahoo, etc).');
-      toast.error('Please use your corporate email address (not public email like Yahoo, etc).');
+      setError('Kindly use your official work email. Personal email domains like Gmail or Yahoo are not accepted.');
+      toast.error('Kindly use your official work email. Personal email domains like Gmail or Yahoo are not accepted.');
       return;
     }
 
@@ -129,8 +128,8 @@ export default function SignupPage() {
         router.push('/dashboard');
       }
     } catch (err) {
-      setOtpError('Something went wrong');
-      toast.error('Something went wrong', { id: otpToast });
+      setOtpError('Incorrect or expired OTP. Please sign up again.');
+      toast.error('Incorrect or expired OTP. Please sign up again.', { id: otpToast });
     } finally {
       setLoading(false);
     }
@@ -282,7 +281,6 @@ export default function SignupPage() {
                       className="w-full border rounded px-3 py-2 text-sm"
                       value={form.phoneNumber}
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>

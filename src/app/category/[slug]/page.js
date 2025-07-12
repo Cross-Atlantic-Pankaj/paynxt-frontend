@@ -160,9 +160,11 @@ export default function B2CPaymentIntelligencePage() {
                     <p className="text-xs text-gray-500 uppercase mb-1">{slide.typeText}</p>
                     <h3 className="text-lg font-bold text-[#155392]">{slide.title}</h3>
                     <p className="text-sm text-gray-700 mt-1 mb-2">
-                      {slide.shortDescription.length > 100
-                        ? `${slide.shortDescription.slice(0, 100)}...`
-                        : slide.shortDescription}
+                      {slide.shortDescription
+                        ? (slide.shortDescription.length > 100
+                          ? `${slide.shortDescription.slice(0, 100)}...`
+                          : slide.shortDescription)
+                        : ''}
                     </p>
                     <div className="flex justify-end">
                       <a

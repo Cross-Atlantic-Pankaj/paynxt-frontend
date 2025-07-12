@@ -58,17 +58,19 @@ const Navbar = () => {
           <div className="flex justify-between items-center">
             {/* Logo on the left */}
             <div className="flex-shrink-0">
-              <img
-                src="/Images/PayNxt_Logo.svg"
-                alt="PayNXT360"
-                className="h-13 w-auto"
-              />
+              <a href="/" aria-label="Go to homepage">
+                <img
+                  src="/Images/PayNxt_Logo.svg"
+                  alt="PayNXT360"
+                  className="h-13 w-auto"
+                />
+              </a>
             </div>
 
             {/* Navigation links with a gap */}
             <div className="flex items-center gap-6">
               <ul className="flex gap-6 text-sm font-medium mb-0">
-                <li><Link href="" className="text-white hover:text-[#FF6B00] whitespace-nowrap">Home</Link></li>
+                <li><Link href="/" className="text-white hover:text-[#FF6B00] whitespace-nowrap">Home</Link></li>
                 <li><Link href="/about-us" className="text-white hover:text-[#FF6B00] whitespace-nowrap">About Us</Link></li>
                 <li><Link href="/contact-us" className="text-white hover:text-[#FF6B00] whitespace-nowrap">Contact Us</Link></li>
               </ul>

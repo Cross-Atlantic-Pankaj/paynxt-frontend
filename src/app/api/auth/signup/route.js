@@ -20,7 +20,7 @@ export async function POST(req) {
       termsAccepted
     } = await req.json();
 
-    if (!Firstname || !Lastname || !email || !password || !phoneNumber || !termsAccepted) {
+    if (!Firstname || !Lastname || !email || !password || !termsAccepted) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -29,9 +29,12 @@ export async function POST(req) {
 
     await connectDB();
 
-    const existingUser = await User.findOne({
-      $or: [{ email }, { phoneNumber }]
-    });
+    const query = [{ email }];
+    if (phoneNumber) {
+      query.push({ phoneNumber });
+    }
+    const existingUser = await User.findOne({ $or: query });
+
 
     if (existingUser) {
       return NextResponse.json(
@@ -42,7 +45,7 @@ export async function POST(req) {
 
     const otp = generateOTP();
     const otpExpiry = new Date();
-    otpExpiry.setMinutes(otpExpiry.getMinutes() + 4);
+    otpExpiry.setHours(otpExpiry.getHours() + 1);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
