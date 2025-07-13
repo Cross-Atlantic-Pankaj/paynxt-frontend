@@ -12,23 +12,37 @@ const Navbar = () => {
   const { user, logout } = useUser();
   const router = useRouter();
   const [isCompact, setIsCompact] = useState(false);
+  const [sections, setSections] = useState([]);
   const { cartItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
-      if (offset > 100) {
-        setIsCompact(true);
-      } else {
-        setIsCompact(false);
-      }
+      setIsCompact(offset > 100);
     };
 
     window.addEventListener('scroll', handleScroll);
+
+    // 🟢 Move this part **before** return
+    const fetchNavbarData = async () => {
+      try {
+        const res = await fetch('/api/navbar');
+        const json = await res.json();
+        if (json.success) {
+          setSections(json.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch navbar data:', error);
+      }
+    };
+
+    fetchNavbarData();
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
 
   const handleLogout = () => {
     logout();
@@ -115,124 +129,27 @@ const Navbar = () => {
       <div className={`paymentsSection ${isCompact ? 'compact' : ''}`}>
         <div className="container">
           <div className="flex justify-center items-center gap-20 py-2">
-            <div className="relative group">
-              <Link href="/#" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
-                PAYMENTS
-              </Link>
-              <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
-                <Link href="/category/b2c-payment-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>B2C PAYMENT INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
+            {sections.map(section => (
+              <div key={section._id} className="relative group">
+                <Link href={section.sectionUrl || '#'} className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  {section.section}
                 </Link>
-                <Link href="/category/b2b-payment-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>B2B PAYMENT INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
+                {section.links.length > 0 && (
+                  <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
+                    {section.links.map(link => (
+                      <Link key={link._id} href={link.url} className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                        <div className="underline-container">
+                          <span>{link.title}</span>
+                          <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
+                            <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
+                          </svg>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                </Link>
-                <Link href="/category/mobile-payment-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>MOBILE PAYMENT INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
-                <Link href="/category/prepaid-card-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>PREPAID CARD & DIGITAL WALLET</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
-                <Link href="/category/ecommerce-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>ECOMMERCE INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
-                <Link href="/category/social-commerce-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>SOCIAL COMMERCE INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
+                )}
               </div>
-            </div>
-            <div className="relative group">
-              <Link href="/#" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
-                GIFT & LOYALTY
-              </Link>
-              <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
-                <Link href="/category/gift-card-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>GIFT CARD INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
-                <Link href="/category/loyalty-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>LOYALTY INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative group">
-              <Link href="/#" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
-                LENDING
-              </Link>
-              <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
-                <Link href="/category/alternative-lending" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>ALTERNATIVE LENDING</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
-                <Link href="/category/buy-now-pay-later-intelligence" className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                  <div className="underline-container">
-                    <span>BUY NOW PAY LATER INTELLIGENCE</span>
-                    <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                      <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                    </svg>
-                  </div>
-                </Link>
-              </div>
-            </div>
-
-            <Link href="/category/finance" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
-              FINANCE
-            </Link>
-            <Link href="/category/remittance" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
-              REMITTANCE
-            </Link>
-            <Link href="/consulting" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
-              CONSULTING
-            </Link>
-            <Link href="/report-store" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
-              REPORT STORE
-            </Link>
-            <Link href="/Insights" className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold">
-              INSIGHTS
-            </Link>
+            ))}
             {/* Search Icon */}
             <div className="cursor-pointer">
               <svg

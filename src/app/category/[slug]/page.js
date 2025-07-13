@@ -226,7 +226,10 @@ export default function B2CPaymentIntelligencePage() {
             {/* Left Column: Title and Description */}
             <div>
               <h2 className="text-3xl text-black mb-6">{sectionThree.title}</h2>
-              <p className="text-gray-500">{sectionThree.description}</p>
+              <div
+                className="text-gray-500 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: sectionThree.description }}
+              />
             </div>
 
             {/* Right Column: Image */}
@@ -267,9 +270,11 @@ export default function B2CPaymentIntelligencePage() {
         <div className="max-w-7xl mx-auto">
           <ul className="space-y-8">
             {sectorDynamics.map((item, index) => (
-              <li key={index} className="text-gray-600 mt-2 text-base leading-[2]">
-                {item.text}
-              </li>
+              <li
+                key={index}
+                className="text-gray-600 mt-2 text-base leading-[2]"
+                dangerouslySetInnerHTML={{ __html: item.text }}
+              />
             ))}
           </ul>
         </div>
