@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
+import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -16,6 +16,7 @@ export default function HomePage() {
   const [productsData, setProductsData] = useState([]);
   const [featuredResearch, setFeaturedResearch] = useState([]);
   const [insights, setInsights] = useState([]);
+  const [partnerLogos, setPartnerLogos] = useState([]);
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -82,6 +83,15 @@ export default function HomePage() {
         console.error('Error fetching research insights:', error);
       }
     };
+    const fetchPartnerLogos = async () => {
+      try {
+        const res = await fetch('/api/home-page/partner-logos');
+        const json = await res.json();
+        if (json.success) setPartnerLogos(json.data);
+      } catch (error) {
+        console.error('Error fetching partner logos:', error);
+      }
+    };
 
 
     fetchBanner();
@@ -91,6 +101,7 @@ export default function HomePage() {
     fetchStrengths();
     fetchTechnologyPlatformData();
     fetchProducts();
+    fetchPartnerLogos();
     fetchResearchInsights();
   }, []);
 
@@ -118,8 +129,14 @@ export default function HomePage() {
   }
 `}</style>
 
-      <section className="w-full bg-[#155392] py-20 px-8">
-        <div className="flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
+      <section
+        className="w-full py-55 px-8 bg-cover bg-center relative"
+        style={{
+          backgroundImage: banner?.image ? `url(${banner.image})` : undefined,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="relative z-10 flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
           {/* Left Banner Section */}
           <div className="w-2/3 text-left">
             {banner ? (
@@ -146,7 +163,7 @@ export default function HomePage() {
                   />
                   <button
                     onClick={handleSearch}
-                    className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                    className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300"
                   >
                     Search
                   </button>
@@ -170,13 +187,17 @@ export default function HomePage() {
           {/* Right Slider Section */}
           <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
             <Swiper
-              modules={[Pagination]}
+              modules={[Pagination, Autoplay]}
               pagination={{
                 el: '.custom-pagination',
                 clickable: true,
               }}
               spaceBetween={16}
               slidesPerView={1}
+              autoplay={{
+                delay: 5000,   // 5 seconds
+                disableOnInteraction: false, // keeps auto-rotating even after user interacts
+              }}
             >
               {sliders.map((slide, index) => (
                 <SwiperSlide key={index}>
@@ -294,11 +315,11 @@ export default function HomePage() {
       <section className="w-full bg-gray-100">
         <div className="max-w-8xl mx-auto">
           <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-2">
-            {[...Array(16)].map((_, index) => (
+            {partnerLogos.map((logo, index) => (
               <div key={index} className="flex justify-center items-center">
                 <img
-                  src={`/images/i${index + 1}.jpg`}
-                  alt={`Logo ${index + 1}`}
+                  src={logo.imageUrl}
+                  alt={logo.altText || `Logo ${index + 1}`}
                   className="w-45 h-23 object-contain grayscale hover:grayscale-0 transition duration-300 border border-white"
                 />
               </div>
@@ -332,7 +353,7 @@ export default function HomePage() {
                   </div>
 
                   <a
-                    href={`/products/${item._id}`}
+                    href={item.url?.startsWith('/') ? item.url : `/${item.url}`}
                     className="mt-4 inline-block w-24 py-1 text-white bg-[#155392] rounded text-center mx-auto transition-all duration-300 hover:bg-[white] hover:text-orange-500"
                   >
                     View
@@ -423,9 +444,9 @@ export default function HomePage() {
                     className="absolute left-0 h-20 w-20 bg-gray-100 object-cover -translate-x-1/2"
                   />
                   <a
-                    href={"/report-store"}
+                    href={`/${item.content.url}`}
                     className="text-md font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200"
-                    target="_blank" rel="noopener noreferrer"
+                    
                   >
                     {item.content.title}
                   </a>
@@ -464,9 +485,9 @@ export default function HomePage() {
                     className="absolute left-0 h-20 w-20 bg-gray-100 object-cover -translate-x-1/2"
                   />
                   <a
-                    href={"/view-points"}
+                    href={`/${item.content.url}`}
                     className="text-md font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200"
-                    target="_blank" rel="noopener noreferrer"
+                    
                   >
                     {item.content.title}
                   </a>

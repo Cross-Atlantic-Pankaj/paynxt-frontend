@@ -169,8 +169,8 @@ export default function ReportPage({ params }) {
             {/* Banner Section */}
             <section className="w-full bg-[#155392] py-20 px-8">
                 <div className="max-w-7xl mx-auto text-left">
-                    <h1 className="text-3xl font-bold text-white mb-2">{report.report_title}</h1>
-                    <p className="text-xl font-semibold text-white mb-4">{report.Product_category}</p>
+                    <h1 className="text-3xl font-bold text-white mb-2">{report.report_title.split(' - ')[0]}</h1>
+                    <p className="text-xl font-semibold text-white mb-4">{report.Product_sub_Category}</p>
                     <p className="text-md text-white mb-8">
                         {report.report_summary?.length > 200
                             ? `${report.report_summary.slice(0, 200)}...`

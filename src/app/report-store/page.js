@@ -327,7 +327,9 @@ export default function ViewPointPage() {
                             >
                                 <div className="p-4 flex flex-col justify-between h-full">
                                     <div>
-                                        <h3 className="text-md font-bold">{blog.report_title}</h3>
+                                        <h3 className="text-md font-bold">
+                                            {blog.report_title.split(' - ')[0]}
+                                        </h3>
                                         <p className="text-sm text-gray-500">{blog.Product_category}</p>
                                         <p className="text-sm text-gray-700">
                                             {blog.report_summary?.length > 100
@@ -486,16 +488,16 @@ export default function ViewPointPage() {
                         {banner ? (
                             <div>
                                 <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
-                                {/* <div className="flex flex-wrap gap-2 mb-6">
-                  {banner.tags?.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div> */}
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                    {banner.tags?.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
                                 <p className="text-md text-white mt-1 mb-8">
                                     {banner.bannerDescription}
                                 </p>
