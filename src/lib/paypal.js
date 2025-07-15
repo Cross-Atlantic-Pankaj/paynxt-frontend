@@ -2,7 +2,7 @@
 import paypal from '@paypal/checkout-server-sdk';
 
 export function environment() {
-  return new paypal.core.SandboxEnvironment(
+  return new paypal.core.LiveEnvironment(
     process.env.PAYPAL_CLIENT_ID,
     process.env.PAYPAL_CLIENT_SECRET
   );
