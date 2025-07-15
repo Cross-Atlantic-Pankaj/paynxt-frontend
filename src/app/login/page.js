@@ -9,7 +9,12 @@ import toast, { Toaster } from 'react-hot-toast';
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const referrer = typeof window !== 'undefined' ? document.referrer : null;
+  const fallbackUrl = referrer && new URL(referrer).origin === window.location.origin
+    ? new URL(referrer).pathname
+    : '/dashboard';
+
+  const callbackUrl = searchParams.get('callbackUrl') || fallbackUrl;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);

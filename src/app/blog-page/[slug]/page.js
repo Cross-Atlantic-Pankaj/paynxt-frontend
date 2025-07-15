@@ -35,7 +35,7 @@ export default function BlogPage() {
                 const res = await fetch('/api/blog-page/blogbanner');
                 const data = await res.json();
                 const matchedBanner = Array.isArray(data)
-                    ? data.find(b => slugify(b.bannerTitle) === slug)
+                    ? data.find(b => slugify(b.title) === slug)
                     : null;
                 setBanner(matchedBanner || null);
             } catch (err) {
@@ -145,7 +145,7 @@ export default function BlogPage() {
                         <div className="w-2/3 text-left">
                             {banner ? (
                                 <div>
-                                    <h1 className="text-3xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
+                                    <h1 className="text-3xl font-bold text-white mb-6">{banner.title}</h1>
                                     <div className="flex flex-wrap gap-2 mb-6">
                                         {/* {banner.tags.map((tag, index) => (
                                         <span
@@ -156,9 +156,9 @@ export default function BlogPage() {
                                         </span>
                                     ))} */}
                                     </div>
-                                    {banner.bannerDescription && (
+                                    {banner.summary && (
                                         <p className="text-md text-white mt-1 mb-8">
-                                            {banner.bannerDescription}
+                                            {banner.summary}
                                         </p>
                                     )}
 
@@ -277,7 +277,7 @@ export default function BlogPage() {
                         {user ? (
                             <div className="mt-6">
                                 <div
-                                    className="text-gray-800 leading-relaxed whitespace-pre-line"
+                                    className="text-gray-800 leading-relaxed whitespace-pre-line article-content"
                                     dangerouslySetInnerHTML={{ __html: blog.articlePart2 }}
                                 />
                             </div>

@@ -176,7 +176,6 @@ export default function ReportPage({ params }) {
                             ? `${report.report_summary.slice(0, 200)}...`
                             : report.report_summary}
                     </p>
-
                     <div className="mt-2 flex items-center">
                         <input
                             type="text"
@@ -355,6 +354,24 @@ export default function ReportPage({ params }) {
                                 >
                                     ADD TO WISHLIST
                                 </a>
+                                <div className="mt-4">
+                                    <a
+                                        href="/checkout"  // replace with your real PayPal checkout URL or route
+                                        className="flex items-center justify-center gap-2 text-center font-semibold text-[#155392] bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-4xl text-sm transition-colors duration-300"
+                                    >
+                                        {/* PayPal logo */}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 64 64"
+                                        >
+                                            <path fill="#003087" d="M17.2 53.8l4.1-25.2c.1-.6.6-1.1 1.2-1.1h12.7c8.8 0 15.2-4.1 17.1-12.6 1.8-8.1-3.4-12.6-13.1-12.6H17.8c-.6 0-1.1.5-1.2 1.1L11 53c-.1.6.4 1.2 1 1.2h4.7c.7 0 1.2-.5 1.3-1.1z" />
+                                            <path fill="#009cde" d="M45.2 27.5c-1.5 6.7-6.3 10.1-13.9 10.1H20.7c-.6 0-1.1.4-1.2 1l-3.6 22.5c-.1.6.4 1.2 1 1.2h8.1c.6 0 1.1-.4 1.2-1l2.1-13c.1-.6.6-1 1.2-1h5.5c9.3 0 16.5-3.8 18.7-14.9 1.9-9-3.4-14.2-13-14.2h-2.9c-5.7 0-10.5 3.3-12.4 9.5-.1.3.1.7.4.7h3.2c.3 0 .6-.2.7-.5 1.2-3.5 4.2-6.1 8.1-6.1h2.2c6.3.1 9.1 3.1 7.8 9.7z" />
+                                        </svg>
+                                        <span>PayPal Checkout</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
 

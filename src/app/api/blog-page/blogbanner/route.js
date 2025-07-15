@@ -1,12 +1,12 @@
 import connectDB from '@/lib/db';
-import BlogBanner from '@/models/blog-page/blogbanner';
+import BlogManager from '@/models/blog-page/blogcontent';
 
 // Updated GET method
 export async function GET() {
   try {
     await connectDB();
 
-    const banners = await BlogBanner.find().sort({ createdAt: -1 });
+    const banners = await BlogManager.find().sort({ createdAt: -1 });
 
     return new Response(JSON.stringify(banners), {
       status: 200,

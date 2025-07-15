@@ -114,7 +114,10 @@ const Navbar = () => {
                     </button>
                   </>
                 ) : (
-                  <Link href="/login" className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition">
+                  <Link
+                    href={`/login?callbackUrl=${encodeURIComponent(router.asPath)}`}
+                    className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition"
+                  >
                     Login/Register
                   </Link>
                 )}

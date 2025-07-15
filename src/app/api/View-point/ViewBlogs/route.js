@@ -1,12 +1,12 @@
 import connectDB from '@/lib/db';
-import ViewPointBlogs from '@/models/View-point/Blogs';
+import BlogManager from '@/models/blog-page/blogcontent';
 
 export async function GET() {
   try {
     await connectDB();
 
     // Fetch the 10 latest blog entries
-    const latestBlogs = await ViewPointBlogs.find().sort({ createdAt: -1 }).limit(10);
+    const latestBlogs = await BlogManager.find().sort({ createdAt: -1 }).limit(10);
 
     if (!latestBlogs || latestBlogs.length === 0) {
       return new Response(JSON.stringify({ message: 'No blogs found' }), {

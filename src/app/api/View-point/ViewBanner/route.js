@@ -1,5 +1,5 @@
 import connectDB from '@/lib/db';
-import ViewTopBanner from '@/models/View-point/ViewBanner';
+import ViewTopBanner from '@/models/blog-page/ViewBanner';
 
 export async function GET() {
   try {

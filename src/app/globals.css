@@ -46,3 +46,13 @@ input:-webkit-autofill:focus{
   -webkit-box-shadow: 0 0 0 50px white inset;
   -webkit-text-fill-color: grey;
 }
+
+.article-content ul {
+  list-style-type: disc;
+  margin-left: 1.5em;
+}
+
+.article-content ol {
+  list-style-type: decimal;
+  margin-left: 1.5em;
+}

@@ -22,7 +22,8 @@ export default function ViewPointPage() {
     const [categories, setCategories] = useState([]);
     const [country, setCon] = useState([]);
     const [selectedCon, setSelectedCon] = useState(null);
-    const [visibleCount, setVisibleCount] = useState(9); // initially show 9 blogs
+    const [visibleCount, setVisibleCount] = useState(15); // initially show 9 blogs
+    const [searchInput, setSearchInput] = useState('');
 
 
     useEffect(() => {
@@ -318,24 +319,35 @@ export default function ViewPointPage() {
         <div className="w-full">
             <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                 {blogs.map((blog, i) => {
-                    const reportUrl = `https://pay-nxt360.vercel.app/report-store/${blog.seo_url}`;
+                    const reportUrl = `/report-store/${blog.seo_url}`;
                     return (
-                        <div key={i} className='h-full'>
+                        <div key={i} className="h-full">
                             <Link
-                                href={`/report-store/${blog.seo_url}`}
+                                href={reportUrl}
                                 className="bg-white flex flex-col justify-between h-full overflow-hidden block"
                             >
                                 <div className="p-4 flex flex-col justify-between h-full">
                                     <div>
+                                        <p className="text-sm leading-tight">
+                                            {blog.report_publish_date
+                                                ? new Date(blog.report_publish_date).toLocaleString('en-US', { month: 'long', year: 'numeric' }).replace(',', '')
+                                                : ''}
+                                        </p>
+                                        <p className="text-sm text-gray-500">{blog.Product_sub_Category}</p>
+                                        <div className="border-b border-gray-400 mb-4"></div>
                                         <h3 className="text-md font-bold">
                                             {blog.report_title.split(' - ')[0]}
                                         </h3>
-                                        <p className="text-sm text-gray-500">{blog.Product_category}</p>
                                         <p className="text-sm text-gray-700">
                                             {blog.report_summary?.length > 100
                                                 ? `${blog.report_summary.slice(0, 100)}...`
                                                 : blog.report_summary}
                                         </p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
+                                            View
+                                        </span>
                                     </div>
                                 </div>
                             </Link>
@@ -417,6 +429,15 @@ export default function ViewPointPage() {
             }
         }
 
+        // Apply search term filter here
+        if (searchTerm.trim()) {
+            const lowerTerm = searchTerm.toLowerCase();
+            data = data.filter(report =>
+                report.report_title?.toLowerCase().includes(lowerTerm) ||
+                report.report_summary?.toLowerCase().includes(lowerTerm)
+            );
+        }
+
         return data
             .slice()
             .sort((a, b) => {
@@ -425,15 +446,28 @@ export default function ViewPointPage() {
                 }
                 return b.Featured_Report_Status - a.Featured_Report_Status;
             });
-    }, [blogs, selectedCat, selectedCon]);
+    }, [blogs, selectedCat, selectedCon, searchTerm]);
 
+
+    const filteredCategories = useMemo(() => {
+        // For each category, check if at least one blog has matching Product_category
+        return categories.filter(cat =>
+            finalFilteredBlogs.some(blog => blog.Product_category === cat.name)
+        );
+    }, [categories, finalFilteredBlogs]);
+
+    const filteredCountries = useMemo(() => {
+        return country.filter(con =>
+            finalFilteredBlogs.some(blog => blog.Report_Geography_Country === con.name)
+        );
+    }, [country, finalFilteredBlogs]);
 
     const visibleBlogs = useMemo(() => {
         return finalFilteredBlogs.slice(0, visibleCount);
     }, [finalFilteredBlogs, visibleCount]);
 
     useEffect(() => {
-        setVisibleCount(9); // reset to show first 9 when filters change
+        setVisibleCount(15); // reset to show first 9 when filters change
     }, [selectedCat, selectedCon, searchTerm]);
 
 
@@ -458,6 +492,7 @@ export default function ViewPointPage() {
 
 
     const handleSearch = () => {
+        setSearchTerm(searchInput);
         console.log('Search Term:', searchTerm);
     };
 
@@ -506,8 +541,8 @@ export default function ViewPointPage() {
                                     <input
                                         type="text"
                                         placeholder="Search..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        value={searchInput}
+                                        onChange={(e) => setSearchInput(e.target.value)}
                                         className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                                     />
                                     <button
@@ -585,7 +620,7 @@ export default function ViewPointPage() {
                 <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
                     <div className="col-span-1 flex flex-col gap-4">
                         <CategoryFilter
-                            categories={categories}
+                            categories={filteredCategories}
                             selectedCat={selectedCat}
                             onSelect={(selection) => {
                                 setSelectedCat(selection);
@@ -593,7 +628,7 @@ export default function ViewPointPage() {
                             }}
                         />
                         <CountryFilter
-                            country={country}
+                            country={filteredCountries}
                             selectedCon={selectedCon}
                             onSelect={(selection) => {
                                 setSelectedCon(selection);
@@ -605,7 +640,7 @@ export default function ViewPointPage() {
                     <div className="col-span-3">
                         <BlogsGrid
                             blogs={visibleBlogs}
-                            onLoadMore={() => setVisibleCount(prev => prev + 9)}
+                            onLoadMore={() => setVisibleCount(prev => prev + 15)}
                             canLoadMore={visibleCount < finalFilteredBlogs.length}
                         />
                     </div>

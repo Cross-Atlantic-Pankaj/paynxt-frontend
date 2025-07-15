@@ -18,8 +18,10 @@ export default function ViewPointPage() {
     const [sliders, setSliders] = useState([]);
     const [blogs, setBlogs] = useState([]);
     const [selectedCat, setSelectedCat] = useState(null);
+    const [selectedTopic, setSelectedTopic] = useState(null); // { topic: string, sub: string }
     const [currentPage, setCurrentPage] = useState(1);
     const [categories, setCategories] = useState([]);
+    const [topics, setTopics] = useState([]);
 
     useEffect(() => {
         const fetchBanner = async () => {
@@ -43,7 +45,13 @@ export default function ViewPointPage() {
             const data = await res.json();
             setCategories(data);
         };
+        const fetchTopics = async () => {
+            const res = await fetch('/api/View-point/ViewTopics'); // adjust path
+            const data = await res.json();
+            setTopics(data);
+        };
 
+        fetchTopics();
         fetchCategories();
         fetchBanner();
         fetchSliders();
@@ -136,6 +144,78 @@ export default function ViewPointPage() {
         );
     };
 
+    const TopicFilter = ({ topics, selectedTopic, onSelect }) => {
+        const [openKey, setOpenKey] = useState(null);
+
+        const handleTopicClick = (topicName) => {
+            if (selectedTopic?.topic === topicName && !selectedTopic?.sub) {
+                onSelect(null); // deselect
+            } else {
+                onSelect({ topic: topicName }); // select topic
+            }
+        };
+
+        return (
+            <div className="bg-gray-100 overflow-hidden mt-4">
+                <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
+                    Filter by topic
+                </div>
+                <Collapse
+                    accordion
+                    activeKey={openKey}
+                    onChange={(key) => setOpenKey(key)}
+                    expandIconPosition="end"
+                    className="bg-gray-100 border-none shadow-none"
+                    expandIcon={({ isActive }) => (
+                        <div
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                                }`}
+                        >
+                            {isActive ? (
+                                <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
+                            ) : (
+                                <PlusOutlined style={{ fontSize: 10, color: 'white' }} />
+                            )}
+                        </div>
+                    )}
+                >
+                    {topics.map((topic) => (
+                        <Panel
+                            key={topic.name}
+                            className="!bg-gray-100 !border-0"
+                            header={
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleTopicClick(topic.name);
+                                    }}
+                                    className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedTopic?.topic === topic.name && !selectedTopic?.sub
+                                        ? 'bg-[#155392] text-white font-semibold'
+                                        : 'text-gray-800 font-semibold'
+                                        }`}
+                                >
+                                    {topic.name}
+                                </div>
+                            }
+                        >
+                            <div className="bg-gray-100 p-0">
+                                {topic.subtopics.map((sub, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                        onClick={() => onSelect({ topic: topic.name, sub })}
+                                    >
+                                        {sub}
+                                    </div>
+                                ))}
+                            </div>
+                        </Panel>
+                    ))}
+                </Collapse>
+            </div>
+        );
+    };
+
     const BlogsGrid = ({ blogs, currentPage, setCurrentPage }) => {
         const blogsPerPage = 15;
         const start = (currentPage - 1) * blogsPerPage;
@@ -157,16 +237,24 @@ export default function ViewPointPage() {
                                 >
                                     <img
                                         src={blog.imageIconurl}
-                                        alt={blog.blogName}
+                                        alt={blog.title}
                                         className="w-full h-40 object-cover"
                                     />
                                     <div className="p-4 flex flex-col justify-between h-full">
                                         <div>
-                                            <p className="text-sm text-gray-500">{blog.category}</p>
-                                            <h3 className="text-md font-bold">{blog.blogName}</h3>
-                                            <p className="text-sm text-gray-700">{blog.description}</p>
+                                            <p className="text-sm leading-tight">
+                                                {blog.date ? new Date(blog.date).toLocaleString('en-US', { month: 'long', year: 'numeric' }).replace(',', '') : ''}
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                {Array.isArray(blog.subcategory) ? blog.subcategory.join(', ') : blog.subcategory}
+                                            </p>
+                                            <div className="border-b border-gray-400 mb-4"></div>
+                                            <h3 className="text-md font-bold">{blog.title}</h3>
+                                            <p className="text-sm text-gray-700">
+                                                {blog.summary?.length > 100 ? `${blog.summary.slice(0, 100)}...` : blog.summary}
+                                            </p>
                                         </div>
-                                        <div className='mt-4'>
+                                        <div className='mt-2'>
                                             {/* LinkedIn Share Button */}
                                             <a
                                                 href={linkedInShareUrl}
@@ -223,12 +311,72 @@ export default function ViewPointPage() {
     }, [blogs]);
 
     const filteredBlogs = useMemo(() => {
-        if (!selectedCat) return blogs.flatMap(b => b.blogs || []);
-        if (selectedCat.sub) {
-            return blogs.flatMap(b => b.blogs?.filter(bb => bb.category === selectedCat.sub) || []);
+        let result = blogs;
+        if (selectedCat) {
+            if (selectedCat.sub) {
+                result = result.filter(blog => Array.isArray(blog.subcategory) && blog.subcategory.includes(selectedCat.sub));
+            } else {
+                result = result.filter(blog => Array.isArray(blog.category) && blog.category.includes(selectedCat.cat));
+            }
         }
-        return blogs.flatMap(b => b.blogs?.filter(bb => bb.category === selectedCat.cat) || []);
-    }, [blogs, selectedCat]);
+
+        if (selectedTopic) {
+            if (selectedTopic.sub) {
+                result = result.filter(blog => Array.isArray(blog.subtopic) && blog.subtopic.includes(selectedTopic.sub));
+            } else {
+                result = result.filter(blog => Array.isArray(blog.topic) && blog.topic.includes(selectedTopic.topic));
+            }
+        }
+
+        return result;
+    }, [blogs, selectedCat, selectedTopic]);
+
+    // Only keep categories that are present in filteredBlogs
+    const filteredCategories = useMemo(() => {
+        return categories
+            .map(cat => {
+                const filteredSub = cat.subcategories.filter(sub =>
+                    filteredBlogs.some(blog =>
+                        Array.isArray(blog.subcategory) && blog.subcategory.includes(sub)
+                    )
+                );
+                const hasCat = filteredBlogs.some(blog =>
+                    Array.isArray(blog.category) && blog.category.includes(cat.name)
+                );
+                if (hasCat || filteredSub.length > 0) {
+                    return {
+                        ...cat,
+                        subcategories: filteredSub
+                    };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    }, [categories, filteredBlogs]);
+
+
+    // Only keep topics that are present in filteredBlogs
+    const filteredTopics = useMemo(() => {
+        return topics
+            .map(topic => {
+                const filteredSub = topic.subtopics.filter(sub =>
+                    filteredBlogs.some(blog =>
+                        Array.isArray(blog.subtopic) && blog.subtopic.includes(sub)
+                    )
+                );
+                const hasTopic = filteredBlogs.some(blog =>
+                    Array.isArray(blog.topic) && blog.topic.includes(topic.name)
+                );
+                if (hasTopic || filteredSub.length > 0) {
+                    return {
+                        ...topic,
+                        subtopics: filteredSub
+                    };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    }, [topics, filteredBlogs]);
 
 
 
@@ -345,7 +493,7 @@ export default function ViewPointPage() {
                         </Swiper>
 
                         {/* Custom pagination container */}
-                        <div className="custom-pagination flex justify-center gap-2 mt-4"></div>
+                        <div className="custom-pagination flex justify-center gap-4 mt-4"></div>
 
                         {/* Inline styles for pagination bullets */}
                         <style>{`
@@ -370,10 +518,19 @@ export default function ViewPointPage() {
                 <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
                     <div className="col-span-1">
                         <CategoryFilter
-                            categories={categories}
+                            categories={filteredCategories}
                             selectedCat={selectedCat}
                             onSelect={(selection) => {
                                 setSelectedCat(selection);
+                                setCurrentPage(1);
+                            }}
+                        />
+
+                        <TopicFilter
+                            topics={filteredTopics}
+                            selectedTopic={selectedTopic}
+                            onSelect={(selection) => {
+                                setSelectedTopic(selection);
                                 setCurrentPage(1);
                             }}
                         />
