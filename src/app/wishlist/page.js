@@ -1,9 +1,12 @@
 'use client';
 import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import Link from 'next/link';
+import { useUser } from '@/context/UserContext';
+import toast, { Toaster } from 'react-hot-toast';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
@@ -13,6 +16,8 @@ const { Option } = Select;
 const { Panel } = Collapse;
 
 export default function ViewPointPage() {
+    const router = useRouter();
+    const { user, isLoading, logout } = useUser();
     const [banner, setBanner] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [sliders, setSliders] = useState([]);
@@ -24,9 +29,17 @@ export default function ViewPointPage() {
     const [selectedCon, setSelectedCon] = useState(null);
     const [visibleCount, setVisibleCount] = useState(15); // initially show 9 blogs
     const [searchInput, setSearchInput] = useState('');
-
+    const [wishlist, setWishlist] = useState([]);
+    const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+    const [wishlistError, setWishlistError] = useState(null);
 
     useEffect(() => {
+        if (isLoading) return;
+        if (!user) {
+            toast.error('Please log in to view your wishlist');
+            router.push(`/login?callbackUrl=/wishlist`);
+            return;
+        }
         const fetchBanner = async () => {
             const res = await fetch('/api/report-store/repbanner');
             const data = await res.json();
@@ -53,15 +66,78 @@ export default function ViewPointPage() {
             const data = await res.json();
             setCon(data);
         };
+        const fetchWishlist = async () => {
+            setIsWishlistLoading(true);
+            setWishlistError(null);
+            try {
+                const res = await fetch('/api/wishlist', {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setWishlist(data.map(item => item.seo_url));
+                } else {
+                    setWishlist([]);
+                    setWishlistError('Failed to load wishlist');
+                    toast.error('Failed to load wishlist');
+                }
+            } catch (error) {
+                console.error('Error fetching wishlist:', error);
+                setWishlist([]);
+                setWishlistError('An error occurred while loading your wishlist');
+                toast.error('An error occurred while loading your wishlist');
+            } finally {
+                setIsWishlistLoading(false);
+            }
+        };
 
         fetchcountry();
         fetchCategories();
         fetchBanner();
         fetchSliders();
         fetchBlogs();
-    }, []);
+        fetchWishlist();
+    }, [user, isLoading, router]);
 
+    const toggleWishlist = async (seo_url) => {
+        if (!user) {
+            toast.error('Please log in to modify your wishlist');
+            router.push(`/login?callbackUrl=/wishlist`);
+            return;
+        }
 
+        const isInWishlist = wishlist.includes(seo_url);
+        const toastId = toast.loading(isInWishlist ? 'Removing from wishlist...' : 'Adding to wishlist...');
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: isInWishlist ? 'DELETE' : 'POST',
+                body: JSON.stringify({ seo_url }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+            if (res.ok) {
+                setWishlist(prev =>
+                    isInWishlist ? prev.filter(id => id !== seo_url) : [...prev, seo_url]
+                );
+                toast.success(isInWishlist ? 'Removed from wishlist' : 'Added to wishlist', { id: toastId });
+            } else {
+                toast.error('Failed to update wishlist', { id: toastId });
+            }
+        } catch (error) {
+            console.error('Error updating wishlist:', error);
+            toast.error('An error occurred while updating your wishlist', { id: toastId });
+        }
+    };
+
+    const handleLogout = () => {
+        logout();
+        toast.success('Logged out successfully');
+        router.push('/login');
+    };
     const CategoryFilter = ({ categories, selectedCat, onSelect }) => {
         const [openKey, setOpenKey] = useState(null);
 
@@ -315,64 +391,84 @@ export default function ViewPointPage() {
     //     );
     // };
 
-    const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
-        <div className="w-full">
-            <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
-                {blogs.map((blog, i) => {
-                    const reportUrl = `/report-store/${blog.seo_url}`;
-                    return (
-                        <div key={i} className="h-full">
-                            <Link
-                                href={reportUrl}
-                                className="bg-white flex flex-col justify-between h-full overflow-hidden block"
-                            >
-                                <div className="p-4 flex flex-col justify-between h-full">
-                                    <div>
-                                        <p className="text-sm leading-tight">
-                                            {blog.report_publish_date
-                                                ? new Date(blog.report_publish_date).toLocaleString('en-US', { month: 'long', year: 'numeric' }).replace(',', '')
-                                                : ''}
-                                        </p>
-                                        <p className="text-sm text-gray-500">{blog.Product_sub_Category}</p>
-                                        <div className="border-b border-gray-400 mb-4"></div>
-                                        <h3 className="text-md font-bold">
-                                            {blog.report_title.split(' - ')[0]}
-                                        </h3>
-                                        <p className="text-sm text-gray-700">
-                                            {blog.report_summary?.length > 100
-                                                ? `${blog.report_summary.slice(0, 100)}...`
-                                                : blog.report_summary}
-                                        </p>
-                                    </div>
-                                    <div className="mt-4">
-                                        <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
-                                            View
-                                        </span>
-                                    </div>
+    const BlogsGrid = ({ blogs, wishlist, onLoadMore, canLoadMore }) => {
+        const wishlistBlogs = blogs.filter(blog => wishlist.includes(blog.seo_url));
+
+        return (
+            <div className="w-full">
+                {isWishlistLoading ? (
+                    <p className="text-center text-gray-500 mt-4">Loading wishlist...</p>
+                ) : wishlistError ? (
+                    <p className="text-center text-red-500 mt-4">{wishlistError}</p>
+                ) : wishlistBlogs.length === 0 ? (
+                    <p className="text-center text-gray-500 mt-4">No blogs in your wishlist.</p>
+                ) : (
+                    <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
+                        {wishlistBlogs.map((blog, i) => {
+                            const reportUrl = `/report-store/${blog.seo_url}`;
+                            return (
+                                <div key={i} className="h-full">
+                                    <Link
+                                        href={reportUrl}
+                                        className="bg-white flex flex-col justify-between h-full overflow-hidden block"
+                                    >
+                                        <div className="p-4 flex flex-col justify-between h-full">
+                                            <div>
+                                                <p className="text-sm leading-tight">
+                                                    {blog.report_publish_date
+                                                        ? new Date(blog.report_publish_date).toLocaleString('en-US', {
+                                                            month: 'long',
+                                                            year: 'numeric',
+                                                        }).replace(',', '')
+                                                        : ''}
+                                                </p>
+                                                <p className="text-sm text-gray-500">{blog.Product_sub_Category}</p>
+                                                <div className="border-b border-gray-400 mb-4"></div>
+                                                <h3 className="text-md font-bold">{blog.report_title.split(' - ')[0]}</h3>
+                                                <p className="text-sm text-gray-700">
+                                                    {blog.report_summary?.length > 100
+                                                        ? `${blog.report_summary.slice(0, 100)}...`
+                                                        : blog.report_summary}
+                                                </p>
+                                            </div>
+                                            <div className="mt-4 flex gap-2">
+                                                <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
+                                                    View
+                                                </span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        toggleWishlist(blog.seo_url);
+                                                    }}
+                                                    className={`px-4 py-2 text-sm rounded ${wishlist.includes(blog.seo_url)
+                                                        ? 'bg-red-500 text-white hover:bg-red-600'
+                                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                                        }`}
+                                                >
+                                                    {wishlist.includes(blog.seo_url) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </Link>
                                 </div>
-                            </Link>
-                        </div>
-                    );
-                })}
+                            );
+                        })}
+                    </div>
+                )}
+
+                {canLoadMore && wishlistBlogs.length > 0 && (
+                    <div className="mt-6 flex justify-center">
+                        <button
+                            onClick={onLoadMore}
+                            className="px-6 py-3 rounded bg-[#155392] text-[white] hover:bg-[#0e3a6f] focus:outline-none"
+                        >
+                            Load More
+                        </button>
+                    </div>
+                )}
             </div>
-
-            {canLoadMore && (
-                <div className="mt-6 flex justify-center">
-                    <button
-                        onClick={onLoadMore}
-                        className="px-6 py-3 rounded bg-[#155392] text-[white] hover:bg-[#0e3a6f] focus:outline-none"
-                    >
-                        Load More
-                    </button>
-                </div>
-            )}
-
-            {blogs.length === 0 && (
-                <p className="text-center text-gray-500 mt-4">No reports found for this filter.</p>
-            )}
-        </div>
-    );
-
+        );
+    };
 
     const categoryOptions = useMemo(() => {
         const categories = new Set();
@@ -429,14 +525,16 @@ export default function ViewPointPage() {
             }
         }
 
-        // Apply search term filter here
         if (searchTerm.trim()) {
             const lowerTerm = searchTerm.toLowerCase();
-            data = data.filter(report =>
-                report.report_title?.toLowerCase().includes(lowerTerm) ||
-                report.report_summary?.toLowerCase().includes(lowerTerm)
+            data = data.filter(
+                report =>
+                    report.report_title?.toLowerCase().includes(lowerTerm) ||
+                    report.report_summary?.toLowerCase().includes(lowerTerm)
             );
         }
+
+        data = data.filter(blog => wishlist.includes(blog.seo_url));
 
         return data
             .slice()
@@ -446,7 +544,7 @@ export default function ViewPointPage() {
                 }
                 return b.Featured_Report_Status - a.Featured_Report_Status;
             });
-    }, [blogs, selectedCat, selectedCon, searchTerm]);
+    }, [blogs, selectedCat, selectedCon, searchTerm, wishlist]);
 
 
     const filteredCategories = useMemo(() => {
@@ -467,8 +565,8 @@ export default function ViewPointPage() {
     }, [finalFilteredBlogs, visibleCount]);
 
     useEffect(() => {
-        setVisibleCount(15); // reset to show first 9 when filters change
-    }, [selectedCat, selectedCon, searchTerm]);
+        setVisibleCount(15);
+    }, [selectedCat, selectedCon, searchTerm, wishlist]);
 
 
     const paginatedBlogs = useMemo(() => {
@@ -488,8 +586,6 @@ export default function ViewPointPage() {
         }
         return result;
     }, [filterReports]);
-
-
 
     const handleSearch = () => {
         setSearchTerm(searchInput);
@@ -640,6 +736,7 @@ export default function ViewPointPage() {
                     <div className="col-span-3">
                         <BlogsGrid
                             blogs={visibleBlogs}
+                            wishlist={wishlist}
                             onLoadMore={() => setVisibleCount(prev => prev + 15)}
                             canLoadMore={visibleCount < finalFilteredBlogs.length}
                         />

@@ -14,6 +14,7 @@ const Navbar = () => {
   const [isCompact, setIsCompact] = useState(false);
   const [sections, setSections] = useState([]);
   const { cartItems } = useCart();
+  const isLoggedIn = !!user;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -129,50 +130,110 @@ const Navbar = () => {
         </div>
       </header>
 
-      <div className={`paymentsSection ${isCompact ? 'compact' : ''}`}>
-        <div className="container">
-          <div className="flex justify-center items-center gap-20 py-2">
-            {sections.map(section => (
-              <div key={section._id} className="relative group">
-                <Link href={section.sectionUrl || '#'} className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
-                  {section.section}
+      {user ? (
+        // Logged-in view
+        <div className={`paymentsSection ${isCompact ? 'compact' : ''}`}>
+          <div className="container">
+            <div className="flex justify-center items-center gap-20 py-2">
+              <div className="relative group">
+                <Link href="/" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  Welcome {user?.user?.Firstname} {user?.user?.Lastname}
                 </Link>
-                {section.links.length > 0 && (
-                  <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
-                    {section.links.map(link => (
-                      <Link key={link._id} href={link.url} className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
-                        <div className="underline-container">
-                          <span>{link.title}</span>
-                          <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
-                            <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
-                          </svg>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
               </div>
-            ))}
-            {/* Search Icon */}
-            <div className="cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-white cursor-pointer"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="3"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+
+
+              <div className="relative group">
+                <Link href="/report-purchases" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  Access Reports 
+                </Link>
+              </div>
+
+              <div className="relative group">
+                <Link href="/wishlist" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  Wishlist
+                </Link>
+              </div>
+
+              <div className="relative group">
+                <Link href="/ask-an-analyst" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  Ask an Analyst
+                </Link>
+              </div>
+
+              <div className="relative group">
+                <Link href="/report-store" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  Report Store
+                </Link>
+              </div>
+
+              {/* Search Icon */}
+              <div className="cursor-pointer">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        // Logged-out view (original with dropdowns)
+        <div className={`paymentsSection ${isCompact ? 'compact' : ''}`}>
+          <div className="container">
+            <div className="flex justify-center items-center gap-20 py-2">
+              {sections.map(section => (
+                <div key={section._id} className="relative group">
+                  <Link href={section.sectionUrl || '#'} className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                    {section.section}
+                  </Link>
+                  {section.links.length > 0 && (
+                    <div className="dropdown absolute left-0 mt-2 w-80 bg-white shadow-lg rounded z-50">
+                      {section.links.map(link => (
+                        <Link key={link._id} href={link.url} className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                          <div className="underline-container">
+                            <span>{link.title}</span>
+                            <svg viewBox="0 0 14 7" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 arrow">
+                              <path d="M9.81066 2.19083H0.375C0.167906 2.19083 0 2.35873 0 2.56583V4.31583C0 4.52292 0.167906 4.69083 0.375 4.69083H9.81066V6.13017C9.81066 6.79836 10.6185 7.13298 11.091 6.66051L13.7803 3.97117C14.0732 3.67826 14.0732 3.20339 13.7803 2.91051L11.091 0.22117C10.6185 -0.251299 9.81066 0.0833263 9.81066 0.751514V2.19083Z" fill="currentColor" />
+                            </svg>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {/* Search Icon */}
+              <div className="cursor-pointer">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 };

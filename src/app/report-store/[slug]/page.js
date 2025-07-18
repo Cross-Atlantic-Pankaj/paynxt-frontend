@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function ReportPage({ params }) {
     const { slug } = params;
@@ -17,9 +19,23 @@ export default function ReportPage({ params }) {
     const [advs, setAdvs] = useState([]);
     const [dels, setDels] = useState([]);
     const [repcontent, setRepcontent] = useState(null);
-    const { addToCart } = useCart();
+    const { cartItems, addToCart } = useCart(); // ✅ Make sure you get `cartItems`
     const router = useRouter();
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const { user } = useUser();
+    const [customModalVisible, setCustomModalVisible] = useState(false);
+    const [customModalContent, setCustomModalContent] = useState({
+        title: '',
+        message: '',
+        success: true,
+    });
+    const [wishlistModalVisible, setWishlistModalVisible] = useState(false);
+    const [wishlistModalContent, setWishlistModalContent] = useState({
+        title: '',
+        message: '',
+        success: true,
+    });
+    const [wishlistItems, setWishlistItems] = useState([]);
+    const [partnerLogos, setPartnerLogos] = useState([]);
 
 
     useEffect(() => {
@@ -80,12 +96,98 @@ export default function ReportPage({ params }) {
             }
         };
 
+        const fetchPartnerLogos = async () => {
+            try {
+                const res = await fetch('/api/home-page/partner-logos');
+                const json = await res.json();
+                if (json.success) setPartnerLogos(json.data);
+            } catch (error) {
+                console.error('Error fetching partner logos:', error);
+            }
+        };
+
         fetchDels();
         fetchAdvs();
         fetchReport();
         fetchConsults();
         fetchStrengths();
+        fetchPartnerLogos();
     }, [slug]);
+
+    const addToWishlist = async () => {
+        if (!user) {
+            localStorage.setItem('wishlistSeoUrl', report.seo_url);
+            toast.error('Please log in to add to wishlist');
+            router.push(`/login?callbackUrl=/report-store/${report.seo_url}`);
+            return;
+        }
+
+        const alreadyInWishlist = wishlistItems.some(item => item.seo_url === report.seo_url);
+
+        if (alreadyInWishlist) {
+            setCustomModalContent({
+                title: 'Already in Wishlist',
+                message: 'This report is already in your wishlist.',
+                success: false,
+            });
+            setCustomModalVisible(true);
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify({ seo_url: report.seo_url }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setWishlistItems(prev => [...prev, { seo_url: report.seo_url }]);
+                toast.success('Added to wishlist');
+            } else {
+                toast.error(data.message || 'Failed to add to wishlist');
+            }
+
+            setCustomModalContent({
+                title: res.ok ? 'Added to Wishlist' : 'Error',
+                message: data.message || 'Failed to add to wishlist',
+                success: res.ok,
+            });
+            setCustomModalVisible(true);
+
+            localStorage.removeItem('wishlistSeoUrl');
+        } catch (err) {
+            toast.error('Failed to add to wishlist');
+            setCustomModalContent({
+                title: 'Error',
+                message: 'Failed to add to wishlist. Please try again later.',
+                success: false,
+            });
+            setCustomModalVisible(true);
+        }
+    };
+
+    useEffect(() => {
+        const fetchWishlist = async () => {
+            if (!user) return;
+            try {
+                const res = await fetch('/api/wishlist', {
+                    headers: { Authorization: `Bearer ${user.token}` },
+                });
+                const data = await res.json();
+                setWishlistItems(data); // Expecting [{ seo_url }, ...]
+            } catch (error) {
+                console.error('Error fetching wishlist:', error);
+            }
+        };
+        fetchWishlist();
+    }, [user]);
+    // ✅ Only runs when both are available
 
     if (loading) {
         return <div className="max-w-4xl mx-auto py-20">Loading...</div>;
@@ -113,24 +215,31 @@ export default function ReportPage({ params }) {
         { title: report.key_stats_d1, description: report.key_stats_d2 },
     ];
 
-    // const handlePurchase = () => {
-    //     addToCart({
-    //         title: report.report_title,
-    //         price: report.single_user_dollar_price,
-    //         summary: report.report_summary,
-    //     });
-
-    //     router.push('/cart');
-    // };
-
     const handlePurchase = () => {
+        const alreadyInCart = cartItems.some(item => item.title === report.report_title);
+
+        if (alreadyInCart) {
+            setCustomModalContent({
+                title: 'Already in Cart',
+                message: 'This report is already in your cart.',
+                success: false,
+            });
+            setCustomModalVisible(true);
+            return;
+        }
+
         addToCart({
             title: report.report_title,
             price: report.single_user_dollar_price,
             summary: report.report_summary,
         });
 
-        setIsModalVisible(true);  // show modal
+        setCustomModalContent({
+            title: 'Added to Cart',
+            message: 'Report added to cart successfully!',
+            success: true,
+        });
+        setCustomModalVisible(true);
     };
 
 
@@ -347,10 +456,8 @@ export default function ReportPage({ params }) {
                                 </button>
                                 <div className="my-2 text-gray-500 font-medium">-OR-</div>
                                 <a
-                                    href="/login"
-                                    // target="_blank"
-                                    // rel="noopener noreferrer"
-                                    className="inline-block text-center font-semibold text-[white] bg-[#FF6B00] hover:bg-[#155392] hover:text-[white] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300"
+                                    onClick={addToWishlist} // ✅ Now this works
+                                    className="inline-block text-center font-semibold text-[white] bg-[#FF6B00] hover:bg-[#155392] hover:text-[white] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300 cursor-pointer"
                                 >
                                     ADD TO WISHLIST
                                 </a>
@@ -376,9 +483,6 @@ export default function ReportPage({ params }) {
                         </div>
 
                         <div className="mt-8">
-                            {/* <h2 className="bg-[#155392] text-white text-lg px-4 py-2 font-bold mb-2">
-                            Consult With Us
-                        </h2> */}
                             {consults.length === 0 ? (
                                 <p className="text-gray-500 text-sm">No consult options available.</p>
                             ) : (
@@ -486,14 +590,14 @@ export default function ReportPage({ params }) {
                 </div>
             </section>
 
-            <section className="w-full bg-gray-100 mb-8">
+            <section className="w-full bg-gray-100">
                 <div className="max-w-8xl mx-auto">
                     <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-2">
-                        {[...Array(16)].map((_, index) => (
+                        {partnerLogos.map((logo, index) => (
                             <div key={index} className="flex justify-center items-center">
                                 <img
-                                    src={`/images/i${index + 1}.jpg`}
-                                    alt={`Logo ${index + 1}`}
+                                    src={logo.imageUrl}
+                                    alt={logo.altText || `Logo ${index + 1}`}
                                     className="w-45 h-23 object-contain grayscale hover:grayscale-0 transition duration-300 border border-white"
                                 />
                             </div>
@@ -501,26 +605,28 @@ export default function ReportPage({ params }) {
                     </div>
                 </div>
             </section>
-
             <Modal
-                title="Added to Cart"
-                open={isModalVisible}
-                onOk={() => setIsModalVisible(false)}
-                onCancel={() => setIsModalVisible(false)}
+                title={customModalContent.title}
+                open={customModalVisible}
+                onOk={() => setCustomModalVisible(false)}
+                onCancel={() => setCustomModalVisible(false)}
                 centered
-                footer={null}  // optional: remove default footer buttons
+                footer={null}
             >
                 <div className="text-center">
-                    <p className="text-lg font-semibold mb-4">Report added to cart successfully!</p>
+                    <p className="text-lg font-semibold mb-4">
+                        {customModalContent.message}
+                    </p>
                     <button
-                        onClick={() => setIsModalVisible(false)}
-                        className="mt-4 inline-block text-center font-semibold text-[white] bg-[#FF6B00] hover:bg-[#155392] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300"
+                        onClick={() => setCustomModalVisible(false)}
+                        className={`mt-4 inline-block text-center font-semibold text-white px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300 
+                ${customModalContent.success ? 'bg-[#FF6B00]' : 'bg-red-600'} 
+                hover:bg-[#155392]`}
                     >
                         OK
                     </button>
                 </div>
             </Modal>
-
         </main>
     );
 }
