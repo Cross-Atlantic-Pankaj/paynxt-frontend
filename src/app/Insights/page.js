@@ -7,6 +7,9 @@ import Link from 'next/link';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -58,7 +61,7 @@ export default function ViewPointPage() {
         fetchBlogs();
     }, []);
 
-    const CategoryFilter = ({ categories, selectedCat, onSelect }) => {
+    const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
         const handleCategoryClick = (catName) => {
@@ -96,38 +99,52 @@ export default function ViewPointPage() {
                         </div>
                     )}
                 >
-                    {categories.map((cat) => (
-                        <Panel
-                            key={cat.name}
-                            className="!bg-gray-100 !border-0"
-                            header={
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Prevent collapse toggle
-                                        handleCategoryClick(cat.name);
-                                    }}
-                                    className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
-                                        ? 'bg-[#155392] text-white font-semibold'
-                                        : 'text-gray-800 font-semibold'
-                                        }`}
+                    {categories.map((cat) => {
+                        // Filter subcategories to only those present in blogs
+                        const filteredSubcategories = cat.subcategories.filter((sub) =>
+                            blogs.some((blog) => Array.isArray(blog.subcategory) && blog.subcategory.includes(sub))
+                        );
+
+                        // Only render the Panel if there are subcategories or the category is tagged
+                        if (
+                            filteredSubcategories.length > 0 ||
+                            blogs.some((blog) => Array.isArray(blog.category) && blog.category.includes(cat.name))
+                        ) {
+                            return (
+                                <Panel
+                                    key={cat.name}
+                                    className="!bg-gray-100 !border-0"
+                                    header={
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent collapse toggle
+                                                handleCategoryClick(cat.name);
+                                            }}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                                ? 'bg-[#155392] text-white font-semibold'
+                                                : 'text-gray-800 font-semibold'
+                                                }`}
+                                        >
+                                            {cat.name}
+                                        </div>
+                                    }
                                 >
-                                    {cat.name}
-                                </div>
-                            }
-                        >
-                            <div className="bg-gray-100 p-0">
-                                {cat.subcategories.map((sub, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
-                                        onClick={() => onSelect({ cat: cat.name, sub })}
-                                    >
-                                        {sub}
+                                    <div className="bg-gray-100 p-0">
+                                        {filteredSubcategories.map((sub, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                                onClick={() => onSelect({ cat: cat.name, sub })}
+                                            >
+                                                {sub}
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        </Panel>
-                    ))}
+                                </Panel>
+                            );
+                        }
+                        return null;
+                    })}
                 </Collapse>
 
                 {/* Remove white padding around dropdown */}
@@ -144,14 +161,14 @@ export default function ViewPointPage() {
         );
     };
 
-    const TopicFilter = ({ topics, selectedTopic, onSelect }) => {
+    const TopicFilter = ({ topics, selectedTopic, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
         const handleTopicClick = (topicName) => {
             if (selectedTopic?.topic === topicName && !selectedTopic?.sub) {
-                onSelect(null); // deselect
+                onSelect(null); // Deselect
             } else {
-                onSelect({ topic: topicName }); // select topic
+                onSelect({ topic: topicName }); // Select topic
             }
         };
 
@@ -179,38 +196,52 @@ export default function ViewPointPage() {
                         </div>
                     )}
                 >
-                    {topics.map((topic) => (
-                        <Panel
-                            key={topic.name}
-                            className="!bg-gray-100 !border-0"
-                            header={
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleTopicClick(topic.name);
-                                    }}
-                                    className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedTopic?.topic === topic.name && !selectedTopic?.sub
-                                        ? 'bg-[#155392] text-white font-semibold'
-                                        : 'text-gray-800 font-semibold'
-                                        }`}
+                    {topics.map((topic) => {
+                        // Filter subtopics to only those present in blogs
+                        const filteredSubtopics = topic.subtopics.filter((sub) =>
+                            blogs.some((blog) => Array.isArray(blog.subtopic) && blog.subtopic.includes(sub))
+                        );
+
+                        // Only render the Panel if there are subtopics or the topic is tagged
+                        if (
+                            filteredSubtopics.length > 0 ||
+                            blogs.some((blog) => Array.isArray(blog.topic) && blog.topic.includes(topic.name))
+                        ) {
+                            return (
+                                <Panel
+                                    key={topic.name}
+                                    className="!bg-gray-100 !border-0"
+                                    header={
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleTopicClick(topic.name);
+                                            }}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedTopic?.topic === topic.name && !selectedTopic?.sub
+                                                    ? 'bg-[#155392] text-white font-semibold'
+                                                    : 'text-gray-800 font-semibold'
+                                                }`}
+                                        >
+                                            {topic.name}
+                                        </div>
+                                    }
                                 >
-                                    {topic.name}
-                                </div>
-                            }
-                        >
-                            <div className="bg-gray-100 p-0">
-                                {topic.subtopics.map((sub, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
-                                        onClick={() => onSelect({ topic: topic.name, sub })}
-                                    >
-                                        {sub}
+                                    <div className="bg-gray-100 p-0">
+                                        {filteredSubtopics.map((sub, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                                onClick={() => onSelect({ topic: topic.name, sub })}
+                                            >
+                                                {sub}
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        </Panel>
-                    ))}
+                                </Panel>
+                            );
+                        }
+                        return null;
+                    })}
                 </Collapse>
             </div>
         );
@@ -220,80 +251,145 @@ export default function ViewPointPage() {
         const blogsPerPage = 15;
         const start = (currentPage - 1) * blogsPerPage;
         const paginatedBlogs = blogs.slice(start, start + blogsPerPage);
+        const { user, isLoading: userLoading } = useUser();
+        const router = useRouter();
+        const [savedArticles, setSavedArticles] = useState([]);
+
+        useEffect(() => {
+            if (!user) return;
+            const fetchSavedArticles = async () => {
+                try {
+                    const res = await fetch('/api/saved-articles', {
+                        headers: { Authorization: `Bearer ${user.token}` },
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        setSavedArticles(data.data.map((item) => item.slug));
+                    } else {
+                        console.error('Failed to fetch saved articles:', data.message);
+                        toast.error(data.message || 'Failed to fetch saved articles');
+                    }
+                } catch (error) {
+                    console.error('Error fetching saved articles:', error);
+                    toast.error('Error fetching saved articles');
+                }
+            };
+            fetchSavedArticles();
+        }, [user]);
+
+        const handleSaveArticle = async (blog, e) => {
+            e.preventDefault(); // Prevent any default behavior
+            e.stopPropagation(); // Stop event bubbling to parent Link
+            if (!user) {
+                toast.error('Please log in to save articles');
+                router.push('/login?callbackUrl=/view-point');
+                return;
+            }
+
+            const isSaved = savedArticles.includes(blog.slug);
+            const toastId = toast.loading(isSaved ? 'Removing article...' : 'Saving article...');
+            try {
+                const res = await fetch('/api/saved-articles', {
+                    method: isSaved ? 'DELETE' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                    body: JSON.stringify({ slug: blog.slug }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setSavedArticles((prev) =>
+                        isSaved ? prev.filter((s) => s !== blog.slug) : [...prev, blog.slug]
+                    );
+                    toast.success(isSaved ? 'Article removed from saved' : 'Article saved successfully', {
+                        id: toastId,
+                    });
+                } else {
+                    toast.error(data.message || 'Failed to save article', { id: toastId });
+                }
+            } catch (error) {
+                console.error('Error saving article:', error);
+                toast.error('Failed to save article', { id: toastId });
+            }
+        };
 
         return (
             <div className="w-full">
                 <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                     {paginatedBlogs.map((blog, i) => {
-                        const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blog.slug}`; // Replace with actual URL or dynamic slug
-                        const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(blogUrl)}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`;
+                        const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blog.slug}`;
+                        const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+                            blogUrl
+                        )}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`;
+                        const isSaved = savedArticles.includes(blog.slug);
 
                         return (
-                            <div key={i} className='h-full'>
-                                <Link
-                                    key={i}
-                                    href={`/blog-page/${blog.slug}`} // Replace with dynamic route if available
-                                    className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition"
-                                >
-                                    <img
-                                        src={blog.imageIconurl}
-                                        alt={blog.title}
-                                        className="w-full h-40 object-cover"
-                                    />
-                                    <div className="p-4 flex flex-col justify-between h-full">
-                                        <div>
-                                            <p className="text-sm leading-tight">
-                                                {blog.date ? new Date(blog.date).toLocaleString('en-US', { month: 'long', year: 'numeric' }).replace(',', '') : ''}
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                {Array.isArray(blog.subcategory) ? blog.subcategory.join(', ') : blog.subcategory}
-                                            </p>
-                                            <div className="border-b border-gray-400 mb-4"></div>
-                                            <h3 className="text-md font-bold">{blog.title}</h3>
-                                            <p className="text-sm text-gray-700">
-                                                {blog.summary?.length > 100 ? `${blog.summary.slice(0, 100)}...` : blog.summary}
-                                            </p>
+                            <div key={i} className="h-full">
+                                <div className="bg-white flex flex-col justify-between h-full overflow-hidden">
+                                    <Link href={`/blog-page/${blog.slug}`} className="block">
+                                        <img src={blog.imageIconurl} alt={blog.title} className="w-full h-40 object-cover" />
+                                        <div className="p-4 flex flex-col justify-between">
+                                            <div>
+                                                <p className="text-sm leading-tight">
+                                                    {blog.date
+                                                        ? new Date(blog.date)
+                                                            .toLocaleString('en-US', { month: 'long', year: 'numeric' })
+                                                            .replace(',', '')
+                                                        : ''}
+                                                </p>
+                                                <p className="text-sm text-gray-500">
+                                                    {Array.isArray(blog.subcategory) ? blog.subcategory.join(', ') : blog.subcategory}
+                                                </p>
+                                                <div className="border-b border-gray-400 mb-4"></div>
+                                                <h3 className="text-md font-bold">{blog.title}</h3>
+                                                <p className="text-sm text-gray-700">
+                                                    {blog.summary?.length > 100 ? `${blog.summary.slice(0, 100)}...` : blog.summary}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className='mt-2'>
-                                            {/* LinkedIn Share Button */}
-                                            <a
-                                                href={linkedInShareUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={(e) => e.stopPropagation()} // Prevent Link navigation
-                                                className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
-                                            >
-                                                <svg
-                                                    className="w-4 h-4"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.7 8.5 8.7zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
-                                                </svg>
-                                                Share
-                                            </a>
-                                        </div>
+                                    </Link>
+                                    <div className="p-4 pt-0 flex gap-2">
+                                        <a
+                                            href={linkedInShareUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.2 8.5 8.2zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
+                                            </svg>
+                                            Share
+                                        </a>
+                                        <button
+                                            onClick={(e) => handleSaveArticle(blog, e)}
+                                            className={`inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border text-sm font-medium transition ${isSaved
+                                                ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500'
+                                                : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                                            </svg>
+                                            {isSaved ? 'Remove' : 'Save'}
+                                        </button>
                                     </div>
-                                </Link>
+                                </div>
                             </div>
                         );
                     })}
                 </div>
-
                 <div className="mt-4 flex justify-center">
                     <Pagination
                         current={currentPage}
                         pageSize={blogsPerPage}
-                        total={filteredBlogs.length}
-                        onChange={page => setCurrentPage(page)}
+                        total={blogs.length}
+                        onChange={(page) => setCurrentPage(page)}
                     />
                 </div>
-                {paginatedBlogs.length === 0 ? (
-                    <p className="text-center text-gray-500">No blogs found for this category.</p>
-                ) : (
-                    <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
-                        {/* blog cards */}
-                    </div>
+                {paginatedBlogs.length === 0 && (
+                    <p className="text-center text-gray-500">No articles found.</p>
                 )}
             </div>
         );
@@ -352,7 +448,7 @@ export default function ViewPointPage() {
                 return null;
             })
             .filter(Boolean);
-    }, [categories, filteredBlogs]);
+    }, [categories, blogs]);
 
 
     // Only keep topics that are present in filteredBlogs
@@ -376,7 +472,7 @@ export default function ViewPointPage() {
                 return null;
             })
             .filter(Boolean);
-    }, [topics, filteredBlogs]);
+    }, [topics, blogs]);
 
 
 
@@ -516,7 +612,24 @@ export default function ViewPointPage() {
             </section>
             <section className="bg-gray-100 py-10">
                 <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
-                    <div className="col-span-1">
+                    <div className="col-span-1 flex flex-col gap-4">
+                        <button
+                            onClick={() => {
+                                setSelectedCat(null);
+                                setSelectedTopic(null);
+                                setSearchTerm('');
+                                setSearchInput('');
+                                setCurrentPage(1);
+                                setVisibleCount(15);
+                            }}
+                            className={`px-4 py-2 rounded transition ${!selectedCat && !selectedTopic && !searchTerm
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
+                                }`}
+                            disabled={!selectedCat && !selectedTopic && !searchTerm}
+                        >
+                            Clear All Filters
+                        </button>
                         <CategoryFilter
                             categories={filteredCategories}
                             selectedCat={selectedCat}
@@ -524,6 +637,7 @@ export default function ViewPointPage() {
                                 setSelectedCat(selection);
                                 setCurrentPage(1);
                             }}
+                            blogs={blogs}
                         />
 
                         <TopicFilter
@@ -533,6 +647,7 @@ export default function ViewPointPage() {
                                 setSelectedTopic(selection);
                                 setCurrentPage(1);
                             }}
+                            blogs={blogs}
                         />
                     </div>
 

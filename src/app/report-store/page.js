@@ -62,7 +62,7 @@ export default function ViewPointPage() {
     }, []);
 
 
-    const CategoryFilter = ({ categories, selectedCat, onSelect }) => {
+    const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
         const handleCategoryClick = (catName) => {
@@ -100,38 +100,52 @@ export default function ViewPointPage() {
                         </div>
                     )}
                 >
-                    {categories.map((cat) => (
-                        <Panel
-                            key={cat.name}
-                            className="!bg-gray-100 !border-0"
-                            header={
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Prevent collapse toggle
-                                        handleCategoryClick(cat.name);
-                                    }}
-                                    className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
-                                        ? 'bg-[#155392] text-white font-semibold'
-                                        : 'text-gray-800 font-semibold'
-                                        }`}
+                    {categories.map((cat) => {
+                        // Filter subcategories to only those present in blogs
+                        const filteredSubcategories = cat.subcategories.filter((sub) =>
+                            blogs.some((blog) => blog.Product_sub_Category === sub)
+                        );
+
+                        // Only render the Panel if there are subcategories or the category is tagged
+                        if (
+                            filteredSubcategories.length > 0 ||
+                            blogs.some((blog) => blog.Product_category === cat.name)
+                        ) {
+                            return (
+                                <Panel
+                                    key={cat.name}
+                                    className="!bg-gray-100 !border-0"
+                                    header={
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent collapse toggle
+                                                handleCategoryClick(cat.name);
+                                            }}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                                ? 'bg-[#155392] text-white font-semibold'
+                                                : 'text-gray-800 font-semibold'
+                                                }`}
+                                        >
+                                            {cat.name}
+                                        </div>
+                                    }
                                 >
-                                    {cat.name}
-                                </div>
-                            }
-                        >
-                            <div className="bg-gray-100 p-0">
-                                {cat.subcategories.map((sub, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
-                                        onClick={() => onSelect({ cat: cat.name, sub })}
-                                    >
-                                        {sub}
+                                    <div className="bg-gray-100 p-0">
+                                        {filteredSubcategories.map((sub, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                                onClick={() => onSelect({ cat: cat.name, sub })}
+                                            >
+                                                {sub}
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        </Panel>
-                    ))}
+                                </Panel>
+                            );
+                        }
+                        return null;
+                    })}
                 </Collapse>
 
                 {/* Remove white padding around dropdown */}
@@ -147,14 +161,14 @@ export default function ViewPointPage() {
             </div>
         );
     };
-    const CountryFilter = ({ country, selectedCon, onSelect }) => {
+    const CountryFilter = ({ country, selectedCon, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
         const handleCountryClick = (conName) => {
             if (selectedCon?.con === conName && !selectedCon?.sub) {
                 onSelect(null); // Deselect
             } else {
-                onSelect({ con: conName }); // Select category
+                onSelect({ con: conName }); // Select country
             }
         };
 
@@ -165,7 +179,7 @@ export default function ViewPointPage() {
                     Filter by country
                 </div>
 
-                {/* Categories */}
+                {/* Countries */}
                 <Collapse
                     accordion
                     activeKey={openKey}
@@ -185,38 +199,52 @@ export default function ViewPointPage() {
                         </div>
                     )}
                 >
-                    {country.map((con) => (
-                        <Panel
-                            key={con.name}
-                            className="!bg-gray-100 !border-0"
-                            header={
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Prevent collapse toggle
-                                        handleCountryClick(con.name);
-                                    }}
-                                    className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
-                                        ? 'bg-[#155392] text-white font-semibold'
-                                        : 'text-gray-800 font-semibold'
-                                        }`}
+                    {country.map((con) => {
+                        // Filter subcategories to only those present in blogs
+                        const filteredSubcategories = (con.subcategories || []).filter((sub) =>
+                            blogs.some((blog) => blog.Report_Geography_Region === sub)
+                        );
+
+                        // Only render the Panel if there are subcategories or the country is tagged
+                        if (
+                            filteredSubcategories.length > 0 ||
+                            blogs.some((blog) => blog.Report_Geography_Country === con.name)
+                        ) {
+                            return (
+                                <Panel
+                                    key={con.name}
+                                    className="!bg-gray-100 !border-0"
+                                    header={
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent collapse toggle
+                                                handleCountryClick(con.name);
+                                            }}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
+                                                    ? 'bg-[#155392] text-white font-semibold'
+                                                    : 'text-gray-800 font-semibold'
+                                                }`}
+                                        >
+                                            {con.name}
+                                        </div>
+                                    }
                                 >
-                                    {con.name}
-                                </div>
-                            }
-                        >
-                            <div className="bg-gray-100 p-0">
-                                {(con.subcategories || []).map((sub, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
-                                        onClick={() => onSelect({ con: con.name, sub })}
-                                    >
-                                        {sub}
+                                    <div className="bg-gray-100 p-0">
+                                        {filteredSubcategories.map((sub, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                                onClick={() => onSelect({ con: con.name, sub })}
+                                            >
+                                                {sub}
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        </Panel>
-                    ))}
+                                </Panel>
+                            );
+                        }
+                        return null;
+                    })}
                 </Collapse>
 
                 {/* Remove white padding around dropdown */}
@@ -450,17 +478,16 @@ export default function ViewPointPage() {
 
 
     const filteredCategories = useMemo(() => {
-        // For each category, check if at least one blog has matching Product_category
         return categories.filter(cat =>
-            finalFilteredBlogs.some(blog => blog.Product_category === cat.name)
+            blogs.some(blog => blog.Product_category === cat.name)
         );
-    }, [categories, finalFilteredBlogs]);
+    }, [categories, blogs]);
 
     const filteredCountries = useMemo(() => {
         return country.filter(con =>
-            finalFilteredBlogs.some(blog => blog.Report_Geography_Country === con.name)
+            blogs.some(blog => blog.Report_Geography_Country === con.name)
         );
-    }, [country, finalFilteredBlogs]);
+    }, [country, blogs]);
 
     const visibleBlogs = useMemo(() => {
         return finalFilteredBlogs.slice(0, visibleCount);
@@ -488,7 +515,6 @@ export default function ViewPointPage() {
         }
         return result;
     }, [filterReports]);
-
 
 
     const handleSearch = () => {
@@ -523,16 +549,7 @@ export default function ViewPointPage() {
                         {banner ? (
                             <div>
                                 <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
-                                <div className="flex flex-wrap gap-2 mb-6">
-                                    {banner.tags?.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
+
                                 <p className="text-md text-white mt-1 mb-8">
                                     {banner.bannerDescription}
                                 </p>
@@ -551,6 +568,16 @@ export default function ViewPointPage() {
                                     >
                                         Search
                                     </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2 mt-4 mb-6">
+                                    {banner.tags?.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
                         ) : (
@@ -619,6 +646,24 @@ export default function ViewPointPage() {
             <section className="bg-gray-100 py-10">
                 <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
                     <div className="col-span-1 flex flex-col gap-4">
+
+                        <button
+                            onClick={() => {
+                                setSelectedCat(null);
+                                setSelectedCon(null);
+                                setSearchTerm('');
+                                setSearchInput('');
+                                setCurrentPage(1);
+                                setVisibleCount(15);
+                            }}
+                            className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !searchTerm
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
+                                }`}
+                            disabled={!selectedCat && !selectedCon && !searchTerm}
+                        >
+                            Clear All Filters
+                        </button>
                         <CategoryFilter
                             categories={filteredCategories}
                             selectedCat={selectedCat}
@@ -626,6 +671,7 @@ export default function ViewPointPage() {
                                 setSelectedCat(selection);
                                 setCurrentPage(1);
                             }}
+                            blogs={blogs}
                         />
                         <CountryFilter
                             country={filteredCountries}
@@ -634,6 +680,7 @@ export default function ViewPointPage() {
                                 setSelectedCon(selection);
                                 setCurrentPage(1);
                             }}
+                            blogs={blogs}
                         />
                     </div>
 

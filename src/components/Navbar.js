@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import styles from "../styles/Styling.css";
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useUser } from '../context/UserContext';
 import toast, { Toaster } from 'react-hot-toast';
 import { useCart } from '@/context/CartContext';
@@ -15,6 +15,7 @@ const Navbar = () => {
   const [sections, setSections] = useState([]);
   const { cartItems } = useCart();
   const isLoggedIn = !!user;
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,7 +50,7 @@ const Navbar = () => {
     logout();
     localStorage.removeItem('paynxt_user');
     toast.success('Logged out successfully!');
-    setTimeout(() => router.push('/login'), 1000);
+    setTimeout(() => router.push('/'), 1000);
   };
 
   const renderAvatar = (name) => {
@@ -116,7 +117,7 @@ const Navbar = () => {
                   </>
                 ) : (
                   <Link
-                    href={`/login?callbackUrl=${encodeURIComponent(router.asPath)}`}
+                    href={`/login?callbackUrl=${encodeURIComponent(pathname)}`}
                     className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition"
                   >
                     Login/Register
@@ -143,7 +144,7 @@ const Navbar = () => {
 
 
               <div className="relative group">
-                <Link href="/report-purchases" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/access-reports" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
                   Access Reports 
                 </Link>
               </div>
@@ -163,6 +164,16 @@ const Navbar = () => {
               <div className="relative group">
                 <Link href="/report-store" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
                   Report Store
+                </Link>
+              </div>
+              <div className="relative group">
+                <Link href="/Insights" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  Insights
+                </Link>
+              </div>
+              <div className="relative group">
+                <Link href="/saved-articles" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  Saved Articles
                 </Link>
               </div>
 

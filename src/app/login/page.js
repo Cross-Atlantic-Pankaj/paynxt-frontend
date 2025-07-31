@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function LoginPage() {
+  const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   // const referrer = typeof window !== 'undefined' ? document.referrer : null;
@@ -15,8 +16,9 @@ export default function LoginPage() {
   //   : '/dashboard';
 
   // const callbackUrl = searchParams.get('callbackUrl') || fallbackUrl;
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
-  const callbackUrl = searchParams.get('callbackUrl') || currentPath;
+ 
+  // const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const callbackUrl = searchParams.get('callbackUrl') || '/'; // or homepage as default
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,11 +47,14 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
+      console.log('Login response data:', data);
 
       if (!res.ok) {
         setError(data.error || 'Login failed');
         toast.error(data.error || 'Login failed', { id: loginToast });
       } else {
+        localStorage.setItem('userId', data.user.id);
+
         setUserContext({ token: data.token, user: data.user });
         toast.success('Login successful!', { id: loginToast });
         router.push(callbackUrl);
