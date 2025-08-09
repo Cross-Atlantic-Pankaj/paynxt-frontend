@@ -221,8 +221,8 @@ export default function ViewPointPage() {
                                                 handleCountryClick(con.name);
                                             }}
                                             className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
-                                                    ? 'bg-[#155392] text-white font-semibold'
-                                                    : 'text-gray-800 font-semibold'
+                                                ? 'bg-[#155392] text-white font-semibold'
+                                                : 'text-gray-800 font-semibold'
                                                 }`}
                                         >
                                             {con.name}
@@ -458,12 +458,22 @@ export default function ViewPointPage() {
         }
 
         // Apply search term filter here
+        // Apply search term filter here (word-based AND matching, any order)
         if (searchTerm.trim()) {
-            const lowerTerm = searchTerm.toLowerCase();
-            data = data.filter(report =>
-                report.report_title?.toLowerCase().includes(lowerTerm) ||
-                report.report_summary?.toLowerCase().includes(lowerTerm)
-            );
+            const tokens = searchTerm
+                .toLowerCase()
+                .replace(/[^\p{L}\p{N}\s]/gu, " ")  // remove punctuation (unicode-aware)
+                .split(/\s+/)
+                .filter(Boolean);
+
+            data = data.filter((report) => {
+                const hay = `${report.report_title || ""} ${report.report_summary || ""}`
+                    .toLowerCase()
+                    .replace(/[^\p{L}\p{N}\s]/gu, " ");
+
+                // require every token to be present
+                return tokens.every((t) => hay.includes(t));
+            });
         }
 
         return data
@@ -519,6 +529,8 @@ export default function ViewPointPage() {
 
     const handleSearch = () => {
         setSearchTerm(searchInput);
+        setCurrentPage(1);
+        setVisibleCount(15);
         console.log('Search Term:', searchTerm);
     };
 
@@ -560,6 +572,7 @@ export default function ViewPointPage() {
                                         placeholder="Search..."
                                         value={searchInput}
                                         onChange={(e) => setSearchInput(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
                                         className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                                     />
                                     <button

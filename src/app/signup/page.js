@@ -120,8 +120,8 @@ export default function SignupPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setOtpError(data.error || 'OTP verification failed');
-        toast.error(data.error || 'OTP verification failed', { id: otpToast });
+        setOtpError(data.error || 'Incorrect or expired OTP. Please sign up again');
+        toast.error(data.error || 'Incorrect or expired OTP. Please sign up again', { id: otpToast });
       } else {
         toast.success('OTP verified successfully!', { id: otpToast });
         setUserContext({ token: data.token, user: data.user });

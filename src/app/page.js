@@ -193,7 +193,7 @@ export default function HomePage() {
       )}
 
       {blogs.length === 0 && (
-        <p className="text-center text-gray-500 mt-4">No blogs found for this filter.</p>
+        <p className="text-center text-gray-500 mt-4">No reports found for this filter.</p>
       )}
     </div>
   );
