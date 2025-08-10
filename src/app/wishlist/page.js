@@ -80,22 +80,33 @@ export default function ViewPointPage() {
             setIsWishlistLoading(true);
             setWishlistError(null);
             try {
-                const res = await fetch('/api/wishlist', {
+                // Fetch wishlist items with full data and tile templates
+                const res = await fetch('/api/wishlist/items', {
                     headers: {
                         Authorization: `Bearer ${user.token}`,
                     },
                 });
                 if (res.ok) {
-                    const data = await res.json();
-                    setWishlist(data.map(item => item.seo_url));
+                    const response = await res.json();
+                    if (response.success) {
+                        const wishlistReports = response.data || [];
+                        setBlogs(wishlistReports); // Set the blogs directly from wishlist API
+                        setWishlist(wishlistReports.map(item => item.seo_url));
+                    } else {
+                        setWishlist([]);
+                        setBlogs([]);
+                        setWishlistError(response.message || 'Failed to load wishlist');
+                    }
                 } else {
                     setWishlist([]);
+                    setBlogs([]);
                     setWishlistError('Failed to load wishlist');
                     toast.error('Failed to load wishlist');
                 }
             } catch (error) {
                 console.error('Error fetching wishlist:', error);
                 setWishlist([]);
+                setBlogs([]);
                 setWishlistError('An error occurred while loading your wishlist');
                 toast.error('An error occurred while loading your wishlist');
             } finally {
@@ -107,8 +118,7 @@ export default function ViewPointPage() {
         fetchCategories();
         fetchBanner();
         fetchSliders();
-        fetchBlogs();
-        fetchWishlist();
+        fetchWishlist(); // This now fetches both wishlist and blog data with tile templates
         fetchregion();
     }, [user, isLoading, router]);
 

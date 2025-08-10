@@ -61,7 +61,21 @@ export async function GET(req) {
           null
       };
     });
-    return NextResponse.json({ success: true, data: enrichedBlogs });
+
+    // Sort by savedAt (most recent first)
+    enrichedBlogs.sort((a, b) => {
+      if (!a.savedAt || !b.savedAt) return 0;
+      return new Date(b.savedAt) - new Date(a.savedAt);
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      data: enrichedBlogs 
+    }, {
+      headers: {
+        'Cache-Control': 'private, no-cache', // Private data, don't cache
+      }
+    });
   } catch (error) {
     console.error('Error fetching saved articles:', error);
     return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
