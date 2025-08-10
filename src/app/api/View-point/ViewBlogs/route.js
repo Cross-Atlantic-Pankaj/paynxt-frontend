@@ -1,13 +1,13 @@
 import connectDB from '@/lib/db';
 import BlogManager from '@/models/blog-page/blogcontent';
+import TileTemplate from '@/models/TileTemplate';
 
 export async function GET() {
   try {
     await connectDB();
 
-    // Fetch the 10 latest blog entries with populated tileTemplateId
+    // First fetch blogs without populate to avoid connection issues
     const latestBlogs = await BlogManager.find()
-      .populate('tileTemplateId')
       .lean()
       .sort({ createdAt: -1 })
       .limit(10);
@@ -19,51 +19,51 @@ export async function GET() {
       });
     }
 
-    // Ensure all blogs have a tileTemplateId field (even if null)
+    // Extract unique tileTemplateIds (filter out null/undefined)
+    const tileTemplateIds = [...new Set(
+      latestBlogs
+        .map(blog => blog.tileTemplateId)
+        .filter(id => id && typeof id === 'string' && id.length === 24)
+    )];
+
+    // Fetch tile templates in batch if we have any IDs
+    let tileTemplatesMap = new Map();
+    if (tileTemplateIds.length > 0) {
+      try {
+        const tileTemplates = await TileTemplate.find({
+          _id: { $in: tileTemplateIds }
+        }).lean();
+        
+        tileTemplates.forEach(template => {
+          tileTemplatesMap.set(template._id.toString(), template);
+        });
+      } catch (tileError) {
+        console.warn('Failed to fetch tile templates:', tileError);
+        // Continue without tile templates
+      }
+    }
+
+    // Join the data manually
     const processedBlogs = latestBlogs.map(blog => ({
       ...blog,
-      tileTemplateId: blog.tileTemplateId || null
+      tileTemplateId: blog.tileTemplateId ? 
+        tileTemplatesMap.get(blog.tileTemplateId.toString()) || blog.tileTemplateId : 
+        null
     }));
 
     return new Response(JSON.stringify(processedBlogs), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600'
+      },
     });
 
   } catch (error) {
     console.error('Error fetching blogs:', error);
-    
-    // If populate fails, try without it as fallback
-    try {
-      const latestBlogs = await BlogManager.find()
-        .lean()
-        .sort({ createdAt: -1 })
-        .limit(10);
-
-      if (!latestBlogs || latestBlogs.length === 0) {
-        return new Response(JSON.stringify({ message: 'No blogs found' }), {
-          status: 404,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-
-      // Ensure all blogs have a tileTemplateId field (set to null)
-      const processedBlogs = latestBlogs.map(blog => ({
-        ...blog,
-        tileTemplateId: null
-      }));
-
-      return new Response(JSON.stringify(processedBlogs), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-    } catch (fallbackError) {
-      console.error('Fallback fetch also failed:', fallbackError);
-      return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
