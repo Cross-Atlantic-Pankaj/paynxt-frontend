@@ -450,7 +450,7 @@ export default function ViewPointPage() {
                 ) : wishlistError ? (
                     <p className="text-center text-red-500 mt-4">{wishlistError}</p>
                 ) : wishlistBlogs.length === 0 ? (
-                    <p className="text-center text-gray-500 mt-4">No blogs in your wishlist.</p>
+                    <p className="text-center text-gray-500 mt-4">No reports in your wishlist.</p>
                 ) : (
                     <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                         {wishlistBlogs.map((blog, i) => {
