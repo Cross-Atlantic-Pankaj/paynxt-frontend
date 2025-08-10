@@ -167,7 +167,7 @@ const Navbar = () => {
                 </Link>
               </div>
               <div className="relative group">
-                <Link href="/Insights" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/insights" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
                   Insights
                 </Link>
               </div>
