@@ -9,14 +9,17 @@ import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import TileRenderer from '@/components/TileRenderer';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
 
 const { Text } = Typography;
 const { Option } = Select;
 const { Panel } = Collapse;
 
 export default function ViewPointPage() {
+    const router = useRouter();
+    const { user, isLoading, logout } = useUser();
     const [banner, setBanner] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [sliders, setSliders] = useState([]);
@@ -26,7 +29,7 @@ export default function ViewPointPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [categories, setCategories] = useState([]);
     const [topics, setTopics] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [pageLoadStart, setPageLoadStart] = useState(performance.now());
 
     useEffect(() => {
         const fetchBanner = async () => {
@@ -558,7 +561,12 @@ export default function ViewPointPage() {
 
     return (
 
-        <main className="min-h-screen bg-white">
+        <main className="min-h-screen bg-gray-100">
+            <PerformanceMonitor 
+                componentName="Insights Page" 
+                startTime={pageLoadStart} 
+            />
+            <Toaster position="top-right" />
             <style jsx global>{`
   .swiper-pagination {
     position: relative;

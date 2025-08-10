@@ -10,6 +10,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import TileRenderer from '@/components/TileRenderer';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -34,6 +36,7 @@ export default function ViewPointPage() {
     const [wishlist, setWishlist] = useState([]);
     const [isWishlistLoading, setIsWishlistLoading] = useState(false);
     const [wishlistError, setWishlistError] = useState(null);
+    const [pageLoadStart, setPageLoadStart] = useState(performance.now());
 
     useEffect(() => {
         if (isLoading) return;
@@ -461,7 +464,22 @@ export default function ViewPointPage() {
                                         href={reportUrl}
                                         className="bg-white flex flex-col justify-between h-full overflow-hidden block"
                                     >
-                                        <div className="p-4 flex flex-col justify-between h-full">
+                                        {/* Tile Display - Outside padded container for full width */}
+                                        <div className="w-full h-40">
+                                            {(blog.tileTemplateId && blog.tileTemplateId !== null) ? (
+                                                <TileRenderer
+                                                    tileTemplateId={blog.tileTemplateId}
+                                                    fallbackIcon="FileText"
+                                                    className="w-full h-40"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
+                                                    <span className="text-gray-500 text-sm">No template</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="p-4 flex flex-col justify-between">
                                             <div>
                                                 <p className="text-sm leading-tight">
                                                     {blog.report_publish_date
@@ -628,7 +646,12 @@ export default function ViewPointPage() {
 
     return (
 
-        <main className="min-h-screen bg-white">
+        <main className="min-h-screen bg-gray-100">
+            <PerformanceMonitor 
+                componentName="Wishlist Page" 
+                startTime={pageLoadStart} 
+            />
+            <Toaster position="top-right" />
             <style jsx global>{`
   .swiper-pagination {
     position: relative;
