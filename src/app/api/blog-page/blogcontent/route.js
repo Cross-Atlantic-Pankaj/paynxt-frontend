@@ -6,16 +6,25 @@ export async function GET() {
   try {
     await connectDB();
 
-    const blogs = await BlogManager.find().sort({ createdAt: -1 });
+    const blogs = await BlogManager.find()
+      .populate('tileTemplateId')
+      .lean()
+      .sort({ createdAt: -1 });
 
-    if (!blogs || blogs.length === 0) {
+    // Ensure all blogs have a tileTemplateId field (even if null)
+    const processedBlogs = blogs.map(blog => ({
+      ...blog,
+      tileTemplateId: blog.tileTemplateId || null
+    }));
+
+    if (!processedBlogs || processedBlogs.length === 0) {
       return new Response(JSON.stringify({ message: 'No blogs found' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    return new Response(JSON.stringify(blogs), {
+    return new Response(JSON.stringify(processedBlogs), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

@@ -11,6 +11,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import slugify from '@/lib/slugify';
+import TileRenderer from '@/components/TileRenderer';
 // import Head from 'next/head';
 
 export default function BlogPage() {
@@ -324,6 +325,13 @@ export default function BlogPage() {
                                                 href={`/blog-page/${article.slug}`} // ✅ Using slug-based URL
                                                 className="flex items-start gap-2 text-sm text-blue-700 group-hover:text-[#FF6B00]"
                                             >
+                                                {article.tileTemplateId && (
+                                                    <TileRenderer 
+                                                        tileTemplateId={article.tileTemplateId}
+                                                        fallbackIcon="FileText"
+                                                        className="w-4 h-4 mr-2"
+                                                    />
+                                                )}
                                                 <span className="text-blue-700 group-hover:text-[#FF6B00]">&gt;</span>
                                                 <span>{article.title}</span>
                                             </a>
@@ -389,11 +397,19 @@ export default function BlogPage() {
                                                         className="border border-gray-200 p-4 bg-white flex flex-col justify-between"
                                                     >
                                                         <div className="flex justify-center items-center">
-                                                            <img
-                                                                src={blog.imageIconurl}
-                                                                alt={blog.blogName}
-                                                                className="w-15 h-15 object-contain rounded"
-                                                            />
+                                                            {blog.tileTemplateId ? (
+                                                                <TileRenderer 
+                                                                    tileTemplateId={blog.tileTemplateId}
+                                                                    fallbackIcon="FileText"
+                                                                    className="w-15 h-15"
+                                                                />
+                                                            ) : (
+                                                                <img
+                                                                    src={blog.imageIconurl}
+                                                                    alt={blog.blogName}
+                                                                    className="w-15 h-15 object-contain rounded"
+                                                                />
+                                                            )}
                                                         </div>
                                                         <h3 className="text-lg text-center font-semibold mt-10 text-[#155392]">
                                                             {blog.blogName}

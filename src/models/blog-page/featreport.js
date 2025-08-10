@@ -5,6 +5,7 @@ const FeatRepoSchema = new mongoose.Schema({
   category: { type: String },
   blogName: { type: String, required: true },
   description: { type: String },
+  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' },
   createdAt: {
     type: Date,
     default: Date.now

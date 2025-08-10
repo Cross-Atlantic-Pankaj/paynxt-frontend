@@ -7,6 +7,7 @@ import Link from 'next/link';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import TileRenderer from '@/components/TileRenderer';
 import { set } from 'mongoose';
 
 const { Text } = Typography;
@@ -377,6 +378,28 @@ export default function ViewPointPage() {
                                 href={reportUrl}
                                 className="bg-white flex flex-col justify-between h-full overflow-hidden block"
                             >
+                                {/* Tile Display - Outside padded container for full width */}
+                                <div className="w-full h-50">
+                                    {(blog.tileTemplateId && blog.tileTemplateId !== null) ? (
+                                        <TileRenderer
+                                            tileTemplateId={blog.tileTemplateId}
+                                            fallbackIcon="FileText"
+                                            className="w-full h-40"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
+                                            <span className="text-gray-500 text-sm">No template</span>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* Report Button - Positioned between tile and text content */}
+                                <div className="px-4 -mt-2 mb-2">
+                                    <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
+                                        Report
+                                    </span>
+                                </div>
+                                
                                 <div className="p-4 flex flex-col justify-between h-full">
                                     <div>
                                         <p className="text-sm leading-tight">
@@ -395,8 +418,8 @@ export default function ViewPointPage() {
                                                 : blog.report_summary}
                                         </p>
                                     </div>
-                                    <div className="mt-4">
-                                        <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
+                                    <div className="-mt-8">
+                                        <span className="inline-block px-3 py-1 bg-[#155392] text-white text-sm rounded-full hover:bg-[#0e3a6f] transition">
                                             View
                                         </span>
                                     </div>

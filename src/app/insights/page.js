@@ -10,6 +10,7 @@ import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import TileRenderer from '@/components/TileRenderer';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -25,40 +26,81 @@ export default function ViewPointPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [categories, setCategories] = useState([]);
     const [topics, setTopics] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchBanner = async () => {
-            const res = await fetch('/api/View-point/ViewBanner');
-            const data = await res.json();
-            setBanner(data);
+            try {
+                const res = await fetch('/api/View-point/ViewBanner');
+                const data = await res.json();
+                setBanner(data);
+            } catch (error) {
+                console.error('Error fetching banner:', error);
+                setBanner(null);
+            }
         };
 
         const fetchSliders = async () => {
-            const res = await fetch('/api/View-point/ViewSlider');
-            const data = await res.json();
-            setSliders(data);
+            try {
+                const res = await fetch('/api/View-point/ViewSlider');
+                const data = await res.json();
+                // Ensure sliders is always an array
+                setSliders(Array.isArray(data) ? data : []);
+            } catch (error) {
+                console.error('Error fetching sliders:', error);
+                setSliders([]);
+            }
         };
+        
         const fetchBlogs = async () => {
-            const res = await fetch('/api/View-point/ViewBlogs');
-            const data = await res.json();
-            setBlogs(data);
+            try {
+                const res = await fetch('/api/View-point/ViewBlogs');
+                const data = await res.json();
+                // Ensure blogs is always an array
+                setBlogs(Array.isArray(data) ? data : []);
+            } catch (error) {
+                console.error('Error fetching blogs:', error);
+                setBlogs([]);
+            }
         };
+        
         const fetchCategories = async () => {
-            const res = await fetch('/api/View-point/ViewCategories');
-            const data = await res.json();
-            setCategories(data);
+            try {
+                const res = await fetch('/api/View-point/ViewCategories');
+                const data = await res.json();
+                setCategories(Array.isArray(data) ? data : []);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+                setCategories([]);
+            }
         };
+        
         const fetchTopics = async () => {
-            const res = await fetch('/api/View-point/ViewTopics'); // adjust path
-            const data = await res.json();
-            setTopics(data);
+            try {
+                const res = await fetch('/api/View-point/ViewTopics'); // adjust path
+                const data = await res.json();
+                setTopics(Array.isArray(data) ? data : []);
+            } catch (error) {
+                console.error('Error fetching topics:', error);
+                setTopics([]);
+            }
         };
 
-        fetchTopics();
-        fetchCategories();
-        fetchBanner();
-        fetchSliders();
-        fetchBlogs();
+        const fetchAllData = async () => {
+            try {
+                await Promise.all([
+                    fetchTopics(),
+                    fetchCategories(),
+                    fetchBanner(),
+                    fetchSliders(),
+                    fetchBlogs()
+                ]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        
+        fetchAllData();
     }, []);
 
     const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
@@ -328,7 +370,19 @@ export default function ViewPointPage() {
                             <div key={i} className="h-full">
                                 <div className="bg-white flex flex-col justify-between h-full overflow-hidden">
                                     <Link href={`/blog-page/${blog.slug}`} className="block">
-                                        <img src={blog.imageIconurl} alt={blog.title} className="w-full h-40 object-cover" />
+                                        <div className="w-full h-40">
+                                            {blog.tileTemplateId ? (
+                                                <TileRenderer
+                                                    tileTemplateId={blog.tileTemplateId}
+                                                    fallbackIcon="FileText"
+                                                    className="w-full h-40"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg">
+                                                    <span className="text-gray-500 text-sm">No template</span>
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="p-4 flex flex-col justify-between">
                                             <div>
                                                 <p className="text-sm leading-tight">
@@ -490,6 +544,18 @@ export default function ViewPointPage() {
         console.log('Search Term:', searchTerm);
     };
 
+    // Show loading state while data is being fetched
+    if (isLoading) {
+        return (
+            <main className="min-h-screen bg-white flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#155392] mx-auto mb-4"></div>
+                    <p className="text-lg text-gray-600">Loading insights...</p>
+                </div>
+            </main>
+        );
+    }
+
     return (
 
         <main className="min-h-screen bg-white">
@@ -554,39 +620,47 @@ export default function ViewPointPage() {
 
                     {/* Right Slider Section */}
                     <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
-                        <Swiper
-                            modules={[SwiperPagination]}
-                            pagination={{
-                                el: '.custom-pagination',
-                                clickable: true,
-                            }}
-                            spaceBetween={16}
-                            slidesPerView={1}
-                        >
-                            {sliders.map((slide, index) => (
-                                <SwiperSlide key={index}>
-                                    <div className="mb-4 border-b pb-4">
-                                        <p className="text-xs text-gray-500 uppercase mb-1">{slide.typeText}</p>
-                                        <h3 className="text-lg font-bold text-[#155392]">{slide.title}</h3>
-                                        <p className="text-sm text-gray-700 mt-1 mb-2">
-                                            {slide.shortDescription.length > 100
-                                                ? `${slide.shortDescription.slice(0, 100)}...`
-                                                : slide.shortDescription}
-                                        </p>
-                                        <div className="flex justify-end">
-                                            <a
-                                                href={slide.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm text-white bg-[#155392] hover:bg-[#0e3a6f] px-3 py-1 rounded"
-                                            >
-                                                Read More
-                                            </a>
+                        {Array.isArray(sliders) && sliders.length > 0 ? (
+                            <Swiper
+                                modules={[SwiperPagination]}
+                                pagination={{
+                                    el: '.custom-pagination',
+                                    clickable: true,
+                                }}
+                                spaceBetween={16}
+                                slidesPerView={1}
+                            >
+                                {sliders.map((slide, index) => (
+                                    <SwiperSlide key={index}>
+                                        <div className="mb-4 border-b pb-4">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <p className="text-xs text-gray-500 uppercase">{slide.typeText}</p>
+                                            </div>
+                                            <h3 className="text-lg font-bold text-[#155392]">{slide.title}</h3>
+                                            <p className="text-sm text-gray-700 mt-1 mb-2">
+                                                {slide.shortDescription && slide.shortDescription.length > 100
+                                                    ? `${slide.shortDescription.slice(0, 100)}...`
+                                                    : slide.shortDescription}
+                                            </p>
+                                            <div className="flex justify-end">
+                                                <a
+                                                    href={slide.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm text-white bg-[#155392] hover:bg-[#0e3a6f] px-3 py-1 rounded"
+                                                >
+                                                    Read More
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        ) : (
+                            <div className="text-center text-gray-500 py-8">
+                                <p>No featured content available</p>
+                            </div>
+                        )}
 
                         {/* Custom pagination container */}
                         <div className="custom-pagination flex justify-center gap-4 mt-4"></div>
@@ -618,9 +692,7 @@ export default function ViewPointPage() {
                                 setSelectedCat(null);
                                 setSelectedTopic(null);
                                 setSearchTerm('');
-                                setSearchInput('');
                                 setCurrentPage(1);
-                                setVisibleCount(15);
                             }}
                             className={`px-4 py-2 rounded transition ${!selectedCat && !selectedTopic && !searchTerm
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -652,11 +724,28 @@ export default function ViewPointPage() {
                     </div>
 
                     <div className="col-span-3">
-                        <BlogsGrid
-                            blogs={filteredBlogs}
-                            currentPage={currentPage}
-                            setCurrentPage={setCurrentPage}
-                        />
+                        {Array.isArray(filteredBlogs) && filteredBlogs.length > 0 ? (
+                            <BlogsGrid
+                                blogs={filteredBlogs}
+                                currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                            />
+                        ) : (
+                            <div className="text-center text-gray-500 py-20">
+                                <p className="text-xl">No articles found matching your criteria</p>
+                                <button
+                                    onClick={() => {
+                                        setSelectedCat(null);
+                                        setSelectedTopic(null);
+                                        setSearchTerm('');
+                                        setCurrentPage(1);
+                                    }}
+                                    className="mt-4 px-6 py-2 bg-[#155392] text-white rounded hover:bg-[#0e3a6f]"
+                                >
+                                    Clear Filters
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

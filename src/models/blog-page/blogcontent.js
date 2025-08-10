@@ -17,7 +17,8 @@ const blogSchema = new mongoose.Schema({
     description: { type: String },
     url: { type: String }
   },
-  is_featured: { type: Boolean, default: false }
+  is_featured: { type: Boolean, default: false },
+  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' }
 }, { timestamps: true });
 
 export default mongoose.models.BlogManager || mongoose.model('BlogManager', blogSchema, 'blog_manager');

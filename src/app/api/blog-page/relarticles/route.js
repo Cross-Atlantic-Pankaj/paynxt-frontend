@@ -28,16 +28,18 @@ export async function GET(req) {
     const subcategory = currentArticle.subcategory;
 
     // Step 2: Find related articles (exclude current one)
-    const relatedArticles = await relart
-      .find({
-        subcategory: { $regex: new RegExp(`^${subcategory}$`, 'i') },
-        slug: { $ne: slug } // exclude current article
-      })
-      .sort({ date: -1, title: 1 })
-      // most recent first
-      .limit(5);
+    const relatedArticles = await relart.find()
+      .populate('tileTemplateId')
+      .lean()
+      .sort({ createdAt: -1 });
 
-    return new Response(JSON.stringify(relatedArticles), {
+    // Ensure all articles have a tileTemplateId field (even if null)
+    const processedArticles = relatedArticles.map(article => ({
+      ...article,
+      tileTemplateId: article.tileTemplateId || null
+    }));
+
+    return new Response(JSON.stringify(processedArticles), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

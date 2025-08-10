@@ -10,7 +10,8 @@ const relArtSchema = new mongoose.Schema({
     type: String,
     default: () => dayjs().format('YYYY-MM-DD'), // ✅ stored as string
   },
-  slug: { type: String, trim: true }
+  slug: { type: String, trim: true },
+  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' }
 });
 
 // ✅ Pre-save hook to auto-generate slug if missing

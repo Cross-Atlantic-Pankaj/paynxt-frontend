@@ -31,6 +31,7 @@ const repcontentSchema = new mongoose.Schema({
   Meta_Title: String,
   Meta_Keyword: String,
   seo_url: String,
+  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' },
 
   // ✅ New fields
   key_stats_a1: String,

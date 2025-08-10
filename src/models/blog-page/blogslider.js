@@ -5,7 +5,8 @@ const BlogsliderSchema = new mongoose.Schema({
   title: { type: String, required: true },
   shortDescription: { type: String },
   url: { type: String, required: true },
-    createdAt: {
+  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' },
+  createdAt: {
     type: Date,
     default: Date.now
   }
