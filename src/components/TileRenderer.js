@@ -1,10 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Tile from './Tile';
+
+// Global cache for tile templates to avoid duplicate API calls
+const tileTemplateCache = new Map();
+
+// Batch loading mechanism
+let batchLoading = false;
+let pendingRequests = new Map();
+let batchTimeout = null;
+
+const processBatchRequests = async () => {
+    if (pendingRequests.size === 0) return;
+    
+    const ids = Array.from(pendingRequests.keys());
+    const uniqueIds = [...new Set(ids)];
+    
+    try {
+        // Fetch all unique tile templates in one request
+        const response = await fetch('/api/tile-templates/batch', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ids: uniqueIds }),
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Update cache and resolve all pending requests
+            data.forEach(template => {
+                if (template) {
+                    tileTemplateCache.set(template._id, template);
+                }
+            });
+            
+            // Resolve all pending requests
+            pendingRequests.forEach((resolve, reject) => {
+                const template = tileTemplateCache.get(id);
+                if (template) {
+                    resolve(template);
+                } else {
+                    reject(new Error('Template not found'));
+                }
+            });
+        }
+    } catch (error) {
+        // Reject all pending requests on error
+        pendingRequests.forEach((resolve, reject) => {
+            reject(error);
+        });
+    } finally {
+        pendingRequests.clear();
+        batchLoading = false;
+        batchTimeout = null;
+    }
+};
 
 const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' }) => {
     const [tileTemplate, setTileTemplate] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const fetchTileTemplate = useCallback(async (id) => {
+        // Check cache first
+        if (tileTemplateCache.has(id)) {
+            return tileTemplateCache.get(id);
+        }
+
+        // If batch loading is in progress, add to pending requests
+        if (batchLoading) {
+            return new Promise((resolve, reject) => {
+                pendingRequests.set(id, { resolve, reject });
+            });
+        }
+
+        // Start batch loading
+        batchLoading = true;
+        
+        // Set timeout to process batch
+        if (batchTimeout) clearTimeout(batchTimeout);
+        batchTimeout = setTimeout(processBatchRequests, 50); // 50ms delay to collect requests
+        
+        return new Promise((resolve, reject) => {
+            pendingRequests.set(id, { resolve, reject });
+        });
+    }, []);
 
     useEffect(() => {
         if (!tileTemplateId) {
@@ -20,17 +101,13 @@ const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' 
         }
 
         // If tileTemplateId is a string (ObjectId), fetch it
-        const fetchTileTemplate = async () => {
+        const loadTemplate = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`/api/tile-templates/${tileTemplateId}`);
+                setError(null);
                 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tile template');
-                }
-                
-                const data = await response.json();
-                setTileTemplate(data);
+                const template = await fetchTileTemplate(tileTemplateId);
+                setTileTemplate(template);
             } catch (err) {
                 console.error('Error fetching tile template:', err);
                 setError(err.message);
@@ -39,8 +116,8 @@ const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' 
             }
         };
 
-        fetchTileTemplate();
-    }, [tileTemplateId]);
+        loadTemplate();
+    }, [tileTemplateId, fetchTileTemplate]);
 
     if (loading) {
         return (

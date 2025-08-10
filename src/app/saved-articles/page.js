@@ -10,6 +10,8 @@ import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
+import TileRenderer from '@/components/TileRenderer';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -26,6 +28,7 @@ export default function SavedArticlesPage() {
   const [topics, setTopics] = useState([]);
   const { user, isLoading: userLoading } = useUser();
   const router = useRouter();
+  const [pageLoadStart, setPageLoadStart] = useState(performance.now());
 
   useEffect(() => {
     if (!user && !userLoading) {
@@ -344,7 +347,21 @@ export default function SavedArticlesPage() {
               <div key={i} className="h-full">
                 <div className="bg-white flex flex-col justify-between h-full overflow-hidden">
                   <Link href={`/blog-page/${blog.slug}`} className="block">
-                    <img src={blog.imageIconurl} alt={blog.title} className="w-full h-40 object-cover" />
+                    {/* Tile Display - Outside padded container for full width */}
+                    <div className="w-full h-40">
+                      {(blog.tileTemplateId && blog.tileTemplateId !== null) ? (
+                        <TileRenderer
+                          tileTemplateId={blog.tileTemplateId}
+                          fallbackIcon="FileText"
+                          className="w-full h-40"
+                        />
+                      ) : (
+                        <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-500 text-sm">No template</span>
+                        </div>
+                      )}
+                    </div>
+                    
                     <div className="p-4 flex flex-col justify-between">
                       <div>
                         <p className="text-sm leading-tight">
@@ -474,7 +491,11 @@ export default function SavedArticlesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-gray-100">
+      <PerformanceMonitor 
+        componentName="Saved Articles Page" 
+        startTime={pageLoadStart} 
+      />
       <Toaster position="top-right" />
       <style jsx global>{`
         .swiper-pagination {
