@@ -447,30 +447,6 @@ export default function ViewPointPage() {
         </div>
     );
 
-    const filteredReports = useMemo(() => {
-        if (!selectedCat) return blogs;
-        if (selectedCat.sub) {
-            return blogs.filter(report => report.Product_sub_Category === selectedCat.sub);
-        }
-        return blogs.filter(report => report.Product_category === selectedCat.cat);
-    }, [blogs, selectedCat]);
-
-    const filterReports = useMemo(() => {
-        if (!selectedCon) return blogs;
-        if (selectedCon.sub) {
-            return blogs.filter(report => report.Report_Geography_Region === selectedCon.sub);
-        }
-        return blogs.filter(report => report.Report_Geography_Country === selectedCon.con);
-    }, [blogs, selectedCon]);
-
-    const filterregReports = useMemo(() => {
-        if (!selectedReg) return blogs;
-        if (selectedReg.sub) {
-            return blogs.filter(report => report.Report_Geography_Region === selectedReg.sub);
-        }
-        return blogs.filter(report => report.Report_Geography_Region === selectedReg.reg);
-    }, [blogs, selectedReg]);
-
     const finalFilteredBlogs = useMemo(() => {
         let data = blogs;
 
