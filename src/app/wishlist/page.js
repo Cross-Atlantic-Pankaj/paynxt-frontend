@@ -27,6 +27,8 @@ export default function ViewPointPage() {
     const [categories, setCategories] = useState([]);
     const [country, setCon] = useState([]);
     const [selectedCon, setSelectedCon] = useState(null);
+    const [region, setRegion] = useState([]);
+    const [selectedReg, setSelectedReg] = useState(null);
     const [visibleCount, setVisibleCount] = useState(15); // initially show 9 blogs
     const [searchInput, setSearchInput] = useState('');
     const [wishlist, setWishlist] = useState([]);
@@ -66,6 +68,11 @@ export default function ViewPointPage() {
             const data = await res.json();
             setCon(data);
         };
+        const fetchregion = async () => {
+            const res = await fetch('/api/report-store/repreg');
+            const data = await res.json();
+            setRegion(data);
+        };
         const fetchWishlist = async () => {
             setIsWishlistLoading(true);
             setWishlistError(null);
@@ -99,6 +106,7 @@ export default function ViewPointPage() {
         fetchSliders();
         fetchBlogs();
         fetchWishlist();
+        fetchregion();
     }, [user, isLoading, router]);
 
     const toggleWishlist = async (seo_url) => {
@@ -336,88 +344,101 @@ export default function ViewPointPage() {
             </div>
         );
     };
+    const RegionFilter = ({ region, selectedReg, onSelect, blogs }) => {
+        const [openKey, setOpenKey] = useState(null);
 
-    // const BlogsGrid = ({ blogs, currentPage, setCurrentPage }) => {
-    //     const blogsPerPage = 15;
-    //     const start = (currentPage - 1) * blogsPerPage;
-    //     const paginatedBlogs = blogs.slice(start, start + blogsPerPage);
+        const handleRegionClick = (regName) => {
+            if (selectedReg?.reg === regName && !selectedReg?.sub) {
+                onSelect(null); // Deselect
+            } else {
+                onSelect({ reg: regName }); // Select country
+            }
+        };
 
-    //     return (
-    //         <div className="w-full">
-    //             <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
-    //                 {paginatedBlogs.map((blog, i) => {
-    //                     const reportUrl = `https://pay-nxt360.vercel.app/report/${blog.seo_url}`;
-    //                     const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(reportUrl)}&title=${encodeURIComponent(blog.report_title)}&summary=${encodeURIComponent(blog.report_summary)}`;
+        return (
+            <div className="bg-gray-100 overflow-hidden">
+                {/* Title */}
+                <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
+                    Filter by region
+                </div>
 
+                {/* Countries */}
+                <Collapse
+                    accordion
+                    activeKey={openKey}
+                    onChange={(key) => setOpenKey(key)}
+                    expandIconPosition="end"
+                    className="bg-gray-100 border-none shadow-none"
+                    expandIcon={({ isActive }) => (
+                        <div
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                                }`}
+                        >
+                            {isActive ? (
+                                <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
+                            ) : (
+                                <PlusOutlined style={{ fontSize: 10, color: 'white' }} />
+                            )}
+                        </div>
+                    )}
+                >
 
-    //                     return (
-    //                         <div key={i} className='h-full'>
-    //                             <Link
-    //                                 key={i}
-    //                                 href={`/blog-page/${blog.seo_url}`} // Replace with dynamic route if available
-    //                                 className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition"
-    //                             >
-    //                                 {/* <img
-    //                                     src={blog.imageIconurl}
-    //                                     alt={blog.blogName}
-    //                                     className="w-full h-40 object-cover"
-    //                                 /> */}
-    //                                 <div className="p-4 flex flex-col justify-between h-full">
-    //                                     <div>
-    //                                         {/* You might not have an image; skip or use placeholder */}
-    //                                         <h3 className="text-md font-bold">{blog.report_title}</h3>
-    //                                         <p className="text-sm text-gray-500">{blog.Product_category}</p>
-    //                                         <p className="text-sm text-gray-700">
-    //                                             {blog.report_summary && blog.report_summary.length > 100
-    //                                                 ? `${blog.report_summary.slice(0, 100)}...`
-    //                                                 : blog.report_summary}
-    //                                         </p>
+                    {console.log("Region in component:", region)}
+                    {(region || []).map((reg) => {
+                        const filteredSubcategories = reg.subcategories || [];
+                        // Filter subcategories to only those present in blogs
+                        // Only render the Panel if there are subcategories or the country is tagged
+                        if (!blogs.some((blog) => blog.Report_Geography_Region === reg.name)) {
+                            return null;
+                        }
+                        return (
+                            <Panel
+                                key={reg.name}
+                                className="!bg-gray-100 !border-0"
+                                header={
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevent collapse toggle
+                                            handleRegionClick(reg.name);
+                                        }}
+                                        className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedReg?.reg === reg.name && !selectedReg?.sub
+                                            ? 'bg-[#155392] text-white font-semibold'
+                                            : 'text-gray-800 font-semibold'
+                                            }`}
+                                    >
+                                        {reg.name}
+                                    </div>
+                                }
+                            >
+                                <div className="bg-gray-100 p-0">
+                                    {filteredSubcategories.map((sub, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                            onClick={() => onSelect({ reg: reg.name, sub })}
+                                        >
+                                            {sub}
+                                        </div>
+                                    ))}
+                                </div>
+                            </Panel>
+                        );
+                    })}
+                </Collapse>
 
-    //                                     </div>
-    //                                     <div className='mt-4'>
-    //                                         {/* LinkedIn Share Button */}
-    //                                         {/* <a
-    //                                             href={linkedInShareUrl}
-    //                                             target="_blank"
-    //                                             rel="noopener noreferrer"
-    //                                             onClick={(e) => e.stopPropagation()} // Prevent Link navigation
-    //                                             className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
-    //                                         >
-    //                                             <svg
-    //                                                 className="w-4 h-4"
-    //                                                 fill="currentColor"
-    //                                                 viewBox="0 0 24 24"
-    //                                             >
-    //                                                 <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.7 8.5 8.7zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
-    //                                             </svg>
-    //                                             Share
-    //                                         </a> */}
-    //                                     </div>
-    //                                 </div>
-    //                             </Link>
-    //                         </div>
-    //                     );
-    //                 })}
-    //             </div>
-
-    //             <div className="mt-4 flex justify-center">
-    //                 <Pagination
-    //                     current={currentPage}
-    //                     pageSize={blogsPerPage}
-    //                     total={blogs.length}
-    //                     onChange={page => setCurrentPage(page)}
-    //                 />
-    //             </div>
-    //             {paginatedBlogs.length === 0 ? (
-    //                 <p className="text-center text-gray-500">No blogs found for this category.</p>
-    //             ) : (
-    //                 <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
-    //                     {/* blog cards */}
-    //                 </div>
-    //             )}
-    //         </div>
-    //     );
-    // };
+                {/* Remove white padding around dropdown */}
+                <style jsx global>{`
+        .ant-collapse-content {
+          background-color: #f3f4f6 !important; /* Tailwind gray-100 */
+        }
+        .ant-collapse-content-box {
+          padding: 0 !important;
+          background-color: #f3f4f6 !important;
+        }
+      `}</style>
+            </div>
+        );
+    };
 
     const BlogsGrid = ({ blogs, wishlist, onLoadMore, canLoadMore }) => {
         const wishlistBlogs = blogs.filter(blog => wishlist.includes(blog.seo_url));
@@ -498,26 +519,6 @@ export default function ViewPointPage() {
         );
     };
 
-    const categoryOptions = useMemo(() => {
-        const categories = new Set();
-        blogs.forEach(blog => {
-            if (blog.blogs) {
-                blog.blogs.forEach(b => categories.add(b.category));
-            }
-        });
-        return Array.from(categories);
-    }, [blogs]);
-
-    const conOptions = useMemo(() => {
-        const countries = new Set();
-        blogs.forEach(blog => {
-            if (blog.blogs) {
-                blog.blogs.forEach(b => countries.add(b.country));
-            }
-        });
-        return Array.from(countries);
-    }, [blogs]);
-
     const filteredReports = useMemo(() => {
         if (!selectedCat) return blogs;
         if (selectedCat.sub) {
@@ -533,6 +534,14 @@ export default function ViewPointPage() {
         }
         return blogs.filter(report => report.Report_Geography_Country === selectedCon.con);
     }, [blogs, selectedCon]);
+
+    const filterregReports = useMemo(() => {
+        if (!selectedReg) return blogs;
+        if (selectedReg.sub) {
+            return blogs.filter(report => report.Report_Geography_Region === selectedReg.sub);
+        }
+        return blogs.filter(report => report.Report_Geography_Region === selectedReg.reg);
+    }, [blogs, selectedReg]);
 
     const finalFilteredBlogs = useMemo(() => {
         let data = blogs;
@@ -550,6 +559,14 @@ export default function ViewPointPage() {
                 data = data.filter(report => report.Report_Geography_Region === selectedCon.sub);
             } else {
                 data = data.filter(report => report.Report_Geography_Country === selectedCon.con);
+            }
+        }
+
+        if (selectedReg) {
+            if (selectedReg.sub) {
+                data = data.filter(report => report.Report_Geography_Region === selectedReg.sub);
+            } else {
+                data = data.filter(report => report.Report_Geography_Region === selectedReg.reg);
             }
         }
 
@@ -572,7 +589,7 @@ export default function ViewPointPage() {
                 }
                 return b.Featured_Report_Status - a.Featured_Report_Status;
             });
-    }, [blogs, selectedCat, selectedCon, searchTerm, wishlist]);
+    }, [blogs, selectedCat, selectedCon, selectedReg, searchTerm, wishlist]);
 
 
     const filteredCategories = useMemo(() => {
@@ -588,35 +605,24 @@ export default function ViewPointPage() {
         );
     }, [country, blogs]);
 
+    const filteredRegions = useMemo(() => {
+        return region.filter(reg =>
+            finalFilteredBlogs.some(blog => blog.Report_Geography_Region === reg.name)
+        );
+    }, [region, blogs]);
+
     const visibleBlogs = useMemo(() => {
         return finalFilteredBlogs.slice(0, visibleCount);
     }, [finalFilteredBlogs, visibleCount]);
 
     useEffect(() => {
         setVisibleCount(15);
-    }, [selectedCat, selectedCon, searchTerm, wishlist]);
-
-
-    const paginatedBlogs = useMemo(() => {
-        const chunkSize = 3;
-        const result = [];
-        for (let i = 0; i < filteredReports.length; i += chunkSize) {
-            result.push(filteredReports.slice(i, i + chunkSize));
-        }
-        return result;
-    }, [filteredReports]);
-
-    const pagilogs = useMemo(() => {
-        const chunkSize = 3;
-        const result = [];
-        for (let i = 0; i < filterReports.length; i += chunkSize) {
-            result.push(filterReports.slice(i, i + chunkSize));
-        }
-        return result;
-    }, [filterReports]);
+    }, [selectedCat, selectedCon, selectedReg, searchTerm, wishlist]);
 
     const handleSearch = () => {
         setSearchTerm(searchInput);
+        setCurrentPage(1);
+        setVisibleCount(15);
         console.log('Search Term:', searchTerm);
     };
 
@@ -667,6 +673,7 @@ export default function ViewPointPage() {
                                         placeholder="Search..."
                                         value={searchInput}
                                         onChange={(e) => setSearchInput(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
                                         className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                                     />
                                     <button
@@ -747,16 +754,17 @@ export default function ViewPointPage() {
                             onClick={() => {
                                 setSelectedCat(null);
                                 setSelectedCon(null);
+                                setSelectedReg(null);
                                 setSearchTerm('');
                                 setSearchInput('');
                                 setCurrentPage(1);
                                 setVisibleCount(15);
                             }}
-                            className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !searchTerm
+                            className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !selectedReg && !searchTerm
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
                                 }`}
-                            disabled={!selectedCat && !selectedCon && !searchTerm}
+                            disabled={!selectedCat && !selectedCon && !selectedReg && !searchTerm}
                         >
                             Clear All Filters
                         </button>
@@ -775,6 +783,15 @@ export default function ViewPointPage() {
                             selectedCon={selectedCon}
                             onSelect={(selection) => {
                                 setSelectedCon(selection);
+                                setCurrentPage(1);
+                            }}
+                            blogs={blogs}
+                        />
+                        <RegionFilter
+                            region={filteredRegions}
+                            selectedReg={selectedReg}
+                            onSelect={(selection) => {
+                                setSelectedReg(selection);
                                 setCurrentPage(1);
                             }}
                             blogs={blogs}
