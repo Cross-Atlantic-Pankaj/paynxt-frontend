@@ -24,15 +24,58 @@ export async function GET(req) {
     const savedArticles = await SavedArticle.find({ userId: decoded.userId }).lean();
     const blogSlugs = savedArticles.map((article) => article.slug);
     const blogs = await BlogManager.find({ slug: { $in: blogSlugs } })
-      .select('imageIconurl category subcategory topic subtopic date slug title summary')
+      .select('imageIconurl category subcategory topic subtopic date slug title summary tileTemplateId')
       .lean();
+    
+    // Extract unique tileTemplateIds and fetch them in batch
+    const tileTemplateIds = [...new Set(
+      blogs
+        .map(blog => blog.tileTemplateId)
+        .filter(id => id && typeof id === 'string' && id.length === 24)
+    )];
+
+    let tileTemplatesMap = new Map();
+    if (tileTemplateIds.length > 0) {
+      try {
+        const TileTemplate = (await import('@/models/TileTemplate')).default;
+        const tileTemplates = await TileTemplate.find({
+          _id: { $in: tileTemplateIds }
+        }).lean();
+        
+        tileTemplates.forEach(template => {
+          tileTemplatesMap.set(template._id.toString(), template);
+        });
+      } catch (tileError) {
+        console.warn('Failed to fetch tile templates:', tileError);
+      }
+    }
     console.log('Fetched Blogs:', blogs);
-    // Map savedAt from savedArticles to blogs
+    // Map savedAt from savedArticles to blogs and join tile templates
     const enrichedBlogs = blogs.map((blog) => {
       const savedArticle = savedArticles.find((sa) => sa.slug === blog.slug);
-      return { ...blog, savedAt: savedArticle?.savedAt };
+      return { 
+        ...blog, 
+        savedAt: savedArticle?.savedAt,
+        tileTemplateId: blog.tileTemplateId ? 
+          tileTemplatesMap.get(blog.tileTemplateId.toString()) || blog.tileTemplateId : 
+          null
+      };
     });
-    return NextResponse.json({ success: true, data: enrichedBlogs });
+
+    // Sort by savedAt (most recent first)
+    enrichedBlogs.sort((a, b) => {
+      if (!a.savedAt || !b.savedAt) return 0;
+      return new Date(b.savedAt) - new Date(a.savedAt);
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      data: enrichedBlogs 
+    }, {
+      headers: {
+        'Cache-Control': 'private, no-cache', // Private data, don't cache
+      }
+    });
   } catch (error) {
     console.error('Error fetching saved articles:', error);
     return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });

@@ -63,14 +63,18 @@ export default function SavedArticlesPage() {
     const fetchSavedBlogs = async () => {
       if (!user) return;
       try {
-        const res = await fetch('/api/saved-articles', {
+        // Use optimized API that includes tile templates
+        const res = await fetch('/api/saved-articles/items', {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         console.log('Fetch Saved Blogs Response:', res.status, res.statusText);
         const data = await res.json();
         console.log('Saved Blogs Data:', data);
-        if (data.success) setBlogs(data.data);
-        else toast.error(data.message || 'Failed to fetch saved articles');
+        if (data.success) {
+          setBlogs(data.data || []);
+        } else {
+          toast.error(data.message || 'Failed to fetch saved articles');
+        }
       } catch (error) {
         console.error('Error fetching saved articles:', error);
         toast.error('Failed to fetch saved articles');

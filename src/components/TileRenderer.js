@@ -28,7 +28,7 @@ const processBatchRequests = async () => {
         if (response.ok) {
             const data = await response.json();
             
-            // Update cache and resolve all pending requests
+            // Update cache
             data.forEach(template => {
                 if (template) {
                     tileTemplateCache.set(template._id, template);
@@ -36,7 +36,7 @@ const processBatchRequests = async () => {
             });
             
             // Resolve all pending requests
-            pendingRequests.forEach((resolve, reject) => {
+            pendingRequests.forEach(({ resolve, reject }, id) => {
                 const template = tileTemplateCache.get(id);
                 if (template) {
                     resolve(template);
@@ -44,10 +44,15 @@ const processBatchRequests = async () => {
                     reject(new Error('Template not found'));
                 }
             });
+        } else {
+            // Reject all pending requests on API error
+            pendingRequests.forEach(({ resolve, reject }) => {
+                reject(new Error('Failed to fetch tile templates'));
+            });
         }
     } catch (error) {
         // Reject all pending requests on error
-        pendingRequests.forEach((resolve, reject) => {
+        pendingRequests.forEach(({ resolve, reject }) => {
             reject(error);
         });
     } finally {
@@ -68,22 +73,18 @@ const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' 
             return tileTemplateCache.get(id);
         }
 
-        // If batch loading is in progress, add to pending requests
-        if (batchLoading) {
-            return new Promise((resolve, reject) => {
-                pendingRequests.set(id, { resolve, reject });
-            });
-        }
-
-        // Start batch loading
-        batchLoading = true;
-        
-        // Set timeout to process batch
-        if (batchTimeout) clearTimeout(batchTimeout);
-        batchTimeout = setTimeout(processBatchRequests, 50); // 50ms delay to collect requests
-        
         return new Promise((resolve, reject) => {
+            // Add to pending requests
             pendingRequests.set(id, { resolve, reject });
+
+            // If not already batch loading, start the process
+            if (!batchLoading) {
+                batchLoading = true;
+                
+                // Set timeout to process batch
+                if (batchTimeout) clearTimeout(batchTimeout);
+                batchTimeout = setTimeout(processBatchRequests, 50); // 50ms delay to collect requests
+            }
         });
     }, []);
 
