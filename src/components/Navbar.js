@@ -137,42 +137,42 @@ const Navbar = () => {
           <div className="container">
             <div className="flex justify-center items-center gap-20 py-2">
               <div className="relative group">
-                <Link href="/" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick('/')}>
                   Welcome {user?.user?.Firstname} {user?.user?.Lastname}
                 </Link>
               </div>
 
 
               <div className="relative group">
-                <Link href="/access-reports" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/access-reports" className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick('/access-reports')}>
                   Access Reports
                 </Link>
               </div>
 
               <div className="relative group">
-                <Link href="/wishlist" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/wishlist" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick('/wishlist')}>
                   Wishlist
                 </Link>
               </div>
 
               <div className="relative group">
-                <Link href="/ask-an-analyst" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/ask-an-analyst" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick('/ask-an-analyst')}>
                   Ask an Analyst
                 </Link>
               </div>
 
               <div className="relative group">
-                <Link href="/report-store" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/report-store" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick('/report-store')}>
                   Report Store
                 </Link>
               </div>
               <div className="relative group">
-                <Link href="/insights" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/insights" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick('/insights')}>
                   Insights
                 </Link>
               </div>
               <div className="relative group">
-                <Link href="/saved-articles" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                <Link href="/saved-articles" className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick('/saved-articles')}>
                   Saved Articles
                 </Link>
               </div>
@@ -204,7 +204,7 @@ const Navbar = () => {
             <div className="flex justify-center items-center gap-2 py-2 [&>*]:m-0">
               {sections.map(section => (
                 <div key={section._id} className="relative group">
-                  <Link href={section.sectionUrl || '#'} className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link">
+                  <Link href={section.sectionUrl || '#'} className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link" onClick={() => handleLinkClick(section.sectionUrl || '#')}>
                     {section.section}
                   </Link>
                   {section.links.length > 0 && (
