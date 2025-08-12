@@ -1,20 +1,19 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
-import { Pagination as SwiperPagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import { useUser } from '@/context/UserContext';
-import Link from 'next/link';
-import { Pagination } from 'antd';
-import TileRenderer from '@/components/TileRenderer';
-import 'antd/dist/reset.css';   // if you use Ant Design v5+
-
+"use client";
+import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import { Pagination as SwiperPagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import { useUser } from "@/context/UserContext";
+import Link from "next/link";
+import { Pagination } from "antd";
+import TileRenderer from "@/components/TileRenderer";
+import "antd/dist/reset.css"; // if you use Ant Design v5+
 
 export default function HomePage() {
   const [banner, setBanner] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [sliders, setSliders] = useState([]);
   const [stats, setStats] = useState([]);
   const [platformData, setPlatformData] = useState(null);
@@ -31,62 +30,63 @@ export default function HomePage() {
   const visibleBlogs = blogs.slice(0, visibleCount);
   const [viewBlogs, setViewBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 6);
-
+  const filteredBlogs = viewBlogs
+    .filter((b) => b.is_featured === true)
+    .slice(0, 6);
 
   useEffect(() => {
     const fetchBanner = async () => {
-      const res = await fetch('/api/home-page/topbanner');
+      const res = await fetch("/api/home-page/topbanner");
       const data = await res.json();
       setBanner(data);
     };
 
     const fetchSliders = async () => {
-      const res = await fetch('/api/home-page/slider');
+      const res = await fetch("/api/home-page/slider");
       const data = await res.json();
       setSliders(data);
     };
 
     const fetchStats = async () => {
-      const res = await fetch('/api/home-page/stats');
+      const res = await fetch("/api/home-page/stats");
       const data = await res.json();
       setStats(data);
     };
 
     const fetchPlatformData = async () => {
-      const res = await fetch('/api/home-page/platsection');
+      const res = await fetch("/api/home-page/platsection");
       const data = await res.json();
       setPlatformData(Array.isArray(data) ? data : []); // ensure it's always an array
     };
 
     const fetchStrengths = async () => {
       try {
-        const res = await fetch('/api/home-page/strength');
+        const res = await fetch("/api/home-page/strength");
         const json = await res.json();
         if (json.success) setStrengths(json.data);
       } catch (err) {
-        console.error('Error fetching strengths:', err);
+        console.error("Error fetching strengths:", err);
       }
     };
 
     const fetchTechnologyPlatformData = async () => {
       try {
-        const res = await fetch('/api/home-page/techplat');
+        const res = await fetch("/api/home-page/techplat");
         const data = await res.json();
         setTechnologyPlatformData(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error('Error fetching technology platform data:', error);
+        console.error("Error fetching technology platform data:", error);
         setTechnologyPlatformData([]);
       }
     };
     const fetchProducts = async () => {
-      const res = await fetch('/api/home-page/prod');
+      const res = await fetch("/api/home-page/prod");
       const data = await res.json();
       setProductsData(Array.isArray(data) ? data : []);
     };
     const fetchResearchInsights = async () => {
       try {
-        const res = await fetch('/api/home-page/content');
+        const res = await fetch("/api/home-page/content");
 
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -96,33 +96,34 @@ export default function HomePage() {
         setFeaturedResearch(data.featuredResearch || []);
         setInsights(data.insights || []);
       } catch (error) {
-        console.error('Error fetching research insights:', error);
+        console.error("Error fetching research insights:", error);
       }
     };
     const fetchPartnerLogos = async () => {
       try {
-        const res = await fetch('/api/home-page/partner-logos');
+        const res = await fetch("/api/home-page/partner-logos");
         const json = await res.json();
         if (json.success) setPartnerLogos(json.data);
       } catch (error) {
-        console.error('Error fetching partner logos:', error);
+        console.error("Error fetching partner logos:", error);
       }
     };
 
     const fetchBlogs = async () => {
-      const res = await fetch('/api/report-store/repcontent');
+      const res = await fetch("/api/report-store/repcontent");
       const data = await res.json();
       // filter on client side
-      const featuredReports = data.filter(report => report.Featured_Report_Status === 1);
+      const featuredReports = data.filter(
+        (report) => report.Featured_Report_Status === 1
+      );
       setBlogs(featuredReports);
     };
 
     const fetchBlog = async () => {
-      const res = await fetch('/api/View-point/ViewBlogs');
+      const res = await fetch("/api/View-point/ViewBlogs");
       const data = await res.json();
       setViewBlogs(data);
     };
-
 
     fetchBanner();
     fetchSliders();
@@ -138,7 +139,7 @@ export default function HomePage() {
   }, []);
 
   const handleSearch = () => {
-    console.log('Search Term:', searchTerm);
+    console.log("Search Term:", searchTerm);
   };
 
   const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
@@ -147,14 +148,15 @@ export default function HomePage() {
         {blogs.map((blog, i) => {
           const reportUrl = `/report-store/${blog.seo_url}`;
           return (
-            <div key={i} className="h-full">
+            <div
+              key={i}
+              className="h-full">
               <Link
                 href={reportUrl}
-                className="bg-white flex flex-col justify-between h-full overflow-hidden block"
-              >
+                className="bg-white flex flex-col justify-between h-full overflow-hidden block">
                 {/* Tile Display - Outside padded container for full width */}
                 <div className="w-full h-50">
-                  {(blog.tileTemplateId && blog.tileTemplateId !== null) ? (
+                  {blog.tileTemplateId && blog.tileTemplateId !== null ? (
                     <TileRenderer
                       tileTemplateId={blog.tileTemplateId}
                       fallbackIcon="FileText"
@@ -178,13 +180,20 @@ export default function HomePage() {
                   <div>
                     <p className="text-sm leading-tight">
                       {blog.report_publish_date
-                        ? new Date(blog.report_publish_date).toLocaleString('en-US', { month: 'long', year: 'numeric' }).replace(',', '')
-                        : ''}
+                        ? new Date(blog.report_publish_date)
+                            .toLocaleString("en-US", {
+                              month: "long",
+                              year: "numeric",
+                            })
+                            .replace(",", "")
+                        : ""}
                     </p>
-                    <p className="text-sm text-gray-500">{blog.Product_sub_Category}</p>
+                    <p className="text-sm text-gray-500">
+                      {blog.Product_sub_Category}
+                    </p>
                     <div className="border-b border-gray-400 mb-4"></div>
                     <h3 className="text-md font-bold">
-                      {blog.report_title.split(' - ')[0]}
+                      {blog.report_title.split(" - ")[0]}
                     </h3>
                     <p className="text-sm text-gray-700">
                       {blog.report_summary?.length > 100
@@ -208,15 +217,16 @@ export default function HomePage() {
         <div className="mt-6 flex justify-center">
           <button
             onClick={onLoadMore}
-            className="px-6 py-3 rounded bg-[#155392] text-[white] hover:bg-[#0e3a6f] focus:outline-none"
-          >
+            className="px-6 py-3 rounded bg-[#155392] text-[white] hover:bg-[#0e3a6f] focus:outline-none">
             Load More
           </button>
         </div>
       )}
 
       {blogs.length === 0 && (
-        <p className="text-center text-gray-500 mt-4">No reports found for this filter.</p>
+        <p className="text-center text-gray-500 mt-4">
+          No reports found for this filter.
+        </p>
       )}
     </div>
   );
@@ -227,14 +237,19 @@ export default function HomePage() {
         <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
           {(blog || []).map((blo, i) => {
             const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blo.slug}`;
-            const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(blogUrl)}&title=${encodeURIComponent(blo.title)}&summary=${encodeURIComponent(blo.summary)}`;
+            const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+              blogUrl
+            )}&title=${encodeURIComponent(
+              blo.title
+            )}&summary=${encodeURIComponent(blo.summary)}`;
 
             return (
-              <div key={i} className='h-full'>
+              <div
+                key={i}
+                className="h-full">
                 <Link
                   href={`/blog-page/${blo.slug}`}
-                  className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition"
-                >
+                  className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition">
                   <div className="w-full h-40">
                     {blo.tileTemplateId ? (
                       <TileRenderer
@@ -244,33 +259,48 @@ export default function HomePage() {
                       />
                     ) : (
                       <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg">
-                        <span className="text-gray-500 text-sm">No template</span>
+                        <span className="text-gray-500 text-sm">
+                          No template
+                        </span>
                       </div>
                     )}
                   </div>
                   <div className="p-4 flex flex-col justify-between h-full">
                     <div>
                       <p className="text-sm leading-tight">
-                        {blo.date ? new Date(blo.date).toLocaleString('en-US', { month: 'long', year: 'numeric' }).replace(',', '') : ''}
+                        {blo.date
+                          ? new Date(blo.date)
+                              .toLocaleString("en-US", {
+                                month: "long",
+                                year: "numeric",
+                              })
+                              .replace(",", "")
+                          : ""}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {Array.isArray(blo.subcategory) ? blo.subcategory.join(', ') : blo.subcategory}
+                        {Array.isArray(blo.subcategory)
+                          ? blo.subcategory.join(", ")
+                          : blo.subcategory}
                       </p>
                       <div className="border-b border-gray-400 mb-4"></div>
                       <h3 className="text-md font-bold">{blo.title}</h3>
                       <p className="text-sm text-gray-700">
-                        {blo.summary?.length > 100 ? `${blo.summary.slice(0, 100)}...` : blo.summary}
+                        {blo.summary?.length > 100
+                          ? `${blo.summary.slice(0, 100)}...`
+                          : blo.summary}
                       </p>
                     </div>
-                    <div className='mt-2'>
+                    <div className="mt-2">
                       <a
                         href={linkedInShareUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
-                      >
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 24 24">
                           <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.7 8.5 8.7zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
                         </svg>
                         Share
@@ -284,14 +314,15 @@ export default function HomePage() {
         </div>
 
         {blog.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">No blogs found for this category.</p>
+          <p className="text-center text-gray-500 mt-4">
+            No blogs found for this category.
+          </p>
         )}
       </div>
     );
   };
 
   return (
-
     <main className="min-h-screen bg-white">
       {isLoggedIn ? (
         <>
@@ -306,22 +337,26 @@ export default function HomePage() {
                   {productsData.map((item, idx) => (
                     <div
                       key={idx}
-                      className="bg-white p-6 text-center border border-gray-200 hover:shadow-xl transition-all duration-300 h-90 flex flex-col justify-between"
-                    >
+                      className="bg-white p-6 text-center border border-gray-200 hover:shadow-xl transition-all duration-300 h-90 flex flex-col justify-between">
                       <div>
                         <img
                           src={item.imageIconurl}
                           alt={item.productName}
                           className="mx-auto h-9 mb-4 object-contain"
                         />
-                        <h3 className="text-lg font-semibold text-black mb-6">{item.productName}</h3>
-                        <p className="text-sm text-gray-700">{item.description}</p>
+                        <h3 className="text-lg font-semibold text-black mb-6">
+                          {item.productName}
+                        </h3>
+                        <p className="text-sm text-gray-700">
+                          {item.description}
+                        </p>
                       </div>
 
                       <a
-                        href={item.url?.startsWith('/') ? item.url : `/${item.url}`}
-                        className="mt-4 inline-block w-24 py-1 text-white bg-[#155392] rounded text-center mx-auto transition-all duration-300 hover:bg-[white] hover:text-orange-500"
-                      >
+                        href={
+                          item.url?.startsWith("/") ? item.url : `/${item.url}`
+                        }
+                        className="mt-4 inline-block w-24 py-1 text-white bg-[#155392] rounded text-center mx-auto transition-all duration-300 hover:bg-[white] hover:text-orange-500">
                         View
                       </a>
                     </div>
@@ -333,20 +368,23 @@ export default function HomePage() {
 
           <section className="bg-gray-100 py-10">
             <div className="max-w-7xl mx-auto px-4 mb-6 mt-10">
-              <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">- latest research -</p>
-              <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">Market Opportunities in Fintech</h2>
+              <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">
+                - latest research -
+              </p>
+              <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">
+                Market Opportunities in Fintech
+              </h2>
             </div>
             <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
               <div className="col-span-4">
                 <BlogsGrid
                   blogs={visibleBlogs}
-                  onLoadMore={() => setVisibleCount(prev => prev + 15)}
+                  onLoadMore={() => setVisibleCount((prev) => prev + 15)}
                 />
                 <div className="mt-6 flex justify-center">
                   <Link
                     href="/report-store"
-                    className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition"
-                  >
+                    className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition">
                     VIEW ALL
                   </Link>
                 </div>
@@ -356,8 +394,12 @@ export default function HomePage() {
 
           <section className="bg-gray-100 py-10">
             <div className="max-w-7xl mx-auto px-4 mb-6 mt-2">
-              <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">- Deeper Look -</p>
-              <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">Market Dynamics and Key Trends</h2>
+              <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">
+                - Deeper Look -
+              </p>
+              <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">
+                Market Dynamics and Key Trends
+              </h2>
             </div>
             <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
               <div className="col-span-4">
@@ -365,48 +407,51 @@ export default function HomePage() {
                 <div className="mt-6 flex justify-center">
                   <Link
                     href="/Insights"
-                    className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition"
-                  >
+                    className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition">
                     VIEW ALL
                   </Link>
                 </div>
               </div>
             </div>
           </section>
-
         </>
       ) : (
         <>
-          <style jsx global>{`
-  .swiper-pagination {
-    position: relative;
-    margin-top: 16px;
-    text-align: center;
-  }
+          <style
+            jsx
+            global>{`
+            .swiper-pagination {
+              position: relative;
+              margin-top: 16px;
+              text-align: center;
+            }
 
-  .swiper-pagination-bullet {
-    background: #155392 !important;
-    opacity: 1;
-  }
+            .swiper-pagination-bullet {
+              background: #155392 !important;
+              opacity: 1;
+            }
 
-  .swiper-pagination-bullet-active {
-    background: #FF6B00 !important;
-  }
-`}</style>
+            .swiper-pagination-bullet-active {
+              background: #ff6b00 !important;
+            }
+          `}</style>
 
           <section
             className="w-full py-55 px-8 bg-cover bg-center relative"
             style={{
-              backgroundImage: banner?.image ? `url(${banner.image})` : undefined,
-            }}
-          >
+              backgroundImage: banner?.image
+                ? `url(${banner.image})`
+                : undefined,
+            }}>
             <div className="absolute inset-0 bg-black/40"></div>
             <div className="relative z-10 flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
               {/* Left Banner Section */}
               <div className="w-2/3 text-left">
                 {banner ? (
                   <div>
-                    <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerHeading}</h1>
+                    <h1 className="text-4xl font-bold text-white mb-6">
+                      {banner.bannerHeading}
+                    </h1>
                     {/* <div className="flex flex-wrap gap-2 mb-6">
                   {banner.tags.map((tag, index) => (
                     <span
@@ -428,8 +473,7 @@ export default function HomePage() {
                       />
                       <button
                         onClick={handleSearch}
-                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300"
-                      >
+                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300">
                         Search
                       </button>
                     </div>
@@ -437,8 +481,7 @@ export default function HomePage() {
                       {banner.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                        >
+                          className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full">
                           {tag}
                         </span>
                       ))}
@@ -454,21 +497,24 @@ export default function HomePage() {
                 <Swiper
                   modules={[SwiperPagination, Autoplay]}
                   pagination={{
-                    el: '.custom-pagination',
+                    el: ".custom-pagination",
                     clickable: true,
                   }}
                   spaceBetween={16}
                   slidesPerView={1}
                   autoplay={{
-                    delay: 5000,   // 5 seconds
+                    delay: 5000, // 5 seconds
                     disableOnInteraction: false, // keeps auto-rotating even after user interacts
-                  }}
-                >
+                  }}>
                   {sliders.map((slide, index) => (
                     <SwiperSlide key={index}>
                       <div className="mb-4 border-b pb-4">
-                        <p className="text-xs text-gray-500 uppercase mb-1">{slide.typeText}</p>
-                        <h3 className="text-lg font-bold text-[#155392]">{slide.title}</h3>
+                        <p className="text-xs text-gray-500 uppercase mb-1">
+                          {slide.typeText}
+                        </p>
+                        <h3 className="text-lg font-bold text-[#155392]">
+                          {slide.title}
+                        </h3>
                         <p className="text-sm text-gray-700 mt-1 mb-2">
                           {slide.shortDescription.length > 100
                             ? `${slide.shortDescription.slice(0, 100)}...`
@@ -479,8 +525,7 @@ export default function HomePage() {
                             href={slide.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-white bg-[#155392] hover:bg-[#0e3a6f] px-3 py-1 rounded"
-                          >
+                            className="text-sm text-white bg-[#155392] hover:bg-[#0e3a6f] px-3 py-1 rounded">
                             Read More
                           </a>
                         </div>
@@ -508,7 +553,6 @@ export default function HomePage() {
     }
   `}</style>
               </div>
-
             </div>
           </section>
           <section className="w-full py-5 bg-[#FF6B00]">
@@ -517,21 +561,24 @@ export default function HomePage() {
                 {stats.map((stat, index) => (
                   <div
                     key={index}
-                    className="bg-[#FF6B00] px-6 py-7 min-h-[220px] flex flex-col justify-between relative"
-                  >
+                    className="bg-[#FF6B00] px-6 py-7 min-h-[220px] flex flex-col justify-between relative">
                     {/* Manual divider */}
                     {index < stats.length - 1 && (
                       <div className="md:block absolute right-0 top-1/2 transform -translate-y-1/2 h-[50%] w-px bg-white/90 z-10" />
                     )}
 
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{stat.title}</h3>
+                      <h3 className="text-lg font-semibold text-white">
+                        {stat.title}
+                      </h3>
                       <p className="text-1xl text-white mt-2 inline-block bg-[#155392] text-white px-3 py-1 rounded-tr-xl rounded-bl-xl">
                         {stat.statText}
                       </p>
                     </div>
 
-                    <p className="text-sm text-white mt-4">{stat.description}</p>
+                    <p className="text-sm text-white mt-4">
+                      {stat.description}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -556,8 +603,7 @@ export default function HomePage() {
                     {item.sections.map((section, index) => (
                       <div
                         key={index}
-                        className="bg-gray-100 p-8 h-72"
-                      >
+                        className="bg-gray-100 p-8 h-72">
                         <img
                           src={section.image}
                           alt={section.imageTitle}
@@ -581,7 +627,9 @@ export default function HomePage() {
             <div className="max-w-8xl mx-auto">
               <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-2">
                 {partnerLogos.map((logo, index) => (
-                  <div key={index} className="flex justify-center items-center">
+                  <div
+                    key={index}
+                    className="flex justify-center items-center">
                     <img
                       src={logo.imageUrl}
                       alt={logo.altText || `Logo ${index + 1}`}
@@ -604,22 +652,26 @@ export default function HomePage() {
                   {productsData.map((item, idx) => (
                     <div
                       key={idx}
-                      className="bg-white p-6 text-center border border-gray-200 hover:shadow-xl transition-all duration-300 h-90 flex flex-col justify-between"
-                    >
+                      className="bg-white p-6 text-center border border-gray-200 hover:shadow-xl transition-all duration-300 h-90 flex flex-col justify-between">
                       <div>
                         <img
                           src={item.imageIconurl}
                           alt={item.productName}
                           className="mx-auto h-9 mb-4 object-contain"
                         />
-                        <h3 className="text-lg font-semibold text-black mb-6">{item.productName}</h3>
-                        <p className="text-sm text-gray-700">{item.description}</p>
+                        <h3 className="text-lg font-semibold text-black mb-6">
+                          {item.productName}
+                        </h3>
+                        <p className="text-sm text-gray-700">
+                          {item.description}
+                        </p>
                       </div>
 
                       <a
-                        href={item.url?.startsWith('/') ? item.url : `/${item.url}`}
-                        className="mt-4 inline-block w-24 py-1 text-white bg-[#155392] rounded text-center mx-auto transition-all duration-300 hover:bg-[white] hover:text-orange-500"
-                      >
+                        href={
+                          item.url?.startsWith("/") ? item.url : `/${item.url}`
+                        }
+                        className="mt-4 inline-block w-24 py-1 text-white bg-[#155392] rounded text-center mx-auto transition-all duration-300 hover:bg-[white] hover:text-orange-500">
                         View
                       </a>
                     </div>
@@ -640,8 +692,7 @@ export default function HomePage() {
                   {technologyPlatformData.map((platform, idx) => (
                     <div
                       key={idx}
-                      className="bg-gray-100 h-180"
-                    >
+                      className="bg-gray-100 h-180">
                       <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-4xl text-black text-center mb-6">
                         {platform.title}
                       </h1>
@@ -664,17 +715,19 @@ export default function HomePage() {
                   {platformData.map((item, index) => (
                     <div
                       key={index}
-                      className="w-full h-78 border-10 border-gray-200 hover:border-[#FF6B00] bg-[#155392] p-6 text-center transition-all duration-300"
-                    >
-                      <h3 className="text-lg font-semibold text-white mt-16 mb-2">{item.title}</h3>
-                      <p className="text-sm text-white mb-2">{item.description}</p>
+                      className="w-full h-78 border-10 border-gray-200 hover:border-[#FF6B00] bg-[#155392] p-6 text-center transition-all duration-300">
+                      <h3 className="text-lg font-semibold text-white mt-16 mb-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-white mb-2">
+                        {item.description}
+                      </p>
                       <a
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block font-semibold px-2 py-1 rounded text-[#FF6B00] hover:text-[white] transition-colors duration-300"
-                      >
-                        {item.clickText || 'Learn More'}
+                        className="inline-block font-semibold px-2 py-1 rounded text-[#FF6B00] hover:text-[white] transition-colors duration-300">
+                        {item.clickText || "Learn More"}
                       </a>
                     </div>
                   ))}
@@ -682,65 +735,72 @@ export default function HomePage() {
               </div>
             </section>
           )}
-          <section className="w-full py-10 bg-gray-100 px-3">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-rows-1 md:grid-cols-3 items-stretch">
-
+          <section className="flex justify-around w-full py-10 bg-gray-100 px-12 md:px-8 lg:px-3">
+            <div className="w-full">
+              <div className="grid grid-rows-1 md:grid-cols-3 items-stretch gap-y-12 md:gap-y-0 md:gap-x-8">
                 {/* Featured Research */}
-                <div className="space-y-12">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 ml-[-40px]">Featured Research</h2>
+                <div className="flex-col items-center justify-items-center space-y-5 md:space-y-12 md:block">
+                  <div className="flex justify-around items-center mb-4 w-full">
+                    <h2 className="text-xl font-semibold text-gray-700 pl-14 lg:pl-0 lg:ml-[-40px]">
+                      Featured
+                    </h2>
                     <a
                       href="/report-store"
-                      className="text-[#FF6B00] hover:text-[#155392] text-sm font-semibold transition-colors duration-200"
-                    >
+                      className="text-[#FF6B00] hover:text-[#155392] text-sm font-semibold transition-colors duration-200">
                       View All →
                     </a>
                   </div>
 
                   {featuredResearch.slice(0, 5).map((item, idx) => (
-                    <div key={idx} className="relative flex items-center h-20 w-120 pl-14 pr-4 py-4 bg-white">
+                    <div
+                      key={idx}
+                      className="relative flex items-center h-20 w-5/6 pr-4 py-4 bg-white pl-14">
                       <img
                         src={item.content.imageurl}
                         alt={item.content.title}
-                        className="absolute left-0 h-20 w-20 bg-gray-100 object-cover -translate-x-1/2"
+                        className="absolute left-0 h-20 w-20 bg-gray-100 object-cover -translate-x-1/2 z-20"
                       />
                       <a
                         href={`/${item.content.url}`}
-                        className="text-md font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200"
-
-                      >
+                        className="text-base font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200">
                         {item.content.title}
                       </a>
-
                     </div>
                   ))}
                 </div>
 
                 {/* Middle Orange Bar */}
                 <div className="flex justify-center items-center relative">
-                  <div className="w-60 bg-[#FF6B00] h-full relative flex flex-col items-center justify-center space-y-1 py-10">
-                    <span className="text-white text-2xl font-bold rotate-0">Insight.</span>
-                    <span className="text-white text-2xl font-bold rotate-0">Innovation.</span>
-                    <span className="text-white text-2xl font-bold rotate-0">Impact.</span>
+                  <div className="w-full md:w-60 bg-[#FF6B00] md:h-full relative flex flex-col items-center justify-center space-y-2 py-10">
+                    <span className="text-white text-xl md:text-2xl font-bold">
+                      Insight.
+                    </span>
+                    <span className="text-white text-xl md:text-2xl font-bold">
+                      Innovation.
+                    </span>
+                    <span className="text-white text-xl md:text-2xl font-bold">
+                      Impact.
+                    </span>
                   </div>
                 </div>
 
-
                 {/* Insights */}
-                <div className="space-y-12">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 ml-[-40px]">Insights</h2>
+                <div className="flex-col items-center justify-items-center space-y-5 md:space-y-12 md:block">
+                  <div className="flex justify-around items-center mb-4 w-full">
+                    <h2 className="text-xl font-semibold text-gray-700 pl-14 lg:pl-0 lg:ml-[-40px]">
+                      Insights
+                    </h2>
                     <a
                       href="/report-store"
-                      className="text-[#FF6B00] hover:text-[#155392] text-sm font-semibold transition-colors duration-200"
-                    >
+                      className="text-[#FF6B00] hover:text-[#155392] text-sm font-semibold transition-colors duration-200">
                       View All →
                     </a>
                   </div>
 
                   {insights.slice(0, 5).map((item, idx) => (
-                    <div key={idx} className="relative flex items-center h-20 w-120 pl-14 pr-4 py-4 bg-white">
+                    <div
+                      key={idx}
+                      className="relative flex items-center h-20 w-5/6 pr-4 py-4 bg-white pl-14">
                       <img
                         src={item.content.imageurl}
                         alt={item.content.title}
@@ -748,30 +808,26 @@ export default function HomePage() {
                       />
                       <a
                         href={`/${item.content.url}`}
-                        className="text-md font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200"
-
-                      >
+                        className="font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200">
                         {item.content.title}
                       </a>
-
                     </div>
                   ))}
                 </div>
-
               </div>
             </div>
           </section>
 
           <section className="w-full bg-white h-160 py-12 px-6">
             <div className="max-w-7xl mx-auto grid grid-rows-1 md:grid-cols-[30%_70%] items-center gap-4">
-
               {/* Left Section: Text and Button */}
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-gray-800">
                   PayNXT360 Insights
                 </h2>
                 <p className="text-gray-600 text-lg">
-                  Sign up for The PayNXT360 Insights, and get a weekly roundup of market events, innovations and data you can trust and use.
+                  Sign up for The PayNXT360 Insights, and get a weekly roundup
+                  of market events, innovations and data you can trust and use.
                 </p>
                 <a href="/login">
                   <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-200">
@@ -788,7 +844,6 @@ export default function HomePage() {
                   className="w-full max-w-4xl"
                 />
               </div>
-
             </div>
           </section>
         </>
@@ -796,4 +851,3 @@ export default function HomePage() {
     </main>
   );
 }
-
