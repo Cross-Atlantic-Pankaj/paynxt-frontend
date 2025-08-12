@@ -42,7 +42,7 @@ export async function POST(req) {
 
     if (String(user.otp.code) !== String(otp)) {
       return NextResponse.json(
-        { error: 'Invalid OTP' },
+        { error: 'Incorrect or expired OTP. Please sign up again.' },
         { status: 400 }
       );
     }

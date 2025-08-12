@@ -11,7 +11,7 @@ export async function GET(req, { params }) {
 
   if (!data || data.length === 0) {
     data = await SectorDynamics.find({ slug: null }).sort({ createdAt: -1 });
-    console.log('Fallback data with slug null:', data);
+    // console.log('Fallback data with slug null:', data);
   }
 
   return new Response(JSON.stringify(data), { status: 200 });

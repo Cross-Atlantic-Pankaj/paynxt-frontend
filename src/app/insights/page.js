@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import TileRenderer from '@/components/TileRenderer';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
-
 const { Text } = Typography;
 const { Option } = Select;
 const { Panel } = Collapse;
@@ -54,7 +53,7 @@ export default function ViewPointPage() {
                 setSliders([]);
             }
         };
-        
+
         const fetchBlogs = async () => {
             try {
                 const res = await fetch('/api/View-point/ViewBlogs');
@@ -66,7 +65,7 @@ export default function ViewPointPage() {
                 setBlogs([]);
             }
         };
-        
+
         const fetchCategories = async () => {
             try {
                 const res = await fetch('/api/View-point/ViewCategories');
@@ -77,7 +76,7 @@ export default function ViewPointPage() {
                 setCategories([]);
             }
         };
-        
+
         const fetchTopics = async () => {
             try {
                 const res = await fetch('/api/View-point/ViewTopics'); // adjust path
@@ -102,7 +101,7 @@ export default function ViewPointPage() {
                 setIsLoading(false);
             }
         };
-        
+
         fetchAllData();
     }, []);
 
@@ -263,8 +262,8 @@ export default function ViewPointPage() {
                                                 handleTopicClick(topic.name);
                                             }}
                                             className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedTopic?.topic === topic.name && !selectedTopic?.sub
-                                                    ? 'bg-[#155392] text-white font-semibold'
-                                                    : 'text-gray-800 font-semibold'
+                                                ? 'bg-[#155392] text-white font-semibold'
+                                                : 'text-gray-800 font-semibold'
                                                 }`}
                                         >
                                             {topic.name}
@@ -481,8 +480,17 @@ export default function ViewPointPage() {
             }
         }
 
+        if (searchTerm.trim() !== "") {
+            const term = searchTerm.toLowerCase();
+            result = result.filter(blog =>
+                blog.title?.toLowerCase().includes(term) ||
+                blog.summary?.toLowerCase().includes(term) ||
+                (Array.isArray(blog.subcategory) && blog.subcategory.join(' ').toLowerCase().includes(term))
+            );
+        }
+
         return result;
-    }, [blogs, selectedCat, selectedTopic]);
+    }, [blogs, selectedCat, selectedTopic, searchTerm]);
 
     // Only keep categories that are present in filteredBlogs
     const filteredCategories = useMemo(() => {
@@ -544,7 +552,7 @@ export default function ViewPointPage() {
 
 
     const handleSearch = () => {
-        console.log('Search Term:', searchTerm);
+        setSearchTerm(searchTerm);
     };
 
     // Show loading state while data is being fetched
@@ -562,9 +570,9 @@ export default function ViewPointPage() {
     return (
 
         <main className="min-h-screen bg-gray-100">
-            <PerformanceMonitor 
-                componentName="Insights Page" 
-                startTime={pageLoadStart} 
+            <PerformanceMonitor
+                componentName="Insights Page"
+                startTime={pageLoadStart}
             />
             <Toaster position="top-right" />
             <style jsx global>{`

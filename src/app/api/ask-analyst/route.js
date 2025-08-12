@@ -37,10 +37,10 @@ export async function POST(req) {
     }
 
     // Validate file (optional, but required per your frontend)
-    if (!file) {
-      console.error('No file uploaded');
-      return NextResponse.json({ success: false, message: 'Please upload a document' }, { status: 400 });
-    }
+    // if (!file) {
+    //   console.error('No file uploaded');
+    //   return NextResponse.json({ success: false, message: 'Please upload a document' }, { status: 400 });
+    // }
 
     // Validate environment variables
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_EMAIL_PASS) {
@@ -54,7 +54,8 @@ export async function POST(req) {
     // Save uploaded file temporarily
     let filePath = null;
     let fileName = null;
-    if (file) {
+
+    if (file && typeof file.arrayBuffer === 'function') {
       const buffer = Buffer.from(await file.arrayBuffer());
       fileName = file.name || `upload-${Date.now()}.bin`;
       filePath = join(tmpdir(), fileName);
@@ -89,11 +90,11 @@ export async function POST(req) {
       text: `Subject: ${subject}\n\nQuery: ${query}\n\nFrom: ${firstName} ${lastName}\nEmail: ${email}\nUserID: ${decoded.userId}`,
       attachments: filePath
         ? [
-            {
-              filename: fileName,
-              path: filePath,
-            },
-          ]
+          {
+            filename: fileName,
+            path: filePath,
+          },
+        ]
         : [],
     };
 
