@@ -762,7 +762,7 @@ export default function HomePage() {
                       />
                       <a
                         href={`/${item.content.url}`}
-                        className="text-base font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200">
+                        className="font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200 md:text-base">
                         {item.content.title}
                       </a>
                     </div>
