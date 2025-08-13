@@ -30,9 +30,10 @@ export default function HomePage() {
   const visibleBlogs = blogs.slice(0, visibleCount);
   const [viewBlogs, setViewBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const filteredBlogs = viewBlogs
-    .filter((b) => b.is_featured === true)
-    .slice(0, 6);
+  const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 6);
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -139,7 +140,10 @@ export default function HomePage() {
   }, []);
 
   const handleSearch = () => {
-    console.log("Search Term:", searchTerm);
+    const results = data.filter(item =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredData(results);
   };
 
   const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
@@ -469,6 +473,7 @@ export default function HomePage() {
                         placeholder="Search for market intelligence on fintech"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                       />
                       <button

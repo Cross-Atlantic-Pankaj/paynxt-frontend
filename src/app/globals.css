@@ -56,3 +56,39 @@ input:-webkit-autofill:focus{
   list-style-type: decimal;
   margin-left: 1.5em;
 }
+
+.tiptap ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+.tiptap ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+.tiptap blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 1rem;
+  color: #555;
+  font-style: italic;
+}
+.tiptap pre {
+  background: #f4f4f4;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+.tiptap code {
+  background: #f1f1f1;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+}
+.tiptap a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+

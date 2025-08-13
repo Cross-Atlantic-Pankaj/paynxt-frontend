@@ -20,16 +20,18 @@ export default function AskAnalystPage() {
       return;
     }
 
-    if (!file) {
-      toast.error('Please upload a document');
-      return;
-    }
+    // if (!file) {
+    //   toast.error('Please upload a document');
+    //   return;
+    // }
 
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       formData.append(key, value);
     });
-    formData.append('file', file);
+    if (file) {
+      formData.append('file', file);
+    }
 
     setLoading(true);
     const toastId = toast.loading('Submitting query...');
@@ -103,7 +105,7 @@ export default function AskAnalystPage() {
         >
           <Input.TextArea rows={4} />
         </Form.Item>
-        <Form.Item label="Upload Document" required>
+        <Form.Item label="Upload Document">
           <Upload
             beforeUpload={(file) => {
               setFile(file);

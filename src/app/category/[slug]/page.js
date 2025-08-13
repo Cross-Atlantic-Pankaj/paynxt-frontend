@@ -266,13 +266,13 @@ export default function B2CPaymentIntelligencePage() {
           ))}
         </div>
       </section>
-      <section className="bg-gray-100 h-200 py-10 px-6">
+      <section className="bg-gray-100 h-250 py-10 px-6">
         <div className="max-w-7xl mx-auto">
           <ul className="space-y-8">
             {sectorDynamics.map((item, index) => (
               <li
                 key={index}
-                className="text-gray-600 mt-2 text-base leading-[2]"
+                className="tiptap text-gray-600 mt-2 text-base leading-[2]"
                 dangerouslySetInnerHTML={{ __html: item.text }}
               />
             ))}
