@@ -125,7 +125,7 @@ export default function SignupPage() {
       } else {
         toast.success('OTP verified successfully!', { id: otpToast });
         setUserContext({ token: data.token, user: data.user });
-        router.push('/dashboard');
+        router.push('/');
       }
     } catch (err) {
       setOtpError('Incorrect or expired OTP. Please sign up again.');

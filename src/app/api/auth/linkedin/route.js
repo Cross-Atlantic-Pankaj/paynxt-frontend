@@ -80,7 +80,7 @@ async function handleLinkedInAuth(code) {
       { expiresIn: "7d" }
     );
 
-    const redirectUrl = new URL(process.env.NEXT_PUBLIC_APP_HOME_URL || "http://localhost:3000/dashboard");
+    const redirectUrl = new URL(process.env.NEXT_PUBLIC_APP_HOME_URL || "http://localhost:3000/");
     redirectUrl.searchParams.set("token", token);
     redirectUrl.searchParams.set("user", encodeURIComponent(JSON.stringify({
       id: user._id,
