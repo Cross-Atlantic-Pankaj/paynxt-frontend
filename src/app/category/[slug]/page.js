@@ -6,18 +6,31 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useParams } from 'next/navigation';
-
+import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import TileRenderer from "@/components/TileRenderer";
 
 export default function B2CPaymentIntelligencePage() {
   const { slug } = useParams();
 
   const [banner, setBanner] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [sliders, setSliders] = useState([]);
   const [sectionThree, setSectionThree] = useState(null);
   const [whyPayNxt, setWhyPayNxt] = useState(null);
   const [sectorDynamics, setSectorDynamics] = useState([]);
   const [stats, setStats] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
+  const [blogs, setBlogs] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const visibleBlogs = blogs.slice(0, visibleCount);
+  const [viewBlogs, setViewBlogs] = useState([]);
+  const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 2);
+
+  const handleTagClick = (tag) => {
+    // Navigate to /report-store?search=tagName
+    router.push(`/report-store?search=${encodeURIComponent(tag)}`);
+  };
 
   useEffect(() => {
     if (!slug) return;
@@ -31,7 +44,6 @@ export default function B2CPaymentIntelligencePage() {
     const fetchSliders = async () => {
       const res = await fetch(`/api/category/${slug}/slider`);
       const data = await res.json();
-      console.log('Fetched sliders data:', data);
       if (Array.isArray(data)) setSliders(data);
       else setSliders([]); // fallback to empty array
     };
@@ -41,6 +53,24 @@ export default function B2CPaymentIntelligencePage() {
       const res = await fetch(`/api/category/${slug}/sectionthree`);
       const data = await res.json();
       setSectionThree(data[0]);
+    };
+
+    const fetchBlogs = async () => {
+      const res = await fetch("/api/report-store/repcontent");
+      const data = await res.json();
+
+      // filter + sort on client side
+      const featuredReports = data
+        .filter((report) => report.Featured_Report_Status === 1)
+        .sort((a, b) => (b.single_user_dollar_price || 0) - (a.single_user_dollar_price || 0));
+
+      setBlogs(featuredReports);
+    };
+
+    const fetchBlog = async () => {
+      const res = await fetch("/api/View-point/ViewBlogs");
+      const data = await res.json();
+      setViewBlogs(data);
     };
 
     const fetchWhyPayNxt = async () => {
@@ -64,14 +94,197 @@ export default function B2CPaymentIntelligencePage() {
     fetchBanner();
     fetchSliders();
     fetchSectionThree();
+    fetchBlogs();
     fetchWhyPayNxt();
     fetchSectorDynamics();
     fetchStats();
+    fetchBlog();
 
   }, [slug]);
 
   const handleSearch = () => {
-    console.log('Search Term:', searchTerm);
+    if (!searchTerm.trim()) return;
+    router.push(`/report-store?search=${encodeURIComponent(searchTerm)}`);
+  };
+
+  const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
+    <div className="w-full">
+      <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
+        {blogs.map((blog, i) => {
+          const reportUrl = `/report-store/${blog.seo_url}`;
+          return (
+            <div
+              key={i}
+              className="h-full">
+              <Link
+                href={reportUrl}
+                className="bg-white flex flex-col justify-between h-full overflow-hidden block">
+                {/* Tile Display - Outside padded container for full width */}
+                <div className="w-full h-50">
+                  {blog.tileTemplateId && blog.tileTemplateId !== null ? (
+                    <TileRenderer
+                      tileTemplateId={blog.tileTemplateId}
+                      fallbackIcon="FileText"
+                      className="w-full h-40"
+                    />
+                  ) : (
+                    <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">No template</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Report Button - Positioned between tile and text content */}
+                <div className="px-4 -mt-2 mb-2">
+                  <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
+                    Report
+                  </span>
+                </div>
+
+                <div className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <p className="text-sm leading-tight">
+                      {blog.report_publish_date
+                        ? new Date(blog.report_publish_date)
+                          .toLocaleString("en-US", {
+                            month: "long",
+                            year: "numeric",
+                          })
+                          .replace(",", "")
+                        : ""}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {blog.Product_sub_Category}
+                    </p>
+                    <div className="border-b border-gray-400 mb-4"></div>
+                    <h3 className="text-md font-bold">
+                      {blog.report_title.split(" - ")[0]}
+                    </h3>
+                    <p className="text-sm text-gray-700">
+                      {blog.report_summary?.length > 100
+                        ? `${blog.report_summary.slice(0, 100)}...`
+                        : blog.report_summary}
+                    </p>
+                  </div>
+                  <div className="-mt-8">
+                    <span className="inline-block px-3 py-1 bg-[#155392] text-white text-sm rounded-full hover:bg-[#0e3a6f] transition">
+                      View
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          );
+        })}
+      </div>
+
+      {canLoadMore && (
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={onLoadMore}
+            className="px-6 py-3 rounded bg-[#155392] text-[white] hover:bg-[#0e3a6f] focus:outline-none">
+            Load More
+          </button>
+        </div>
+      )}
+
+      {blogs.length === 0 && (
+        <p className="text-center text-gray-500 mt-4">
+          No reports found for this filter.
+        </p>
+      )}
+    </div>
+  );
+
+  const BlogGrid = ({ blog = [] }) => {
+    return (
+      <div className="max-w-3xl mx-auto">
+        <div className="grid grid-rows-1 md:grid-cols-2 gap-4">
+          {(blog || []).map((blo, i) => {
+            const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blo.slug}`;
+            const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+              blogUrl
+            )}&title=${encodeURIComponent(
+              blo.title
+            )}&summary=${encodeURIComponent(blo.summary)}`;
+
+            return (
+              <div
+                key={i}
+                className="h-full">
+                <Link
+                  href={`/blog-page/${blo.slug}`}
+                  className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition">
+                  <div className="w-full h-40">
+                    {blo.tileTemplateId ? (
+                      <TileRenderer
+                        tileTemplateId={blo.tileTemplateId}
+                        fallbackIcon="FileText"
+                        className="w-full h-40"
+                      />
+                    ) : (
+                      <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg">
+                        <span className="text-gray-500 text-sm">
+                          No template
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4 flex flex-col justify-between h-full">
+                    <div>
+                      <p className="text-sm leading-tight">
+                        {blo.date
+                          ? new Date(blo.date)
+                            .toLocaleString("en-US", {
+                              month: "long",
+                              year: "numeric",
+                            })
+                            .replace(",", "")
+                          : ""}
+                      </p>
+                      {/* <p className="text-sm text-gray-500">
+                        {Array.isArray(blo.subcategory)
+                          ? blo.subcategory.join(", ")
+                          : blo.subcategory}
+                      </p> */}
+                      <div className="border-b border-gray-400 mb-4"></div>
+                      <h3 className="text-md font-bold">{blo.title}</h3>
+                      <p className="text-sm text-gray-700">
+                        {blo.summary?.length > 100
+                          ? `${blo.summary.slice(0, 100)}...`
+                          : blo.summary}
+                      </p>
+                    </div>
+                    <div className="mt-2">
+                      <a
+                        href={linkedInShareUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 24 24">
+                          <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.7 8.5 8.7zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
+                        </svg>
+                        Share
+                      </a>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+
+        {blog.length === 0 && (
+          <p className="text-center text-gray-500 mt-4">
+            No blogs found for this category.
+          </p>
+        )}
+      </div>
+    );
   };
 
   if (!whyPayNxt) return null;
@@ -108,16 +321,7 @@ export default function B2CPaymentIntelligencePage() {
             {banner ? (
               <div>
                 <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {(banner.tags || []).map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+
                 <p className="text-md text-white mt-1 mb-8">
                   {banner.bannerDescription}
                 </p>
@@ -136,6 +340,17 @@ export default function B2CPaymentIntelligencePage() {
                   >
                     Search
                   </button>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6 mt-4">
+                  {(banner.tags || []).map((tag, index) => (
+                    <span
+                      key={index}
+                      onClick={() => handleTagClick(tag)}
+                      className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:opacity-90 duration-300"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             ) : (
@@ -210,10 +425,10 @@ export default function B2CPaymentIntelligencePage() {
             {stats.map((item, index) => (
               <div
                 key={index}
-                className="border-4 border-[#FF6B00] bg-gray-100 p-6 rounded shadow text-[#155392]"
+                className="border-t-10 border-purple-700 bg-[#f5f3f7] p-6 text-[#155392]"
               >
-                <h3 className="text-lg text-center font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-center">{item.description}</p>
+                <h3 className="text-3xl text-purple-700 text-center font-extrabold mb-2">{item.title}</h3>
+                <p className="text-md text-center">{item.description}</p>
               </div>
             ))}
           </div>
@@ -243,6 +458,32 @@ export default function B2CPaymentIntelligencePage() {
           </div>
         )}
       </div>
+
+      <section className="bg-gray-100 py-10">
+        <div className="max-w-7xl mx-auto px-4 mb-6 mt-10">
+          <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">
+            - latest research -
+          </p>
+          <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">
+            Market Opportunities in Fintech
+          </h2>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
+          <div className="col-span-4">
+            <BlogsGrid
+              blogs={visibleBlogs}
+              onLoadMore={() => setVisibleCount((prev) => prev + 15)}
+            />
+            <div className="mt-6 flex justify-center">
+              <Link
+                href="/report-store"
+                className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition">
+                VIEW MORE
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="bg-white py-15 px-4 sm:px-8 lg:px-16">
         <p className="text-[#FF6B00] text-sm text-center tracking-wide mb-2">
@@ -277,6 +518,58 @@ export default function B2CPaymentIntelligencePage() {
               />
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="bg-gray-100 py-10">
+        <div className="max-w-7xl mx-auto px-4 mb-6 mt-2">
+          <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">
+            - View Points -
+          </p>
+          <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">
+            Market Dynamics and Key Trends
+          </h2>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
+          <div className="col-span-4">
+            <BlogGrid blog={filteredBlogs || []} />
+            <div className="mt-6 flex justify-center">
+              <Link
+                href="/insights"
+                className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition">
+                READ MORE
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full bg-white h-160 py-12 px-6">
+        <div className="max-w-7xl mx-auto grid grid-rows-1 md:grid-cols-[30%_70%] items-center gap-4">
+          {/* Left Section: Text and Button */}
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold text-gray-800">
+              PayNXT360 Insights
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Sign up for The PayNXT360 Insights, and get a weekly roundup
+              of market events, innovations and data you can trust and use.
+            </p>
+            <a href="/login">
+              <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-200">
+                SIGN UP NOW
+              </button>
+            </a>
+          </div>
+
+          {/* Right Section: Image */}
+          <div className="flex justify-center">
+            <img
+              src="/Images/whypay.svg" // make sure your image is at public/images/your-image.jpg
+              alt="Newsletter"
+              className="w-full max-w-4xl"
+            />
+          </div>
         </div>
       </section>
     </main>

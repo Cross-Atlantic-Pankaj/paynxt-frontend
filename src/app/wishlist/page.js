@@ -686,16 +686,6 @@ export default function ViewPointPage() {
                         {banner ? (
                             <div>
                                 <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
-                                <div className="flex flex-wrap gap-2 mb-6">
-                                    {banner.tags?.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
                                 <p className="text-md text-white mt-1 mb-8">
                                     {banner.bannerDescription}
                                 </p>
@@ -715,6 +705,16 @@ export default function ViewPointPage() {
                                     >
                                         Search
                                     </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2 mb-6 mt-4">
+                                    {banner.tags?.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
                         ) : (

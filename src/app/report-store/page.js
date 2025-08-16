@@ -9,6 +9,7 @@ import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import TileRenderer from '@/components/TileRenderer';
 import { set } from 'mongoose';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -16,7 +17,7 @@ const { Panel } = Collapse;
 
 export default function ViewPointPage() {
     const [banner, setBanner] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    // const [searchTerm, setSearchTerm] = useState('');
     const [sliders, setSliders] = useState([]);
     const [blogs, setBlogs] = useState([]);
     const [selectedCat, setSelectedCat] = useState(null);
@@ -27,7 +28,12 @@ export default function ViewPointPage() {
     const [region, setRegion] = useState([]);
     const [selectedReg, setSelectedReg] = useState(null);
     const [visibleCount, setVisibleCount] = useState(15); // initially show 9 blogs
-    const [searchInput, setSearchInput] = useState('');
+    // const [searchInput, setSearchInput] = useState('');
+    const searchParams = useSearchParams();
+    const initialSearch = searchParams.get('search') || '';
+    const [searchInput, setSearchInput] = useState(initialSearch); // Initialize with query
+    const [searchTerm, setSearchTerm] = useState(initialSearch);
+    const router = useRouter();
 
 
     useEffect(() => {
@@ -392,14 +398,14 @@ export default function ViewPointPage() {
                                         </div>
                                     )}
                                 </div>
-                                
+
                                 {/* Report Button - Positioned between tile and text content */}
                                 <div className="px-4 -mt-2 mb-2">
                                     <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
                                         Report
                                     </span>
                                 </div>
-                                
+
                                 <div className="p-4 flex flex-col justify-between h-full">
                                     <div>
                                         <p className="text-sm leading-tight">
@@ -479,16 +485,14 @@ export default function ViewPointPage() {
         if (searchTerm.trim()) {
             const tokens = searchTerm
                 .toLowerCase()
-                .replace(/[^\p{L}\p{N}\s]/gu, " ")  // remove punctuation (unicode-aware)
+                .replace(/[^\p{L}\p{N}\s]/gu, ' ')
                 .split(/\s+/)
                 .filter(Boolean);
 
             data = data.filter((report) => {
-                const hay = `${report.report_title || ""} ${report.report_summary || ""}`
+                const hay = `${report.report_title || ''} ${report.report_summary || ''}`
                     .toLowerCase()
-                    .replace(/[^\p{L}\p{N}\s]/gu, " ");
-
-                // require every token to be present
+                    .replace(/[^\p{L}\p{N}\s]/gu, ' ');
                 return tokens.every((t) => hay.includes(t));
             });
         }
@@ -534,7 +538,14 @@ export default function ViewPointPage() {
         setSearchTerm(searchInput);
         setCurrentPage(1);
         setVisibleCount(15);
-        console.log('Search Term:', searchTerm);
+        // Update URL with new search term
+        const params = new URLSearchParams(searchParams);
+        if (searchInput.trim()) {
+            params.set('search', searchInput);
+        } else {
+            params.delete('search');
+        }
+        router.push(`/report-store?${params.toString()}`);
     };
 
     return (
@@ -589,7 +600,7 @@ export default function ViewPointPage() {
                                     {banner.tags?.map((tag, index) => (
                                         <span
                                             key={index}
-                                            className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
+                                            className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full"
                                         >
                                             {tag}
                                         </span>

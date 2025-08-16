@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Pagination } from "antd";
 import TileRenderer from "@/components/TileRenderer";
 import "antd/dist/reset.css"; // if you use Ant Design v5+
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
   const [banner, setBanner] = useState(null);
@@ -33,6 +34,11 @@ export default function HomePage() {
   const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 6);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const router = useRouter();
+  const handleTagClick = (tag) => {
+    // Navigate to /report-store?search=tagName
+    router.push(`/report-store?search=${encodeURIComponent(tag)}`);
+  };
 
 
   useEffect(() => {
@@ -140,10 +146,8 @@ export default function HomePage() {
   }, []);
 
   const handleSearch = () => {
-    const results = data.filter(item =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredData(results);
+    if (!searchTerm.trim()) return;
+    router.push(`/report-store?search=${encodeURIComponent(searchTerm)}`);
   };
 
   const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
@@ -185,11 +189,11 @@ export default function HomePage() {
                     <p className="text-sm leading-tight">
                       {blog.report_publish_date
                         ? new Date(blog.report_publish_date)
-                            .toLocaleString("en-US", {
-                              month: "long",
-                              year: "numeric",
-                            })
-                            .replace(",", "")
+                          .toLocaleString("en-US", {
+                            month: "long",
+                            year: "numeric",
+                          })
+                          .replace(",", "")
                         : ""}
                     </p>
                     <p className="text-sm text-gray-500">
@@ -274,11 +278,11 @@ export default function HomePage() {
                       <p className="text-sm leading-tight">
                         {blo.date
                           ? new Date(blo.date)
-                              .toLocaleString("en-US", {
-                                month: "long",
-                                year: "numeric",
-                              })
-                              .replace(",", "")
+                            .toLocaleString("en-US", {
+                              month: "long",
+                              year: "numeric",
+                            })
+                            .replace(",", "")
                           : ""}
                       </p>
                       <p className="text-sm text-gray-500">
@@ -410,7 +414,7 @@ export default function HomePage() {
                 <BlogGrid blog={filteredBlogs || []} />
                 <div className="mt-6 flex justify-center">
                   <Link
-                    href="/Insights"
+                    href="/insights"
                     className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition">
                     VIEW ALL
                   </Link>
@@ -456,16 +460,6 @@ export default function HomePage() {
                     <h1 className="text-4xl font-bold text-white mb-6">
                       {banner.bannerHeading}
                     </h1>
-                    {/* <div className="flex flex-wrap gap-2 mb-6">
-                  {banner.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div> */}
 
                     <div className="mt-2 flex items-center">
                       <input
@@ -486,7 +480,8 @@ export default function HomePage() {
                       {banner.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full">
+                          onClick={() => handleTagClick(tag)}
+                          className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:opacity-80 duration-300">
                           {tag}
                         </span>
                       ))}
@@ -562,14 +557,16 @@ export default function HomePage() {
           </section>
           <section className="w-full py-5 bg-[#FF6B00]">
             <div className="relative">
+              {/* First Row - Stats */}
               <div className="grid grid-rows-1 md:grid-cols-4 text-center">
                 {stats.map((stat, index) => (
                   <div
                     key={index}
-                    className="bg-[#FF6B00] px-6 py-7 min-h-[220px] flex flex-col justify-between relative">
+                    className="bg-[#FF6B00] px-6 py-2 min-h-[110px] flex flex-col justify-center relative"
+                  >
                     {/* Manual divider */}
                     {index < stats.length - 1 && (
-                      <div className="md:block absolute right-0 top-1/2 transform -translate-y-1/2 h-[50%] w-px bg-white/90 z-10" />
+                      <div className="md:block absolute right-0 top-1/2 transform -translate-y-1 h-[70%] w-px bg-white/90 z-10" />
                     )}
 
                     <div>
@@ -580,15 +577,21 @@ export default function HomePage() {
                         {stat.statText}
                       </p>
                     </div>
-
-                    <p className="text-sm text-white mt-4">
-                      {stat.description}
-                    </p>
                   </div>
+                ))}
+              </div>
+
+              {/* Second Row - Descriptions */}
+              <div className="grid grid-rows-1 md:grid-cols-4 text-center">
+                {stats.map((stat, index) => (
+                  <p key={index} className="text-sm text-white px-6">
+                    {stat.description}
+                  </p>
                 ))}
               </div>
             </div>
           </section>
+
 
           <section className="w-full py-10 bg-gray-100">
             <div className="max-w-6xl mx-auto space-y-10">
@@ -630,7 +633,7 @@ export default function HomePage() {
 
           <section className="w-full bg-gray-100">
             <div className="max-w-8xl mx-auto">
-              <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-2">
+              <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-1">
                 {partnerLogos.map((logo, index) => (
                   <div
                     key={index}
@@ -717,32 +720,56 @@ export default function HomePage() {
             <section className="w-full bg-white">
               <div className="relative">
                 <div className="grid grid-rows-1 md:grid-cols-3">
-                  {platformData.map((item, index) => (
-                    <div
-                      key={index}
-                      className="w-full h-78 border-10 border-gray-200 hover:border-[#FF6B00] bg-[#155392] p-6 text-center transition-all duration-300">
-                      <h3 className="text-lg font-semibold text-white mt-16 mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-white mb-2">
-                        {item.description}
-                      </p>
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block font-semibold px-2 py-1 rounded text-[#FF6B00] hover:text-[white] transition-colors duration-300">
-                        {item.clickText || "Learn More"}
-                      </a>
-                    </div>
-                  ))}
+                  {platformData.map((item, index) => {
+                    const images = [
+                      "/Images/paynxt360-knowledge-center.jpg",
+                      "/Images/report-store.jpg",
+                      "/Images/consulting.jpg"
+                    ];
+
+                    return (
+                      <div
+                        key={index}
+                        className="relative w-full h-80 border-10 border-gray-200 hover:border-[#FF6B00] p-6 text-center transition-all duration-300 overflow-hidden"
+                      >
+                        {/* Background Image */}
+                        <img
+                          src={images[index]}
+                          alt={item.title}
+                          className="absolute inset-0 w-full h-full object-cover z-0"
+                        />
+
+                        {/* Blue overlay */}
+                        <div className="absolute inset-0 bg-[#155392] opacity-85 z-[1]"></div>
+
+                        {/* Existing content */}
+                        <div className="relative z-[2]">
+                          <h3 className="text-lg font-semibold text-white mt-16 mb-2">
+                            {item.title}
+                          </h3>
+                          <p className="text-sm text-white mb-2">
+                            {item.description}
+                          </p>
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block font-semibold px-2 py-1 rounded text-[#FF6B00] hover:text-[white] transition-colors duration-300"
+                          >
+                            {item.clickText || "Learn More"}
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </section>
           )}
-          <section className="flex justify-around w-full py-10 bg-gray-100 px-12 md:px-8 lg:px-3">
+
+          <section className="flex justify-around max-w-7xl mx-auto py-10 px-20 md:px-8 lg:px-3">
             <div className="w-full">
-              <div className="grid grid-rows-1 md:grid-cols-3 items-stretch gap-y-12 md:gap-y-0 md:gap-x-8">
+              <div className="grid grid-rows-1 md:grid-cols-3 items-stretch gap-y-12 md:gap-y-0 md:gap-x-2">
                 {/* Featured Research */}
                 <div className="flex-col items-center justify-items-center space-y-5 md:space-y-12 md:block">
                   <div className="flex justify-around items-center mb-4 w-full">
@@ -759,7 +786,7 @@ export default function HomePage() {
                   {featuredResearch.slice(0, 5).map((item, idx) => (
                     <div
                       key={idx}
-                      className="relative flex items-center h-20 w-5/6 pr-4 py-4 bg-white pl-14">
+                      className="relative flex items-center h-20 w-5/6 py-4 bg-white pl-14">
                       <img
                         src={item.content.imageurl}
                         alt={item.content.title}
@@ -776,7 +803,7 @@ export default function HomePage() {
 
                 {/* Middle Orange Bar */}
                 <div className="flex justify-center items-center relative">
-                  <div className="w-full md:w-60 bg-[#FF6B00] md:h-full relative flex flex-col items-center justify-center space-y-2 py-10">
+                  <div className="w-100 md:w-60 bg-[#FF6B00] md:h-full relative flex flex-col items-center justify-center space-y-2 py-10">
                     <span className="text-white text-xl md:text-2xl font-bold">
                       Insight.
                     </span>
