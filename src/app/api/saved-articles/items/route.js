@@ -19,7 +19,7 @@ export async function GET(req) {
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Decoded JWT:', decoded);
+      // console.log('Decoded JWT:', decoded);
     } catch (error) {
       console.error('JWT Error:', error.message, error);
       return NextResponse.json({ success: false, message: `Invalid token: ${error.message}` }, { status: 401 });
@@ -69,8 +69,6 @@ export async function GET(req) {
         console.warn('Failed to fetch tile templates:', tileError);
       }
     }
-    
-    console.log('Fetched Blogs:', blogs);
     
     // Map savedAt from savedArticles to blogs and join tile templates
     const enrichedBlogs = blogs.map((blog) => {

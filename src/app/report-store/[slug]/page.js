@@ -114,6 +114,43 @@ export default function ReportPage({ params }) {
         fetchPartnerLogos();
     }, [slug]);
 
+    const handleSearch = () => {
+        if (!searchTerm.trim()) return;
+        router.push(`/report-store?search=${encodeURIComponent(searchTerm)}`);
+    };
+
+    const handleSampleRequest = async () => {
+        if (!user) {
+            // Not logged in → redirect to login
+            router.push(`/login?callbackUrl=/report-store/${report.seo_url}`);
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/report-store/send-sample-request", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    reportId: report._id,
+                    reportTitle: report.report_title,
+                    userEmail: user.user.email,
+                    firstName: user.user.Firstname,
+                }),
+            });
+
+            if (res.ok) {
+                toast.success("Sample request sent! Please check your email.");
+            } else {
+                toast.error("Something went wrong, please try again.");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Error while sending request.");
+        }
+    };
+
     const addToWishlist = async () => {
         if (!user) {
             localStorage.setItem('wishlistSeoUrl', report.seo_url);
@@ -291,11 +328,12 @@ export default function ReportPage({ params }) {
                             placeholder="Search..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                             className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-white focus:outline-none focus:ring-2 focus:ring-white"
                         />
                         <button
-                            onClick={() => console.log('Search clicked:', searchTerm)}
-                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-white hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                            onClick={handleSearch}
+                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-white hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300 cursor-pointer"
                         >
                             Search
                         </button>
@@ -455,12 +493,20 @@ export default function ReportPage({ params }) {
                                     PURCHASE REPORT
                                 </button>
                                 <div className="my-2 text-gray-500 font-medium">-OR-</div>
-                                <a
-                                    onClick={addToWishlist} // ✅ Now this works
-                                    className="inline-block text-center font-semibold text-[white] bg-[#FF6B00] hover:bg-[#155392] hover:text-[white] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300 cursor-pointer"
-                                >
-                                    ADD TO WISHLIST
-                                </a>
+                                <div className="flex gap-4">
+                                    <a
+                                        onClick={addToWishlist}
+                                        className="text-center font-semibold text-white bg-[#FF6B00] hover:bg-[#155392] hover:text-white px-4 py-1 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300 cursor-pointer"
+                                    >
+                                        ADD TO WISHLIST
+                                    </a>
+                                    <a
+                                        onClick={handleSampleRequest}
+                                        className="text-center font-semibold text-white bg-[#FF6B00] hover:bg-[#155392] hover:text-white px-4 py-1 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300 cursor-pointer uppercase"
+                                    >
+                                        Request for sample
+                                    </a>
+                                </div>
                                 <div className="mt-4">
                                     <a
                                         href="/checkout"  // replace with your real PayPal checkout URL or route
@@ -592,7 +638,7 @@ export default function ReportPage({ params }) {
 
             <section className="w-full bg-gray-100">
                 <div className="max-w-8xl mx-auto">
-                    <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-2">
+                    <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-1">
                         {partnerLogos.map((logo, index) => (
                             <div key={index} className="flex justify-center items-center">
                                 <img

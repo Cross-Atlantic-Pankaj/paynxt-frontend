@@ -34,6 +34,10 @@ export default function ViewPointPage() {
     const [searchInput, setSearchInput] = useState(initialSearch); // Initialize with query
     const [searchTerm, setSearchTerm] = useState(initialSearch);
     const router = useRouter();
+    const handleTagClick = (tag) => {
+        // Navigate to /report-store?search=tagName
+        router.push(`/report-store?search=${encodeURIComponent(tag)}`);
+    };
 
 
     useEffect(() => {
@@ -49,10 +53,20 @@ export default function ViewPointPage() {
             setSliders(data);
         };
         const fetchBlogs = async () => {
-            const res = await fetch('/api/report-store/repcontent');
+            const res = await fetch("/api/report-store/repcontent");
             const data = await res.json();
-            setBlogs(data);
+
+            // Filter client-side based on search query
+            if (initialSearch) {
+                const filtered = data.filter((report) =>
+                    report.report_title.toLowerCase().includes(initialSearch.toLowerCase())
+                );
+                setBlogs(filtered);
+            } else {
+                setBlogs(data);
+            }
         };
+
         const fetchCategories = async () => {
             const res = await fetch('/api/report-store/repcat');
             const data = await res.json();
@@ -75,7 +89,7 @@ export default function ViewPointPage() {
         fetchSliders();
         fetchBlogs();
         fetchregion();
-    }, []);
+    }, [initialSearch]);
 
     const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
@@ -591,7 +605,7 @@ export default function ViewPointPage() {
                                     />
                                     <button
                                         onClick={handleSearch}
-                                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300 cursor-pointer"
                                     >
                                         Search
                                     </button>
@@ -600,7 +614,8 @@ export default function ViewPointPage() {
                                     {banner.tags?.map((tag, index) => (
                                         <span
                                             key={index}
-                                            className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full"
+                                            onClick={() => handleTagClick(tag)}
+                                            className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:opacity-80 duration-300"
                                         >
                                             {tag}
                                         </span>

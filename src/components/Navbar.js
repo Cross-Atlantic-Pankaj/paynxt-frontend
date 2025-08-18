@@ -480,10 +480,10 @@ const Navbar = () => {
             <div className="flex justify-center items-center gap-20 py-2">
               <div className="relative group">
                 <Link
-                  href="/"
+                  href="/user"
                   className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
-                  onClick={() => handleLinkClick("/")}>
-                  Welcome {user?.user?.Firstname} {user?.user?.Lastname}
+                  onClick={() => handleLinkClick("/user")}>
+                  My Account
                 </Link>
               </div>
 

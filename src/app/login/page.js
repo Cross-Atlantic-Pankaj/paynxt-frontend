@@ -149,16 +149,16 @@ export default function LoginPage() {
         {/* Right: Signup */}
         <div className="w-1/2 bg-[#054B7D] text-white p-10 flex flex-col justify-center items-center">
           <h2 className="text-3xl font-bold mb-2 text-center">Don't have an account Yet?</h2>
-          <p className="mb-6 text-xs text-center">
+          <p className="mb-8 text-xs text-center">
             By creating an account with our store, you will be able to move through the checkout process faster, store multiple shipping addresses, view and track your orders in your account and more.
           </p>
           <button
             onClick={() => router.push('/signup')}
-            className="w-32 bg-orange-500 text-white py-2 rounded font-semibold hover:bg-orange-600 transition mb-4"
+            className="w-32 bg-orange-500 text-white py-2 rounded font-semibold hover:bg-orange-600 transition mt-2 mb-4"
           >
             SIGN UP
           </button>
-          <div className="text-center text-gray-200 text-xs mb-4">-OR-</div>
+          <div className="text-center text-gray-200 text-xs mb-4 mt-4">-OR-</div>
           <button
             onClick={handleLinkedInLogin}
             className="flex items-center justify-center w-full bg-[#2176ae] text-white py-2 rounded font-semibold hover:bg-[#005983] transition"

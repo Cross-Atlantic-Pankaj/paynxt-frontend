@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { writeFile, unlink } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
+import connectDB from '@/lib/db';
+import EmailTemplate from '@/models/EmailTemplate';
 
 export async function POST(req) {
   try {
@@ -30,37 +32,43 @@ export async function POST(req) {
     const query = formData.get('query');
     const file = formData.get('file');
 
-    // Validate required fields
     if (!firstName || !lastName || !email || !subject || !query) {
-      console.error('Missing required fields:', { firstName, lastName, email, subject, query });
       return NextResponse.json({ success: false, message: 'All fields are required' }, { status: 400 });
     }
 
-    // Validate file (optional, but required per your frontend)
-    // if (!file) {
-    //   console.error('No file uploaded');
-    //   return NextResponse.json({ success: false, message: 'Please upload a document' }, { status: 400 });
-    // }
-
-    // Validate environment variables
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_EMAIL_PASS) {
-      console.error('Missing environment variables:', {
-        ADMIN_EMAIL: process.env.ADMIN_EMAIL,
-        ADMIN_EMAIL_PASS: !!process.env.ADMIN_EMAIL_PASS,
-      });
       return NextResponse.json({ success: false, message: 'Server configuration error' }, { status: 500 });
     }
 
     // Save uploaded file temporarily
     let filePath = null;
     let fileName = null;
-
     if (file && typeof file.arrayBuffer === 'function') {
       const buffer = Buffer.from(await file.arrayBuffer());
       fileName = file.name || `upload-${Date.now()}.bin`;
       filePath = join(tmpdir(), fileName);
       await writeFile(filePath, buffer);
     }
+
+    // DB connection + fetch email template
+    await connectDB();
+    const template = await EmailTemplate.findOne({ type: "ask_an_analyst" });
+    if (!template) {
+      return NextResponse.json({ success: false, message: 'Email template not found' }, { status: 404 });
+    }
+
+    // Replace placeholders in subject & body
+    const replacePlaceholders = (str) =>
+      str
+        .replace(/{{firstName}}/g, firstName)
+        .replace(/{{lastName}}/g, lastName)
+        .replace(/{{email}}/g, email)
+        .replace(/{{subject}}/g, subject)
+        .replace(/{{query}}/g, query)
+        .replace(/{{userId}}/g, decoded.userId || "");
+
+    const compiledSubject = replacePlaceholders(template.subject);
+    const compiledBody = replacePlaceholders(template.body);
 
     // Create nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -74,15 +82,15 @@ export async function POST(req) {
     // Verify transporter connection
     await transporter.verify();
 
-    // Prepare user confirmation email
+    // Email to user (from template)
     const userMail = {
       from: `"Paynxt360 Support" <${process.env.ADMIN_EMAIL}>`,
       to: email,
-      subject: 'Query Received: Ask an Analyst',
-      text: `Hi ${firstName},\n\nWe have received your query: "${subject}".\n\nOur team will get back to you shortly.\n\nBest,\nPaynxt360 Support Team`,
+      subject: compiledSubject,
+      html: compiledBody,
     };
 
-    // Prepare admin notification email
+    // Email to Admin (still custom for you)
     const adminMail = {
       from: `"Paynxt360 Support" <${process.env.ADMIN_EMAIL}>`,
       to: process.env.ADMIN_EMAIL,
@@ -90,20 +98,18 @@ export async function POST(req) {
       text: `Subject: ${subject}\n\nQuery: ${query}\n\nFrom: ${firstName} ${lastName}\nEmail: ${email}\nUserID: ${decoded.userId}`,
       attachments: filePath
         ? [
-          {
-            filename: fileName,
-            path: filePath,
-          },
-        ]
+            {
+              filename: fileName,
+              path: filePath,
+            },
+          ]
         : [],
     };
 
-    // Send both emails
     await Promise.all([transporter.sendMail(userMail), transporter.sendMail(adminMail)]);
 
-    // Clean up uploaded file
     if (filePath) {
-      await unlink(filePath).catch(err => console.error('Error deleting file:', err));
+      await unlink(filePath).catch((err) => console.error('Error deleting file:', err));
     }
 
     return NextResponse.json({ success: true, message: 'Query submitted successfully' });

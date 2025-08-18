@@ -1,8 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
+import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
 
 export default function ContactPage() {
+  const { user, isLoading: userLoading } = useUser();
+  const router = useRouter();
   const [form, setForm] = useState({
     topic: 'Please Select ',
     firstName: '',
@@ -14,14 +18,41 @@ export default function ContactPage() {
     captchaAnswer: '',
     notRobot: false
   });
-
   const [captcha, setCaptcha] = useState({ num1: 0, num2: 0 });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const banner = {
+    title: "Contact Us",
+    description: "PayNXT360's View Point briefs offer data, insights and opinion, enabling companies formulate successful strategies and deliver strong ROI. Register now and get access to several insightful briefs covering emerging business models, consumer insights, and payment market innovation.",
+    tags: ["Fintech", "Payments", "Market Insights", "Consumer Behavior", "Industry Trends"]
+  };
+
+  const handleSearch = () => {
+    console.log('Search term:', searchTerm);
+  };
+
+  const handleTagClick = (tag) => {
+    setSearchTerm(tag);
+    console.log('Tag clicked:', tag);
+  };
 
   useEffect(() => {
     generateCaptcha();
   }, []);
+
+  useEffect(() => {
+    if (user && user.user) {
+      setForm((prevForm) => ({
+        ...prevForm,
+        firstName: user.user.Firstname || '',
+        lastName: user.user.Lastname || '',
+        companyName: user.user.companyName || '',
+        jobTitle: user.user.jobTitle || '',
+        email: user.user.email || ''
+      }));
+    }
+  }, [user]);
 
   const generateCaptcha = () => {
     const num1 = Math.floor(Math.random() * 10) + 1;
@@ -40,6 +71,12 @@ export default function ContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!user) {
+      setStatus('❌ Please log in to submit a query');
+      router.push('/login?callbackUrl=/contact');
+      return;
+    }
+
     if (parseInt(form.captchaAnswer) !== captcha.num1 + captcha.num2) {
       setStatus('❌ Wrong captcha answer.');
       return;
@@ -54,7 +91,10 @@ export default function ContactPage() {
 
     const res = await fetch('/api/contact', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${user.token}`
+      },
       body: JSON.stringify(form)
     });
 
@@ -80,9 +120,45 @@ export default function ContactPage() {
     }
   };
 
+  if (userLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen  p-6">
-      {/* Form Container */}
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="w-full bg-[#155392] py-20 px-6">
+        <div className="max-w-7xl mx-auto text-left">
+          <h1 className="text-4xl font-bold text-white mb-6">{banner.title}</h1>
+          <p className="text-lg text-white mb-6">{banner.description}</p>
+          {/* <div className="mt-2 flex items-center">
+                        <input
+                            type="text"
+                            placeholder="Search for market intelligence on fintech"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
+                        />
+                        <button
+                            onClick={handleSearch}
+                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300"
+                        >
+                            Search
+                        </button>
+                    </div> */}
+          {/* <div className="flex flex-wrap gap-2 mb-6 mt-4">
+                        {banner.tags.map((tag, index) => (
+                            <span
+                                key={index}
+                                onClick={() => handleTagClick(tag)}
+                                className="bg-white text-[#FF6B00] text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:bg-opacity-80 duration-300"
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div> */}
+        </div>
+      </div>
       <div className="w-full max-w-2xl bg-white/80 p-8">
         <h1 className="text-md text-center uppercase text-[#FF6B00] mb-2">- Get in Touch -</h1>
         <h2 className="text-center mb-6 text-3xl">Send your query to PayNXT360</h2>
@@ -91,7 +167,6 @@ export default function ContactPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Topic Dropdown */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">
               What would you like to talk to us about? *
@@ -112,7 +187,6 @@ export default function ContactPage() {
             </select>
           </div>
 
-          {/* Name Fields */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block font-medium text-gray-700 mb-1">First Name *</label>
@@ -137,7 +211,6 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Company Name */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">Company Name *</label>
             <input
@@ -150,7 +223,6 @@ export default function ContactPage() {
             />
           </div>
 
-          {/* Job Title */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">Job Title *</label>
             <input
@@ -163,7 +235,6 @@ export default function ContactPage() {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">Email Address *</label>
             <input
@@ -176,7 +247,6 @@ export default function ContactPage() {
             />
           </div>
 
-          {/* Message */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">Message *</label>
             <textarea
@@ -189,7 +259,6 @@ export default function ContactPage() {
             />
           </div>
 
-          {/* Captcha */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">
               The answer is ({captcha.num1} + {captcha.num2} = ?)
@@ -204,7 +273,6 @@ export default function ContactPage() {
             />
           </div>
 
-          {/* Not a Robot */}
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"
@@ -216,7 +284,6 @@ export default function ContactPage() {
             <label className="text-gray-700">I am not a robot</label>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -229,9 +296,7 @@ export default function ContactPage() {
         {status && <p className="mt-4 text-center text-sm font-medium">{status}</p>}
       </div>
 
-      {/* Contact Info Grid */}
-      <div className="mt-30 grid grid-rows -1 sm:grid-cols-2 lg:grid-cols-4 gap-40 text-center">
-        {/* Office 1 */}
+      <div className="mt-10 grid grid-rows-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 text-center">
         <div className="flex flex-col items-center">
           <img src="/Images/office1.svg" alt="Head Office" className="w-16 h-16 mb-3" />
           <h3 className="text-lg font-semibold uppercase">England</h3>
@@ -239,7 +304,6 @@ export default function ContactPage() {
           <p className="text-sm text-gray-500">25 Milcote Drive, Sutton Coldfield West Midlands, B73 6 QJ</p>
         </div>
 
-        {/* Office 2 */}
         <div className="flex flex-col items-center">
           <img src="/Images/office2.svg" alt="Branch Office" className="w-16 h-16 mb-3" />
           <h3 className="text-lg font-semibold uppercase">Oregon</h3>
@@ -247,7 +311,6 @@ export default function ContactPage() {
           <p className="text-sm text-gray-500">Columbia Blvd Suite C15-544670 Portland, Oregon, 97217</p>
         </div>
 
-        {/* Office 3 */}
         <div className="flex flex-col items-center">
           <img src="/Images/office3.svg" alt="Support Center" className="w-16 h-16 mb-3" />
           <h3 className="text-lg font-semibold uppercase">Bangalore</h3>
@@ -255,7 +318,6 @@ export default function ContactPage() {
           <p className="text-sm text-gray-500">Site #13, Reliaable Lifestyle, Kasavanahalli Main Road, Bangalore - 102</p>
         </div>
 
-        {/* Office 4 */}
         <div className="flex flex-col items-center">
           <img src="/Images/office4.svg" alt="Asia Office" className="w-20 h-20 mb-3" />
           <h3 className="text-lg font-semibold uppercase">Mumbai</h3>

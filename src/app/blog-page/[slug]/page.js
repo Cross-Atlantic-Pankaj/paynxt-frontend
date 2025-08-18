@@ -12,6 +12,8 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import slugify from '@/lib/slugify';
 import TileRenderer from '@/components/TileRenderer';
+import toast, { Toaster } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 // import Head from 'next/head';
 
 export default function BlogPage() {
@@ -27,6 +29,8 @@ export default function BlogPage() {
     const [consults, setConsults] = useState([]);
     const [featuredReports, setFeaturedReports] = useState([]);
     const pathname = usePathname();
+    const [savedArticles, setSavedArticles] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         if (!slug) return;
@@ -116,6 +120,46 @@ export default function BlogPage() {
     if (loading) return <div className="text-center mt-10">Loading blog...</div>;
     if (!blog) return <div className="text-center mt-10 text-red-500">Blog not found</div>;
 
+    const handleSaveArticle = async (blog, e) => {
+        e.preventDefault(); // Prevent any default behavior
+        e.stopPropagation(); // Stop event bubbling to parent Link
+        if (!user) {
+            toast.error('Please log in to save articles');
+            router.push(`/login?callbackUrl=/blog-page/${blog.slug}`);
+            return;
+        }
+
+        const isSaved = savedArticles.includes(blog.slug);
+        const toastId = toast.loading(isSaved ? 'Removing article...' : 'Saving article...');
+        try {
+            const res = await fetch('/api/saved-articles', {
+                method: isSaved ? 'DELETE' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify({ slug: blog.slug }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setSavedArticles((prev) =>
+                    isSaved ? prev.filter((s) => s !== blog.slug) : [...prev, blog.slug]
+                );
+                toast.success(isSaved ? 'Article removed from saved' : 'Article saved successfully', {
+                    id: toastId,
+                });
+            } else {
+                toast.error(data.message || 'Failed to save article', { id: toastId });
+            }
+        } catch (error) {
+            console.error('Error saving article:', error);
+            toast.error('Failed to save article', { id: toastId });
+        }
+    };
+
+
+    const isSaved = savedArticles.includes(blog.slug);
+
     const handleSearch = () => {
         console.log('Search Term:', searchTerm);
     };
@@ -147,6 +191,33 @@ export default function BlogPage() {
                             {banner ? (
                                 <div>
                                     <h1 className="text-3xl font-bold text-white mb-6">{banner.title}</h1>
+                                    
+                                    <div className="pt-0 flex gap-2">
+                                        <a
+                                            href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://pay-nxt360.vercel.app/blog-page/${blog.slug}`)}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.2 8.5 8.2zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
+                                            </svg>
+                                            Share
+                                        </a>
+                                        <button
+                                            onClick={(e) => handleSaveArticle(blog, e)}
+                                            className={`inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border text-sm font-medium transition ${isSaved
+                                                ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500'
+                                                : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                                            </svg>
+                                            {isSaved ? 'Remove' : 'Save'}
+                                        </button>
+                                    </div>
                                     <div className="flex flex-wrap gap-2 mb-6">
                                         {/* {banner.tags.map((tag, index) => (
                                         <span
@@ -326,7 +397,7 @@ export default function BlogPage() {
                                                 className="flex items-start gap-2 text-sm text-blue-700 group-hover:text-[#FF6B00]"
                                             >
                                                 {article.tileTemplateId && (
-                                                    <TileRenderer 
+                                                    <TileRenderer
                                                         tileTemplateId={article.tileTemplateId}
                                                         fallbackIcon="FileText"
                                                         className="w-4 h-4 mr-2"
@@ -398,7 +469,7 @@ export default function BlogPage() {
                                                     >
                                                         <div className="flex justify-center items-center">
                                                             {blog.tileTemplateId ? (
-                                                                <TileRenderer 
+                                                                <TileRenderer
                                                                     tileTemplateId={blog.tileTemplateId}
                                                                     fallbackIcon="FileText"
                                                                     className="w-15 h-15"

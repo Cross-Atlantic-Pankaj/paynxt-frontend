@@ -1,7 +1,7 @@
 'use client';
-import { Form, Input, Button, Upload, message } from 'antd';
+import { Form, Input, Button, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import toast, { Toaster } from 'react-hot-toast';
@@ -10,8 +10,27 @@ export default function AskAnalystPage() {
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [formKey, setFormKey] = useState(0);
   const { user, isLoading: userLoading } = useUser();
   const router = useRouter();
+
+  console.log('User from context:', user);
+
+  useEffect(() => {
+    if (user && user.user) {
+      console.log('Setting form values:', {
+        firstName: user.user.Firstname || '',
+        lastName: user.user.Lastname || '',
+        email: user.user.email || '',
+      });
+      form.setFieldsValue({
+        firstName: user.user.Firstname || '',
+        lastName: user.user.Lastname || '',
+        email: user.user.email || '',
+      });
+      setFormKey((prev) => prev + 1); // Force form re-render
+    }
+  }, [user, form]);
 
   const onFinish = async (values) => {
     if (!user) {
@@ -19,11 +38,6 @@ export default function AskAnalystPage() {
       router.push('/login?callbackUrl=/ask-an-analyst');
       return;
     }
-
-    // if (!file) {
-    //   toast.error('Please upload a document');
-    //   return;
-    // }
 
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
@@ -50,11 +64,9 @@ export default function AskAnalystPage() {
         form.resetFields();
         setFile(null);
       } else {
-        console.error('Submission failed:', data.message);
         toast.error(data.message || 'Submission failed', { id: toastId });
       }
     } catch (err) {
-      console.error('Submit error:', err);
       toast.error('Something went wrong', { id: toastId });
     } finally {
       setLoading(false);
@@ -65,11 +77,21 @@ export default function AskAnalystPage() {
     return <div style={{ textAlign: 'center', padding: 20 }}>Loading...</div>;
   }
 
+  if (!user) {
+    router.push('/login?callbackUrl=/ask-an-analyst');
+    return null;
+  }
+
   return (
     <div style={{ maxWidth: 600, margin: 'auto', padding: 20 }}>
       <Toaster position="top-right" />
       <h2>Ask an Analyst</h2>
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        key={formKey}
+      >
         <Form.Item
           name="firstName"
           label="First Name"
@@ -109,9 +131,9 @@ export default function AskAnalystPage() {
           <Upload
             beforeUpload={(file) => {
               setFile(file);
-              return false; // Prevent automatic upload
+              return false;
             }}
-            fileList={file ? [file] : []}
+ mơ            fileList={file ? [file] : []}
             onRemove={() => setFile(null)}
             accept=".pdf,.doc,.docx"
           >

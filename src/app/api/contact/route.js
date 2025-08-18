@@ -1,10 +1,40 @@
 import nodemailer from 'nodemailer';
+import connectDB from '@/lib/db';   // your DB connection helper
+import EmailTemplate from '@/models/EmailTemplate';
 
 export async function POST(req) {
   try {
-    const body = await req.json();
+    await connectDB(); // ✅ ensure DB is connected
 
+    const body = await req.json();
     const { topic, firstName, lastName, companyName, jobTitle, email, message } = body;
+
+    // Fetch email template from DB
+    const template = await EmailTemplate.findOne({ type: "contact_us" });
+    if (!template) {
+      return new Response(JSON.stringify({ error: 'Email template not found' }), { status: 404 });
+    }
+
+    // Replace placeholders in body
+    // Replace placeholders in subject
+    const compiledSubject = template.subject
+      .replace(/{{firstName}}/g, firstName)
+      .replace(/{{lastName}}/g, lastName)
+      .replace(/{{companyName}}/g, companyName)
+      .replace(/{{jobTitle}}/g, jobTitle)
+      .replace(/{{email}}/g, email)
+      .replace(/{{message}}/g, message)
+      .replace(/{{topic}}/g, topic);
+
+    // Replace placeholders in body
+    const compiledBody = template.body
+      .replace(/{{firstName}}/g, firstName)
+      .replace(/{{lastName}}/g, lastName)
+      .replace(/{{companyName}}/g, companyName)
+      .replace(/{{jobTitle}}/g, jobTitle)
+      .replace(/{{email}}/g, email)
+      .replace(/{{message}}/g, message)
+      .replace(/{{topic}}/g, topic);
 
     // Nodemailer Transporter
     const transporter = nodemailer.createTransport({
@@ -31,16 +61,12 @@ export async function POST(req) {
       `
     });
 
-    // Email to User
+    // Email to User (from template)
     await transporter.sendMail({
       from: process.env.ADMIN_EMAIL,
       to: email,
-      subject: 'Thank you for contacting us',
-      html: `
-        <p>Dear ${firstName},</p>
-        <p>Thank you for reaching out to us. Our team will get back to you shortly.</p>
-        <p>Best regards,<br/>Team</p>
-      `
+      subject: compiledSubject,  // ✅ subject from DB
+      html: compiledBody          // ✅ body from DB with placeholders replaced
     });
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });
