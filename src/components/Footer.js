@@ -40,51 +40,61 @@ const Footer = () => {
           <button className="backToTop" onClick={scrollToTop} aria-label="Back to top">
             <span>Top</span>
           </button>
-          <div className="row align-items-center mobileTop">
-            <div className="col-xl-3 col-lg-3">
-              <div className="flex flex-col items-center h-full justify-center">
-                <img
-                  src="/Images/PayNxt_Logo.svg"
-                  alt="PayNXT360"
-                  className="mb-10"
-                />
+          <div className="grid grid-rows-1 lg:grid-cols-4 gap-6 items-start pt-10">
+            <div className="flex justify-start items-center">
+              <div className="flex flex-col items-center lg:items-start h-full justify-center">
+                <Link href="/">
+                  <Image
+                    src="/Images/PayNxt_Logo.svg"
+                    alt="PayNXT360"
+                    width={150}
+                    height={50}
+                    className="py-10"
+                  />
+                </Link>
                 <div className="socialLinks">
                   {/* Social media links can be uncommented and added here */}
                 </div>
               </div>
             </div>
 
-            <div className="col-xl-3 col-lg-3">
-              <div className="head">Research Databases</div>
-              <ul>
-                {categories.map((cat, index) => (
-                  <li key={index}>
-                    <Link href={`/report-store?category=${encodeURIComponent(cat.name)}`}>
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex justify-center">
+              <div>
+                <div className="text-[#FF6B00] text-lg font-bold mb-4">Research Databases</div>
+                <ul className="list-none p-0">
+                  {categories.map((cat, index) => (
+                    <li key={index} className="mb-2">
+                      <Link href={`/report-store?category=${encodeURIComponent(cat.name)}`} className="text-white text-sm hover:text-[#FF6B00]">
+                        {cat.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            <div className="col-xl-3 col-lg-3">
-              <div className="head">Solution</div>
-              <ul>
-                <li><Link href="/premium-subscription">Premium Subscription</Link></li>
-                <li><Link href="/report-store">Report Store</Link></li>
-                <li><Link href="/consulting">Consulting</Link></li>
-                <li><Link href="/view-points">View Points</Link></li>
-              </ul>
+            <div className="flex justify-center">
+              <div>
+                <div className="text-[#FF6B00] text-lg font-bold mb-4">Solution</div>
+                <ul className="list-none p-0">
+                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Premium Subscription</Link></li>
+                  <li className="mb-2"><Link href="/report-store" className="text-white text-sm hover:text-[#FF6B00]">Report Store</Link></li>
+                  <li className="mb-2"><Link href="/consulting" className="text-white text-sm hover:text-[#FF6B00]">Consulting</Link></li>
+                  <li className="mb-2"><Link href="/insights" className="text-white text-sm hover:text-[#FF6B00]">View Points</Link></li>
+                </ul>
+              </div>
             </div>
 
-            <div className="col-xl-3 col-lg-3">
-              <div className="head">Quick Links</div>
-              <ul>
-                <li><Link href="/contact-us">Our Offices</Link></li>
-                <li><Link href="/contact-us">Sales</Link></li>
-                <li><Link href="/contact-us">Media</Link></li>
-                <li><Link href="/contact-us">Career</Link></li>
-              </ul>
+            <div className="flex justify-center">
+              <div>
+                <div className="text-[#FF6B00] text-lg font-bold mb-4">Quick Links</div>
+                <ul className="list-none p-0">
+                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Our Offices</Link></li>
+                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Sales</Link></li>
+                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Media</Link></li>
+                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Career</Link></li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

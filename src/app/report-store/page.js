@@ -8,7 +8,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import TileRenderer from '@/components/TileRenderer';
-import { set } from 'mongoose';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 const { Text } = Typography;
@@ -17,7 +16,6 @@ const { Panel } = Collapse;
 
 export default function ViewPointPage() {
     const [banner, setBanner] = useState(null);
-    // const [searchTerm, setSearchTerm] = useState('');
     const [sliders, setSliders] = useState([]);
     const [blogs, setBlogs] = useState([]);
     const [selectedCat, setSelectedCat] = useState(null);
@@ -27,18 +25,17 @@ export default function ViewPointPage() {
     const [selectedCon, setSelectedCon] = useState(null);
     const [region, setRegion] = useState([]);
     const [selectedReg, setSelectedReg] = useState(null);
-    const [visibleCount, setVisibleCount] = useState(15); // initially show 9 blogs
-    // const [searchInput, setSearchInput] = useState('');
+    const [visibleCount, setVisibleCount] = useState(15);
     const searchParams = useSearchParams();
     const initialSearch = searchParams.get('search') || '';
-    const [searchInput, setSearchInput] = useState(initialSearch); // Initialize with query
+    const initialCategory = searchParams.get('category') || '';
+    const [searchInput, setSearchInput] = useState(initialSearch);
     const [searchTerm, setSearchTerm] = useState(initialSearch);
     const router = useRouter();
+
     const handleTagClick = (tag) => {
-        // Navigate to /report-store?search=tagName
         router.push(`/report-store?search=${encodeURIComponent(tag)}`);
     };
-
 
     useEffect(() => {
         const fetchBanner = async () => {
@@ -52,11 +49,11 @@ export default function ViewPointPage() {
             const data = await res.json();
             setSliders(data);
         };
+
         const fetchBlogs = async () => {
             const res = await fetch("/api/report-store/repcontent");
             const data = await res.json();
 
-            // Filter client-side based on search query
             if (initialSearch) {
                 const filtered = data.filter((report) =>
                     report.report_title.toLowerCase().includes(initialSearch.toLowerCase())
@@ -72,11 +69,13 @@ export default function ViewPointPage() {
             const data = await res.json();
             setCategories(data);
         };
+
         const fetchcountry = async () => {
             const res = await fetch('/api/report-store/repcon');
             const data = await res.json();
             setCon(data);
         };
+
         const fetchregion = async () => {
             const res = await fetch('/api/report-store/repreg');
             const data = await res.json();
@@ -89,27 +88,31 @@ export default function ViewPointPage() {
         fetchSliders();
         fetchBlogs();
         fetchregion();
-    }, [initialSearch]);
+
+        // Set initial category filter from URL
+        if (initialCategory) {
+            setSelectedCat({ cat: decodeURIComponent(initialCategory) });
+        }
+    }, [initialSearch, initialCategory]);
 
     const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
         const handleCategoryClick = (catName) => {
             if (selectedCat?.cat === catName && !selectedCat?.sub) {
-                onSelect(null); // Deselect
+                onSelect(null);
+                router.push('/report-store');
             } else {
-                onSelect({ cat: catName }); // Select category
+                onSelect({ cat: catName });
+                router.push(`/report-store?category=${encodeURIComponent(catName)}`);
             }
         };
 
         return (
             <div className="bg-gray-100 overflow-hidden">
-                {/* Title */}
                 <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
                     Filter by category
                 </div>
-
-                {/* Categories */}
                 <Collapse
                     accordion
                     activeKey={openKey}
@@ -118,8 +121,9 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${
+                                isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                            }`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -130,12 +134,9 @@ export default function ViewPointPage() {
                     )}
                 >
                     {categories.map((cat) => {
-                        // Filter subcategories to only those present in blogs
                         const filteredSubcategories = cat.subcategories.filter((sub) =>
                             blogs.some((blog) => blog.Product_sub_Category === sub)
                         );
-
-                        // Only render the Panel if there are subcategories or the category is tagged
                         if (
                             filteredSubcategories.length > 0 ||
                             blogs.some((blog) => blog.Product_category === cat.name)
@@ -147,13 +148,14 @@ export default function ViewPointPage() {
                                     header={
                                         <div
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Prevent collapse toggle
+                                                e.stopPropagation();
                                                 handleCategoryClick(cat.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
-                                                ? 'bg-[#155392] text-white font-semibold'
-                                                : 'text-gray-800 font-semibold'
-                                                }`}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${
+                                                selectedCat?.cat === cat.name && !selectedCat?.sub
+                                                    ? 'bg-[#155392] text-white font-semibold'
+                                                    : 'text-gray-800 font-semibold'
+                                            }`}
                                         >
                                             {cat.name}
                                         </div>
@@ -176,17 +178,15 @@ export default function ViewPointPage() {
                         return null;
                     })}
                 </Collapse>
-
-                {/* Remove white padding around dropdown */}
                 <style jsx global>{`
-        .ant-collapse-content {
-          background-color: #f3f4f6 !important; /* Tailwind gray-100 */
-        }
-        .ant-collapse-content-box {
-          padding: 0 !important;
-          background-color: #f3f4f6 !important;
-        }
-      `}</style>
+                    .ant-collapse-content {
+                        background-color: #f3f4f6 !important;
+                    }
+                    .ant-collapse-content-box {
+                        padding: 0 !important;
+                        background-color: #f3f4f6 !important;
+                    }
+                `}</style>
             </div>
         );
     };
@@ -196,20 +196,17 @@ export default function ViewPointPage() {
 
         const handleCountryClick = (conName) => {
             if (selectedCon?.con === conName && !selectedCon?.sub) {
-                onSelect(null); // Deselect
+                onSelect(null);
             } else {
-                onSelect({ con: conName }); // Select country
+                onSelect({ con: conName });
             }
         };
 
         return (
             <div className="bg-gray-100 overflow-hidden">
-                {/* Title */}
                 <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
                     Filter by country
                 </div>
-
-                {/* Countries */}
                 <Collapse
                     accordion
                     activeKey={openKey}
@@ -218,8 +215,9 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${
+                                isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                            }`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -230,12 +228,9 @@ export default function ViewPointPage() {
                     )}
                 >
                     {country.map((con) => {
-                        // Filter subcategories to only those present in blogs
                         const filteredSubcategories = (con.subcategories || []).filter((sub) =>
                             blogs.some((blog) => blog.Report_Geography_Region === sub)
                         );
-
-                        // Only render the Panel if there are subcategories or the country is tagged
                         if (
                             filteredSubcategories.length > 0 ||
                             blogs.some((blog) => blog.Report_Geography_Country === con.name)
@@ -247,13 +242,14 @@ export default function ViewPointPage() {
                                     header={
                                         <div
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Prevent collapse toggle
+                                                e.stopPropagation();
                                                 handleCountryClick(con.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
-                                                ? 'bg-[#155392] text-white font-semibold'
-                                                : 'text-gray-800 font-semibold'
-                                                }`}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${
+                                                selectedCon?.con === con.name && !selectedCon?.sub
+                                                    ? 'bg-[#155392] text-white font-semibold'
+                                                    : 'text-gray-800 font-semibold'
+                                            }`}
                                         >
                                             {con.name}
                                         </div>
@@ -276,17 +272,15 @@ export default function ViewPointPage() {
                         return null;
                     })}
                 </Collapse>
-
-                {/* Remove white padding around dropdown */}
                 <style jsx global>{`
-        .ant-collapse-content {
-          background-color: #f3f4f6 !important; /* Tailwind gray-100 */
-        }
-        .ant-collapse-content-box {
-          padding: 0 !important;
-          background-color: #f3f4f6 !important;
-        }
-      `}</style>
+                    .ant-collapse-content {
+                        background-color: #f3f4f6 !important;
+                    }
+                    .ant-collapse-content-box {
+                        padding: 0 !important;
+                        background-color: #f3f4f6 !important;
+                    }
+                `}</style>
             </div>
         );
     };
@@ -296,20 +290,17 @@ export default function ViewPointPage() {
 
         const handleRegionClick = (regName) => {
             if (selectedReg?.reg === regName && !selectedReg?.sub) {
-                onSelect(null); // Deselect
+                onSelect(null);
             } else {
-                onSelect({ reg: regName }); // Select country
+                onSelect({ reg: regName });
             }
         };
 
         return (
             <div className="bg-gray-100 overflow-hidden">
-                {/* Title */}
                 <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
                     Filter by region
                 </div>
-
-                {/* Countries */}
                 <Collapse
                     accordion
                     activeKey={openKey}
@@ -318,8 +309,9 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${
+                                isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                            }`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -329,12 +321,8 @@ export default function ViewPointPage() {
                         </div>
                     )}
                 >
-
-                    {console.log("Region in component:", region)}
                     {(region || []).map((reg) => {
                         const filteredSubcategories = reg.subcategories || [];
-                        // Filter subcategories to only those present in blogs
-                        // Only render the Panel if there are subcategories or the country is tagged
                         if (!blogs.some((blog) => blog.Report_Geography_Region === reg.name)) {
                             return null;
                         }
@@ -345,13 +333,14 @@ export default function ViewPointPage() {
                                 header={
                                     <div
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Prevent collapse toggle
+                                            e.stopPropagation();
                                             handleRegionClick(reg.name);
                                         }}
-                                        className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedReg?.reg === reg.name && !selectedReg?.sub
-                                            ? 'bg-[#155392] text-white font-semibold'
-                                            : 'text-gray-800 font-semibold'
-                                            }`}
+                                        className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${
+                                            selectedReg?.reg === reg.name && !selectedReg?.sub
+                                                ? 'bg-[#155392] text-white font-semibold'
+                                                : 'text-gray-800 font-semibold'
+                                        }`}
                                     >
                                         {reg.name}
                                     </div>
@@ -372,17 +361,15 @@ export default function ViewPointPage() {
                         );
                     })}
                 </Collapse>
-
-                {/* Remove white padding around dropdown */}
                 <style jsx global>{`
-        .ant-collapse-content {
-          background-color: #f3f4f6 !important; /* Tailwind gray-100 */
-        }
-        .ant-collapse-content-box {
-          padding: 0 !important;
-          background-color: #f3f4f6 !important;
-        }
-      `}</style>
+                    .ant-collapse-content {
+                        background-color: #f3f4f6 !important;
+                    }
+                    .ant-collapse-content-box {
+                        padding: 0 !important;
+                        background-color: #f3f4f6 !important;
+                    }
+                `}</style>
             </div>
         );
     };
@@ -398,7 +385,6 @@ export default function ViewPointPage() {
                                 href={reportUrl}
                                 className="bg-white flex flex-col justify-between h-full overflow-hidden block"
                             >
-                                {/* Tile Display - Outside padded container for full width */}
                                 <div className="w-full h-50">
                                     {(blog.tileTemplateId && blog.tileTemplateId !== null) ? (
                                         <TileRenderer
@@ -412,14 +398,11 @@ export default function ViewPointPage() {
                                         </div>
                                     )}
                                 </div>
-
-                                {/* Report Button - Positioned between tile and text content */}
                                 <div className="px-4 -mt-2 mb-2">
                                     <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
                                         Report
                                     </span>
                                 </div>
-
                                 <div className="p-4 flex flex-col justify-between h-full">
                                     <div>
                                         <p className="text-sm leading-tight">
@@ -449,7 +432,6 @@ export default function ViewPointPage() {
                     );
                 })}
             </div>
-
             {canLoadMore && (
                 <div className="mt-6 flex justify-center">
                     <button
@@ -460,7 +442,6 @@ export default function ViewPointPage() {
                     </button>
                 </div>
             )}
-
             {blogs.length === 0 && (
                 <p className="text-center text-gray-500 mt-4">No reports found for this filter.</p>
             )}
@@ -494,8 +475,6 @@ export default function ViewPointPage() {
             }
         }
 
-        // Apply search term filter here
-        // Apply search term filter here (word-based AND matching, any order)
         if (searchTerm.trim()) {
             const tokens = searchTerm
                 .toLowerCase()
@@ -521,7 +500,6 @@ export default function ViewPointPage() {
             });
     }, [blogs, selectedCat, selectedCon, selectedReg, searchTerm]);
 
-
     const filteredCategories = useMemo(() => {
         return categories.filter(cat =>
             blogs.some(blog => blog.Product_category === cat.name)
@@ -545,55 +523,50 @@ export default function ViewPointPage() {
     }, [finalFilteredBlogs, visibleCount]);
 
     useEffect(() => {
-        setVisibleCount(15); // reset to show first 9 when filters change
+        setVisibleCount(15);
     }, [selectedCat, selectedCon, selectedReg, searchTerm]);
 
     const handleSearch = () => {
         setSearchTerm(searchInput);
         setCurrentPage(1);
         setVisibleCount(15);
-        // Update URL with new search term
         const params = new URLSearchParams(searchParams);
         if (searchInput.trim()) {
             params.set('search', searchInput);
         } else {
             params.delete('search');
         }
+        if (selectedCat?.cat) {
+            params.set('category', selectedCat.cat);
+        } else {
+            params.delete('category');
+        }
         router.push(`/report-store?${params.toString()}`);
     };
 
     return (
-
         <main className="min-h-screen bg-white">
             <style jsx global>{`
-  .swiper-pagination {
-    position: relative;
-    margin-top: 16px;
-    text-align: center;
-  }
-
-  .swiper-pagination-bullet {
-    background: #155392 !important;
-    opacity: 1;
-  }
-
-  .swiper-pagination-bullet-active {
-    background: #FF6B00 !important;
-  }
-`}</style>
-
+                .swiper-pagination {
+                    position: relative;
+                    margin-top: 16px;
+                    text-align: center;
+                }
+                .swiper-pagination-bullet {
+                    background: #155392 !important;
+                    opacity: 1;
+                }
+                .swiper-pagination-bullet-active {
+                    background: #FF6B00 !important;
+                }
+            `}</style>
             <section className="w-full bg-[#155392] py-20 px-8">
                 <div className="flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
-                    {/* Left Banner Section */}
                     <div className="w-2/3 text-left">
                         {banner ? (
                             <div>
                                 <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
-
-                                <p className="text-md text-white mt-1 mb-8">
-                                    {banner.bannerDescription}
-                                </p>
-
+                                <p className="text-md text-white mt-1 mb-8">{banner.bannerDescription}</p>
                                 <div className="mt-2 flex items-center">
                                     <input
                                         type="text"
@@ -626,8 +599,6 @@ export default function ViewPointPage() {
                             <p className="text-white">Loading banner...</p>
                         )}
                     </div>
-
-                    {/* Right Slider Section */}
                     <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
                         <Swiper
                             modules={[SwiperPagination]}
@@ -662,33 +633,26 @@ export default function ViewPointPage() {
                                 </SwiperSlide>
                             ))}
                         </Swiper>
-
-                        {/* Custom pagination container */}
                         <div className="custom-pagination flex justify-center gap-2 mt-4"></div>
-
-                        {/* Inline styles for pagination bullets */}
                         <style>{`
-    .custom-pagination .swiper-pagination-bullet {
-      width: 20px;
-      height: 4px;
-      background-color: #ccc;
-      opacity: 1;
-      border-radius: 2px;
-      transition: background-color 0.3s ease;
-    }
-
-    .custom-pagination .swiper-pagination-bullet-active {
-      background-color: #155392;
-    }
-  `}</style>
+                            .custom-pagination .swiper-pagination-bullet {
+                                width: 20px;
+                                height: 4px;
+                                background-color: #ccc;
+                                opacity: 1;
+                                border-radius: 2px;
+                                transition: background-color 0.3s ease;
+                            }
+                            .custom-pagination .swiper-pagination-bullet-active {
+                                background-color: #155392;
+                            }
+                        `}</style>
                     </div>
-
                 </div>
             </section>
             <section className="bg-gray-100 py-10">
                 <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
                     <div className="col-span-1 flex flex-col gap-4">
-
                         <button
                             onClick={() => {
                                 setSelectedCat(null);
@@ -698,11 +662,13 @@ export default function ViewPointPage() {
                                 setSearchInput('');
                                 setCurrentPage(1);
                                 setVisibleCount(15);
+                                router.push('/report-store');
                             }}
-                            className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !selectedReg && !searchTerm
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
-                                }`}
+                            className={`px-4 py-2 rounded transition ${
+                                !selectedCat && !selectedCon && !selectedReg && !searchTerm
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
+                            }`}
                             disabled={!selectedCat && !selectedCon && !selectedReg && !searchTerm}
                         >
                             Clear All Filters
@@ -735,7 +701,6 @@ export default function ViewPointPage() {
                             blogs={blogs}
                         />
                     </div>
-
                     <div className="col-span-3">
                         <BlogsGrid
                             blogs={visibleBlogs}
@@ -746,5 +711,5 @@ export default function ViewPointPage() {
                 </div>
             </section>
         </main>
-    )
+    );
 }
