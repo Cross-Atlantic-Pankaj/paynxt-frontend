@@ -34,6 +34,8 @@ export default function ViewPointPage() {
     const router = useRouter();
 
     const handleTagClick = (tag) => {
+        setSearchInput(tag); // Update the search bar input
+        setSearchTerm(tag); // Update the search term for filtering
         router.push(`/report-store?search=${encodeURIComponent(tag)}`);
     };
 
@@ -121,9 +123,8 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${
-                                isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                            }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                                }`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -151,11 +152,10 @@ export default function ViewPointPage() {
                                                 e.stopPropagation();
                                                 handleCategoryClick(cat.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${
-                                                selectedCat?.cat === cat.name && !selectedCat?.sub
-                                                    ? 'bg-[#155392] text-white font-semibold'
-                                                    : 'text-gray-800 font-semibold'
-                                            }`}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                                ? 'bg-[#155392] text-white font-semibold'
+                                                : 'text-gray-800 font-semibold'
+                                                }`}
                                         >
                                             {cat.name}
                                         </div>
@@ -215,9 +215,8 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${
-                                isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                            }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                                }`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -245,11 +244,10 @@ export default function ViewPointPage() {
                                                 e.stopPropagation();
                                                 handleCountryClick(con.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${
-                                                selectedCon?.con === con.name && !selectedCon?.sub
-                                                    ? 'bg-[#155392] text-white font-semibold'
-                                                    : 'text-gray-800 font-semibold'
-                                            }`}
+                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
+                                                ? 'bg-[#155392] text-white font-semibold'
+                                                : 'text-gray-800 font-semibold'
+                                                }`}
                                         >
                                             {con.name}
                                         </div>
@@ -309,9 +307,8 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${
-                                isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                            }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                                }`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -336,11 +333,10 @@ export default function ViewPointPage() {
                                             e.stopPropagation();
                                             handleRegionClick(reg.name);
                                         }}
-                                        className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${
-                                            selectedReg?.reg === reg.name && !selectedReg?.sub
-                                                ? 'bg-[#155392] text-white font-semibold'
-                                                : 'text-gray-800 font-semibold'
-                                        }`}
+                                        className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedReg?.reg === reg.name && !selectedReg?.sub
+                                            ? 'bg-[#155392] text-white font-semibold'
+                                            : 'text-gray-800 font-semibold'
+                                            }`}
                                     >
                                         {reg.name}
                                     </div>
@@ -482,6 +478,7 @@ export default function ViewPointPage() {
                 .split(/\s+/)
                 .filter(Boolean);
 
+            // Modified search logic to allow partial matches regardless of order
             data = data.filter((report) => {
                 const hay = `${report.report_title || ''} ${report.report_summary || ''}`
                     .toLowerCase()
@@ -572,17 +569,23 @@ export default function ViewPointPage() {
                                         type="text"
                                         placeholder="Search..."
                                         value={searchInput}
-                                        onChange={(e) => setSearchInput(e.target.value)}
-                                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
+                                        onChange={(e) => {
+                                            setSearchInput(e.target.value);
+                                            handleSearch(e.target.value); // live search while typing
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") handleSearch(searchInput); // Enter key search
+                                        }}
                                         className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                                     />
                                     <button
-                                        onClick={handleSearch}
+                                        onClick={() => handleSearch(searchInput)}
                                         className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300 cursor-pointer"
                                     >
                                         Search
                                     </button>
                                 </div>
+
                                 <div className="flex flex-wrap gap-2 mt-4 mb-6">
                                     {banner.tags?.map((tag, index) => (
                                         <span
@@ -664,12 +667,11 @@ export default function ViewPointPage() {
                                 setVisibleCount(15);
                                 router.push('/report-store');
                             }}
-                            className={`px-4 py-2 rounded transition ${
-                                !selectedCat && !selectedCon && !selectedReg && !searchTerm
+                            className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !selectedReg && !searchTerm && !searchInput
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
-                            }`}
-                            disabled={!selectedCat && !selectedCon && !selectedReg && !searchTerm}
+                                }`}
+                            disabled={!selectedCat && !selectedCon && !selectedReg && !searchTerm && !searchInput}
                         >
                             Clear All Filters
                         </button>

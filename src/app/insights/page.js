@@ -451,7 +451,6 @@ export default function ViewPointPage() {
         );
     };
 
-
     const categoryOptions = useMemo(() => {
         const categories = new Set();
         blogs.forEach(blog => {
@@ -538,7 +537,6 @@ export default function ViewPointPage() {
             })
             .filter(Boolean);
     }, [topics, blogs]);
-
 
 
     const paginatedBlogs = useMemo(() => {

@@ -25,7 +25,7 @@ export default function B2CPaymentIntelligencePage() {
   const [visibleCount, setVisibleCount] = useState(6);
   const visibleBlogs = blogs.slice(0, visibleCount);
   const [viewBlogs, setViewBlogs] = useState([]);
-  const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 2);
+  const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 3);
 
   const handleTagClick = (tag) => {
     // Navigate to /report-store?search=tagName
@@ -198,8 +198,8 @@ export default function B2CPaymentIntelligencePage() {
 
   const BlogGrid = ({ blog = [] }) => {
     return (
-      <div className="max-w-3xl mx-auto">
-        <div className="grid grid-rows-1 md:grid-cols-2 gap-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-rows-1 md:grid-cols-3 gap-6">
           {(blog || []).map((blo, i) => {
             const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blo.slug}`;
             const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
@@ -425,9 +425,9 @@ export default function B2CPaymentIntelligencePage() {
             {stats.map((item, index) => (
               <div
                 key={index}
-                className="border-t-10 border-purple-700 bg-[#f5f3f7] p-6 text-[#155392]"
+                className="border-t-12 border-[#155392] bg-gray-100 p-6 text-[#155392]"
               >
-                <h3 className="text-3xl text-purple-700 text-center font-extrabold mb-2">{item.title}</h3>
+                <h3 className="text-3xl text-[#155392] text-center font-extrabold mb-2">{item.title}</h3>
                 <p className="text-md text-center">{item.description}</p>
               </div>
             ))}

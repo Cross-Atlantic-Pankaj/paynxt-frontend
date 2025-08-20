@@ -127,11 +127,11 @@ const Navbar = () => {
             {/* Desktop Navigation */}
 
             <div className="hidden lg:!flex items-center gap-6">
-              <ul className="flex gap-6 text-sm font-medium mb-0">
+              <ul className="flex gap-6 text-sm font-medium pt-4 mb-0">
                 <li>
                   <Link
                     href="/"
-                    className="text-white hover:text-[#FF6B00] whitespace-nowrap">
+                    className="text-white hover:text-[#FF6B00] whitespace-nowrap duration-300">
                     Home
                   </Link>
                 </li>
@@ -139,7 +139,7 @@ const Navbar = () => {
                 <li>
                   <Link
                     href="/about-us"
-                    className="text-white hover:text-[#FF6B00] whitespace-nowrap">
+                    className="text-white hover:text-[#FF6B00] whitespace-nowrap duration-300">
                     About Us
                   </Link>
                 </li>
@@ -147,7 +147,7 @@ const Navbar = () => {
                 <li>
                   <Link
                     href="/contact-us"
-                    className="text-white hover:text-[#FF6B00] whitespace-nowrap">
+                    className="text-white hover:text-[#FF6B00] whitespace-nowrap duration-300">
                     Contact Us
                   </Link>
                 </li>

@@ -191,33 +191,7 @@ export default function BlogPage() {
                             {banner ? (
                                 <div>
                                     <h1 className="text-3xl font-bold text-white mb-6">{banner.title}</h1>
-                                    
-                                    <div className="pt-0 flex gap-2">
-                                        <a
-                                            href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://pay-nxt360.vercel.app/blog-page/${blog.slug}`)}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
-                                        >
-                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.2 8.5 8.2zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
-                                            </svg>
-                                            Share
-                                        </a>
-                                        <button
-                                            onClick={(e) => handleSaveArticle(blog, e)}
-                                            className={`inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border text-sm font-medium transition ${isSaved
-                                                ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500'
-                                                : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500'
-                                                }`}
-                                        >
-                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
-                                            </svg>
-                                            {isSaved ? 'Remove' : 'Save'}
-                                        </button>
-                                    </div>
+
                                     <div className="flex flex-wrap gap-2 mb-6">
                                         {/* {banner.tags.map((tag, index) => (
                                         <span
@@ -319,6 +293,32 @@ export default function BlogPage() {
                     {/* Left 3/4 */}
                     <div className="w-3/4">
                         <h1 className="text-2xl font-bold mb-4">{blog.title}</h1>
+                        <div className="pt-0 flex gap-2 mb-6">
+                            <a
+                                href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://pay-nxt360.vercel.app/blog-page/${blog.slug}`)}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
+                            >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.2 8.5 8.2zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
+                                </svg>
+                                Share
+                            </a>
+                            <button
+                                onClick={(e) => handleSaveArticle(blog, e)}
+                                className={`inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border text-sm font-medium transition ${isSaved
+                                    ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500'
+                                    : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500'
+                                    }`}
+                            >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                                </svg>
+                                {isSaved ? 'Remove' : 'Save'}
+                            </button>
+                        </div>
                         <p className="text-gray-700 mb-6">{blog.summary}</p>
 
                         <div className="mb-8">
