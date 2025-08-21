@@ -122,7 +122,7 @@ export default function AboutUsPage() {
                                 of market events, innovations and data you can trust and use.
                             </p>
                             <a href="/login">
-                                <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-300">
+                                <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-300 cursor-pointer">
                                     SIGN UP NOW
                                 </button>
                             </a>

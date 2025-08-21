@@ -621,7 +621,7 @@ export default function ViewPointPage() {
                                     />
                                     <button
                                         onClick={handleSearch}
-                                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white cursor-pointer duration-300"
                                     >
                                         Search
                                     </button>

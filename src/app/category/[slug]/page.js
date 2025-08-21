@@ -326,17 +326,22 @@ export default function B2CPaymentIntelligencePage() {
                   {banner.bannerDescription}
                 </p>
 
-                <div className="mt-2 flex items-center">
+                <div className="mt-2 flex items-center relative">
                   <input
                     type="text"
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch(searchTerm);
+                      }
+                    }}
                     className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                   />
                   <button
-                    onClick={handleSearch}
-                    className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                    onClick={() => handleSearch(searchTerm)}
+                    className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white cursor-pointer duration-300"
                   >
                     Search
                   </button>
@@ -556,7 +561,7 @@ export default function B2CPaymentIntelligencePage() {
               of market events, innovations and data you can trust and use.
             </p>
             <a href="/login">
-              <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-200">
+              <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-300 cursor-pointer">
                 SIGN UP NOW
               </button>
             </a>

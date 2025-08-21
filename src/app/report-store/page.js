@@ -9,6 +9,7 @@ import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import TileRenderer from '@/components/TileRenderer';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useDebounce } from 'use-debounce'; // Ensure this is installed
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -29,13 +30,14 @@ export default function ViewPointPage() {
     const searchParams = useSearchParams();
     const initialSearch = searchParams.get('search') || '';
     const initialCategory = searchParams.get('category') || '';
-    const [searchInput, setSearchInput] = useState(initialSearch);
-    const [searchTerm, setSearchTerm] = useState(initialSearch);
+    const [searchInput, setSearchInput] = useState(initialSearch); // Keep raw input for display
+    const [searchTerm, setSearchTerm] = useState(initialSearch); // Normalized for filtering
     const router = useRouter();
+    const [debouncedSearchInput] = useDebounce(searchInput, 50); // Debounce raw input
 
     const handleTagClick = (tag) => {
-        setSearchInput(tag); // Update the search bar input
-        setSearchTerm(tag); // Update the search term for filtering
+        setSearchInput(tag); // Set raw tag for display
+        setSearchTerm(tag.trim().replace(/\s+/g, ' ').toLowerCase()); // Normalize for filtering
         router.push(`/report-store?search=${encodeURIComponent(tag)}`);
     };
 
@@ -57,9 +59,16 @@ export default function ViewPointPage() {
             const data = await res.json();
 
             if (initialSearch) {
-                const filtered = data.filter((report) =>
-                    report.report_title.toLowerCase().includes(initialSearch.toLowerCase())
-                );
+                const normalizedSearch = initialSearch.trim().replace(/\s+/g, ' ').toLowerCase();
+                const tokens = normalizedSearch.split(/\s+/).filter(Boolean);
+                console.log('Initial Search:', normalizedSearch, 'Tokens:', tokens);
+                const filtered = data.filter((report) => {
+                    const hay = `${report.report_title || ''} ${report.report_summary || ''}`
+                        .toLowerCase()
+                        .replace(/[^\p{L}\p{N}\s]/gu, ' ');
+                    return tokens.every((t) => hay.includes(t));
+                });
+                console.log('Filtered Blogs:', filtered.map(report => report.report_title), 'Count:', filtered.length);
                 setBlogs(filtered);
             } else {
                 setBlogs(data);
@@ -91,11 +100,13 @@ export default function ViewPointPage() {
         fetchBlogs();
         fetchregion();
 
-        // Set initial category filter from URL
+        // Set initial category and search from URL
         if (initialCategory) {
             setSelectedCat({ cat: decodeURIComponent(initialCategory) });
         }
-    }, [initialSearch, initialCategory]);
+        setSearchInput(initialSearch); // Keep raw input for display
+        setSearchTerm(initialSearch.trim().replace(/\s+/g, ' ').toLowerCase()); // Normalize for filtering
+    }, [searchParams]);
 
     const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
@@ -123,8 +134,7 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'}`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -215,8 +225,7 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'}`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -271,14 +280,14 @@ export default function ViewPointPage() {
                     })}
                 </Collapse>
                 <style jsx global>{`
-                    .ant-collapse-content {
-                        background-color: #f3f4f6 !important;
-                    }
-                    .ant-collapse-content-box {
-                        padding: 0 !important;
-                        background-color: #f3f4f6 !important;
-                    }
-                `}</style>
+                .ant-collapse-content {
+                    background-color: #f3f4f6 !important;
+                }
+                .ant-collapse-content-box {
+                    padding: 0 !important;
+                    background-color: #f3f4f6 !important;
+                }
+            `}</style>
             </div>
         );
     };
@@ -307,8 +316,7 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'}`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -358,14 +366,14 @@ export default function ViewPointPage() {
                     })}
                 </Collapse>
                 <style jsx global>{`
-                    .ant-collapse-content {
-                        background-color: #f3f4f6 !important;
-                    }
-                    .ant-collapse-content-box {
-                        padding: 0 !important;
-                        background-color: #f3f4f6 !important;
-                    }
-                `}</style>
+                .ant-collapse-content {
+                    background-color: #f3f4f6 !important;
+                }
+                .ant-collapse-content-box {
+                    padding: 0 !important;
+                    background-color: #f3f4f6 !important;
+                }
+            `}</style>
             </div>
         );
     };
@@ -472,19 +480,26 @@ export default function ViewPointPage() {
         }
 
         if (searchTerm.trim()) {
-            const tokens = searchTerm
-                .toLowerCase()
-                .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-                .split(/\s+/)
-                .filter(Boolean);
+            const normalizedSearch = searchTerm.trim().replace(/\s+/g, ' ').toLowerCase();
+            console.log('Normalized Search Term:', normalizedSearch);
+            const tokens = normalizedSearch.split(/\s+/).filter(Boolean);
+            console.log('Search Tokens:', tokens);
 
-            // Modified search logic to allow partial matches regardless of order
             data = data.filter((report) => {
                 const hay = `${report.report_title || ''} ${report.report_summary || ''}`
                     .toLowerCase()
                     .replace(/[^\p{L}\p{N}\s]/gu, ' ');
-                return tokens.every((t) => hay.includes(t));
+                const matches = tokens.every((t) => {
+                    const tokenMatch = hay.includes(t);
+                    console.log(`Token: ${t}, In Hay: ${tokenMatch}, Hay: ${hay}`);
+                    return tokenMatch;
+                });
+                console.log(`Report: ${report.report_title}, Matches: ${matches}`);
+                return matches;
             });
+
+            console.log('Filtered Blogs:', data.map(report => report.report_title));
+            console.log('Filtered Blogs Count:', data.length);
         }
 
         return data
@@ -523,23 +538,30 @@ export default function ViewPointPage() {
         setVisibleCount(15);
     }, [selectedCat, selectedCon, selectedReg, searchTerm]);
 
-    const handleSearch = () => {
-        setSearchTerm(searchInput);
+    const handleSearch = (value) => {
+        console.log('handleSearch called with value:', value);
+        const normalizedSearch = value.trim().replace(/\s+/g, ' ').toLowerCase();
+        console.log('Normalized Search:', normalizedSearch);
+        setSearchTerm(normalizedSearch);
         setCurrentPage(1);
         setVisibleCount(15);
-        const params = new URLSearchParams(searchParams);
-        if (searchInput.trim()) {
-            params.set('search', searchInput);
-        } else {
-            params.delete('search');
+        const params = new URLSearchParams();
+        if (value.trim()) {
+            params.set('search', value); // Use raw value for URL
         }
         if (selectedCat?.cat) {
             params.set('category', selectedCat.cat);
-        } else {
-            params.delete('category');
         }
-        router.push(`/report-store?${params.toString()}`);
+        const newUrl = `/report-store?${params.toString()}`;
+        console.log('Navigating to:', newUrl);
+        router.push(newUrl, { scroll: false });
     };
+
+    useEffect(() => {
+        if (debouncedSearchInput !== searchTerm) {
+            handleSearch(searchInput); // Use searchInput directly to ensure latest value
+        }
+    }, [debouncedSearchInput, searchInput, searchTerm, selectedCat, router]);
 
     return (
         <main className="min-h-screen bg-white">
@@ -570,11 +592,13 @@ export default function ViewPointPage() {
                                         placeholder="Search..."
                                         value={searchInput}
                                         onChange={(e) => {
-                                            setSearchInput(e.target.value);
-                                            handleSearch(e.target.value); // live search while typing
+                                            setSearchInput(e.target.value); // Keep raw input
                                         }}
                                         onKeyDown={(e) => {
-                                            if (e.key === "Enter") handleSearch(searchInput); // Enter key search
+                                            if (e.key === "Enter") {
+                                                console.log('Enter pressed with:', searchInput);
+                                                handleSearch(searchInput);
+                                            }
                                         }}
                                         className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                                     />
@@ -668,8 +692,8 @@ export default function ViewPointPage() {
                                 router.push('/report-store');
                             }}
                             className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !selectedReg && !searchTerm && !searchInput
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
                                 }`}
                             disabled={!selectedCat && !selectedCon && !selectedReg && !searchTerm && !searchInput}
                         >
