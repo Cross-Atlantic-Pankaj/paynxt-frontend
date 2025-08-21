@@ -16,7 +16,7 @@ export async function GET(req) {
     }
 
     // Step 1: Find the current article to extract its subcategory
-    const currentArticle = await relart.findOne({ slug });
+    const currentArticle = await relart.findOne({ slug }).lean();
 
     if (!currentArticle || !currentArticle.subcategory) {
       return new Response(JSON.stringify([]), {
@@ -27,16 +27,21 @@ export async function GET(req) {
 
     const subcategory = currentArticle.subcategory;
 
-    // Step 2: Find related articles (exclude current one)
-    const relatedArticles = await relart.find()
+    // Step 2: Find up to 5 latest related articles in the same subcategory, excluding the current one
+    const relatedArticles = await relart
+      .find({
+        subcategory,
+        slug: { $ne: slug }, // Exclude the current article
+      })
       .populate('tileTemplateId')
-      .lean()
-      .sort({ createdAt: -1 });
+      .sort({ date: -1 }) // Sort by date in descending order (newest first)
+      .limit(5) // Limit to 5 articles
+      .lean();
 
     // Ensure all articles have a tileTemplateId field (even if null)
     const processedArticles = relatedArticles.map(article => ({
       ...article,
-      tileTemplateId: article.tileTemplateId || null
+      tileTemplateId: article.tileTemplateId || null,
     }));
 
     return new Response(JSON.stringify(processedArticles), {

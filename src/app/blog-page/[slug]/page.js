@@ -116,7 +116,6 @@ export default function BlogPage() {
     }, [blog]);
 
 
-
     if (loading) return <div className="text-center mt-10">Loading blog...</div>;
     if (!blog) return <div className="text-center mt-10 text-red-500">Blog not found</div>;
 
@@ -161,7 +160,8 @@ export default function BlogPage() {
     const isSaved = savedArticles.includes(blog.slug);
 
     const handleSearch = () => {
-        console.log('Search Term:', searchTerm);
+        if (!searchTerm.trim()) return;
+        router.push(`/report-store?search=${encodeURIComponent(searchTerm)}`);
     };
 
     return (
@@ -215,12 +215,12 @@ export default function BlogPage() {
                                             placeholder="Search..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                             className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                                         />
                                         <button
                                             onClick={handleSearch}
-                                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                                        >
+                                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300 cursor-pointer">
                                             Search
                                         </button>
                                     </div>
@@ -430,7 +430,7 @@ export default function BlogPage() {
                                                 href={consult.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-block text-center font-semibold text-white bg-[#FF6B00] hover:bg-[white] hover:text-[#FF6B00] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors"
+                                                className="inline-block text-center font-semibold text-white bg-[#FF6B00] hover:bg-[white] hover:text-[#FF6B00] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300"
                                             >
                                                 CONSULT NOW
                                             </a>
