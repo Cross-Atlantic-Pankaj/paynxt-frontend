@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import TileRenderer from "@/components/TileRenderer";
+import { message } from 'antd';
 
 export default function B2CPaymentIntelligencePage() {
   const { slug } = useParams();
@@ -22,10 +23,9 @@ export default function B2CPaymentIntelligencePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
   const [blogs, setBlogs] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(6);
-  const visibleBlogs = blogs.slice(0, visibleCount);
   const [viewBlogs, setViewBlogs] = useState([]);
   const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 3);
+  const [loading, setLoading] = useState(false);
 
   const handleTagClick = (tag) => {
     // Navigate to /report-store?search=tagName
@@ -55,16 +55,24 @@ export default function B2CPaymentIntelligencePage() {
       setSectionThree(data[0]);
     };
 
-    const fetchBlogs = async () => {
-      const res = await fetch("/api/report-store/repcontent");
-      const data = await res.json();
+    const fetchBlogs = async (pageNum = 1, append = false) => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/category/${slug}?page=${pageNum}`);
+        const { success, data, message: errorMessage } = await res.json();
 
-      // filter + sort on client side
-      const featuredReports = data
-        .filter((report) => report.Featured_Report_Status === 1)
-        .sort((a, b) => (b.single_user_dollar_price || 0) - (a.single_user_dollar_price || 0));
+        if (!success) {
+          message.error(errorMessage || 'Failed to load featured reports');
+          return;
+        }
 
-      setBlogs(featuredReports);
+        setBlogs(prev => (append ? [...prev, ...data] : data));
+      } catch (err) {
+        console.error('Error fetching featured reports:', err);
+        message.error('Failed to load featured reports');
+      } finally {
+        setLoading(false);
+      }
     };
 
     const fetchBlog = async () => {
@@ -94,7 +102,7 @@ export default function B2CPaymentIntelligencePage() {
     fetchBanner();
     fetchSliders();
     fetchSectionThree();
-    fetchBlogs();
+    fetchBlogs(1);
     fetchWhyPayNxt();
     fetchSectorDynamics();
     fetchStats();
@@ -107,10 +115,13 @@ export default function B2CPaymentIntelligencePage() {
     router.push(`/report-store?search=${encodeURIComponent(searchTerm)}`);
   };
 
-  const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
+  // Add before <BlogsGrid>:
+  { loading && <p className="text-center text-gray-500">Loading featured reports...</p> }
+
+  const BlogsGrid = ({ blogs }) => (
     <div className="w-full">
       <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
-        {blogs.map((blog, i) => {
+        {blogs.slice(0, 6).map((blog, i) => {
           const reportUrl = `/report-store/${blog.seo_url}`;
           return (
             <div
@@ -119,7 +130,6 @@ export default function B2CPaymentIntelligencePage() {
               <Link
                 href={reportUrl}
                 className="bg-white flex flex-col justify-between h-full overflow-hidden block">
-                {/* Tile Display - Outside padded container for full width */}
                 <div className="w-full h-50">
                   {blog.tileTemplateId && blog.tileTemplateId !== null ? (
                     <TileRenderer
@@ -133,14 +143,11 @@ export default function B2CPaymentIntelligencePage() {
                     </div>
                   )}
                 </div>
-
-                {/* Report Button - Positioned between tile and text content */}
                 <div className="px-4 -mt-2 mb-2">
                   <span className="inline-block px-4 py-2 bg-[#155392] text-white text-sm rounded hover:bg-[#0e3a6f] transition">
                     Report
                   </span>
                 </div>
-
                 <div className="p-4 flex flex-col justify-between h-full">
                   <div>
                     <p className="text-sm leading-tight">
@@ -177,20 +184,9 @@ export default function B2CPaymentIntelligencePage() {
           );
         })}
       </div>
-
-      {canLoadMore && (
-        <div className="mt-6 flex justify-center">
-          <button
-            onClick={onLoadMore}
-            className="px-6 py-3 rounded bg-[#155392] text-[white] hover:bg-[#0e3a6f] focus:outline-none">
-            Load More
-          </button>
-        </div>
-      )}
-
       {blogs.length === 0 && (
         <p className="text-center text-gray-500 mt-4">
-          No reports found for this filter.
+          No featured reports found for this category.
         </p>
       )}
     </div>
@@ -469,15 +465,14 @@ export default function B2CPaymentIntelligencePage() {
           <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">
             - latest research -
           </p>
-          <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">
-            Market Opportunities in Fintech
+          <h2 className="text-2xl text-center font-bold text-gray-800 mt-1 uppercase">
+            Featured Reports in {slug ? slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Category'}
           </h2>
         </div>
         <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
           <div className="col-span-4">
             <BlogsGrid
-              blogs={visibleBlogs}
-              onLoadMore={() => setVisibleCount((prev) => prev + 15)}
+              blogs={blogs}
             />
             <div className="mt-6 flex justify-center">
               <Link
@@ -494,7 +489,7 @@ export default function B2CPaymentIntelligencePage() {
         <p className="text-[#FF6B00] text-sm text-center tracking-wide mb-2">
           - BENEFITS -
         </p>
-        <h2 className="text-3xl text-center mb-10">{whyPayNxt.heading}</h2>
+        <h2 className="text-3xl text-center mb-10">{whyPayNxt?.heading}</h2>
 
         <div className="grid grid-rows-2 md:grid-cols-2 gap-6">
           {sections.map((section, index) => (

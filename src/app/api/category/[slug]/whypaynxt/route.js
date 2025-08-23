@@ -6,7 +6,7 @@ export async function GET(req, { params }) {
     await dbConnect();
 
     const { slug } = params;
-    console.log('Slug param in API:', slug);
+    // console.log('Slug param in API:', slug);
 
     let latestEntry = null;
 
