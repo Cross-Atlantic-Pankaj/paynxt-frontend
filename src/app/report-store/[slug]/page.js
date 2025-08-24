@@ -665,7 +665,7 @@ export default function ReportPage({ params }) {
                     </p>
                     <button
                         onClick={() => setCustomModalVisible(false)}
-                        className={`mt-4 inline-block text-center font-semibold text-white px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300 
+                        className={`mt-4 inline-block text-center font-semibold text-[white] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300 
                 ${customModalContent.success ? 'bg-[#FF6B00]' : 'bg-red-600'} 
                 hover:bg-[#155392]`}
                     >

@@ -5,6 +5,7 @@ import { useUser } from '@/context/UserContext';
 import Link from 'next/link';
 import { usePathname, notFound, useParams } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from "swiper/modules";
 import { Pagination } from 'swiper/modules';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -233,13 +234,17 @@ export default function BlogPage() {
                         {/* Right Slider Section */}
                         <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
                             <Swiper
-                                modules={[Pagination]}
+                                modules={[Pagination, Autoplay]}
                                 pagination={{
                                     el: '.custom-pagination',
                                     clickable: true,
                                 }}
                                 spaceBetween={16}
                                 slidesPerView={1}
+                                autoplay={{
+                                    delay: 5000, // 5 seconds
+                                    disableOnInteraction: false, // keeps auto-rotating even after user interacts
+                                }}
                             >
                                 {sliders.map((slide, index) => (
                                     <SwiperSlide key={index}>

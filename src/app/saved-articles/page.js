@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from "swiper/modules";
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import Link from 'next/link';
 import 'swiper/css';
@@ -365,7 +366,7 @@ export default function SavedArticlesPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="p-4 flex flex-col justify-between">
                       <div>
                         <p className="text-sm leading-tight">
@@ -496,9 +497,9 @@ export default function SavedArticlesPage() {
 
   return (
     <main className="min-h-screen bg-gray-100">
-      <PerformanceMonitor 
-        componentName="Saved Articles Page" 
-        startTime={pageLoadStart} 
+      <PerformanceMonitor
+        componentName="Saved Articles Page"
+        startTime={pageLoadStart}
       />
       <Toaster position="top-right" />
       <style jsx global>{`
@@ -532,7 +533,7 @@ export default function SavedArticlesPage() {
                   />
                   <button
                     onClick={handleSearch}
-                    className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                    className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white cursor-pointer duration-300"
                   >
                     Search
                   </button>
@@ -544,10 +545,14 @@ export default function SavedArticlesPage() {
           </div>
           <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
             <Swiper
-              modules={[SwiperPagination]}
+              modules={[SwiperPagination, Autoplay]}
               pagination={{ el: '.custom-pagination', clickable: true }}
               spaceBetween={16}
               slidesPerView={1}
+              autoplay={{
+                delay: 5000, // 5 seconds
+                disableOnInteraction: false, // keeps auto-rotating even after user interacts
+              }}
             >
               {sliders.map((slide, index) => (
                 <SwiperSlide key={index}>

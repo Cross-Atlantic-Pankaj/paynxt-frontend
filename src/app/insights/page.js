@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from "swiper/modules";
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import Link from 'next/link';
 import 'swiper/css';
@@ -636,13 +637,17 @@ export default function ViewPointPage() {
                     <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
                         {Array.isArray(sliders) && sliders.length > 0 ? (
                             <Swiper
-                                modules={[SwiperPagination]}
+                                modules={[SwiperPagination, Autoplay]}
                                 pagination={{
                                     el: '.custom-pagination',
                                     clickable: true,
                                 }}
                                 spaceBetween={16}
                                 slidesPerView={1}
+                                autoplay={{
+                                    delay: 5000, // 5 seconds
+                                    disableOnInteraction: false, // keeps auto-rotating even after user interacts
+                                }}
                             >
                                 {sliders.map((slide, index) => (
                                     <SwiperSlide key={index}>

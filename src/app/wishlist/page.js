@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from "swiper/modules";
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
@@ -159,6 +160,13 @@ export default function ViewPointPage() {
         toast.success('Logged out successfully');
         router.push('/login');
     };
+
+    const handleTagClick = (tag) => {
+        setSearchInput(tag); // Set raw tag for display
+        setSearchTerm(tag.trim().toLowerCase()); // Normalize for filtering
+        handleSearch(tag); // Trigger immediate search
+    };
+
     const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
@@ -186,8 +194,7 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'}`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -258,6 +265,7 @@ export default function ViewPointPage() {
             </div>
         );
     };
+
     const CountryFilter = ({ country, selectedCon, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
@@ -285,8 +293,7 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'}`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -357,6 +364,7 @@ export default function ViewPointPage() {
             </div>
         );
     };
+
     const RegionFilter = ({ region, selectedReg, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
@@ -384,8 +392,7 @@ export default function ViewPointPage() {
                     className="bg-gray-100 border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
-                                }`}
+                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'}`}
                         >
                             {isActive ? (
                                 <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
@@ -395,8 +402,6 @@ export default function ViewPointPage() {
                         </div>
                     )}
                 >
-
-                    {console.log("Region in component:", region)}
                     {(region || []).map((reg) => {
                         const filteredSubcategories = reg.subcategories || [];
                         // Filter subcategories to only those present in blogs
@@ -488,7 +493,7 @@ export default function ViewPointPage() {
                                                 </div>
                                             )}
                                         </div>
-                                        
+
                                         <div className="p-4 flex flex-col justify-between">
                                             <div>
                                                 <p className="text-sm leading-tight">
@@ -518,11 +523,11 @@ export default function ViewPointPage() {
                                                         toggleWishlist(blog.seo_url);
                                                     }}
                                                     className={`px-4 py-2 text-sm rounded ${wishlist.includes(blog.seo_url)
-                                                        ? 'bg-red-500 text-white hover:bg-red-600'
+                                                        ? 'bg-red-500 text-[white] hover:bg-red-600 hover:cursor-pointer'
                                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                                         }`}
                                                 >
-                                                    {wishlist.includes(blog.seo_url) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                                                    {wishlist.includes(blog.seo_url) ? 'Remove' : 'Add to Wishlist'}
                                                 </button>
                                             </div>
                                         </div>
@@ -619,7 +624,6 @@ export default function ViewPointPage() {
             });
     }, [blogs, selectedCat, selectedCon, selectedReg, searchTerm, wishlist]);
 
-
     const filteredCategories = useMemo(() => {
         // For each category, check if at least one blog has matching Product_category
         return categories.filter(cat =>
@@ -647,37 +651,35 @@ export default function ViewPointPage() {
         setVisibleCount(15);
     }, [selectedCat, selectedCon, selectedReg, searchTerm, wishlist]);
 
-    const handleSearch = () => {
-        setSearchTerm(searchInput);
+    const handleSearch = (value) => {
+        const normalizedSearch = value.trim().toLowerCase();
+        setSearchTerm(normalizedSearch);
         setCurrentPage(1);
         setVisibleCount(15);
-        console.log('Search Term:', searchTerm);
+        console.log('Search Term:', normalizedSearch);
     };
 
     return (
-
         <main className="min-h-screen bg-gray-100">
-            <PerformanceMonitor 
-                componentName="Wishlist Page" 
-                startTime={pageLoadStart} 
+            <PerformanceMonitor
+                componentName="Wishlist Page"
+                startTime={pageLoadStart}
             />
             <Toaster position="top-right" />
             <style jsx global>{`
-  .swiper-pagination {
-    position: relative;
-    margin-top: 16px;
-    text-align: center;
-  }
-
-  .swiper-pagination-bullet {
-    background: #155392 !important;
-    opacity: 1;
-  }
-
-  .swiper-pagination-bullet-active {
-    background: #FF6B00 !important;
-  }
-`}</style>
+                .swiper-pagination {
+                    position: relative;
+                    margin-top: 16px;
+                    text-align: center;
+                }
+                .swiper-pagination-bullet {
+                    background: #155392 !important;
+                    opacity: 1;
+                }
+                .swiper-pagination-bullet-active {
+                    background: #FF6B00 !important;
+                }
+            `}</style>
 
             <section className="w-full bg-[#155392] py-20 px-8">
                 <div className="flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
@@ -695,13 +697,20 @@ export default function ViewPointPage() {
                                         type="text"
                                         placeholder="Search..."
                                         value={searchInput}
-                                        onChange={(e) => setSearchInput(e.target.value)}
-                                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
+                                        onChange={(e) => {
+                                            setSearchInput(e.target.value);
+                                            handleSearch(e.target.value); // Live search
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSearch(searchInput);
+                                            }
+                                        }}
                                         className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
                                     />
                                     <button
-                                        onClick={handleSearch}
-                                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                                        onClick={() => handleSearch(searchInput)}
+                                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white cursor-pointer duration-300"
                                     >
                                         Search
                                     </button>
@@ -710,7 +719,8 @@ export default function ViewPointPage() {
                                     {banner.tags?.map((tag, index) => (
                                         <span
                                             key={index}
-                                            className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full"
+                                            onClick={() => handleTagClick(tag)}
+                                            className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:opacity-80 duration-300"
                                         >
                                             {tag}
                                         </span>
@@ -725,13 +735,17 @@ export default function ViewPointPage() {
                     {/* Right Slider Section */}
                     <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
                         <Swiper
-                            modules={[SwiperPagination]}
+                            modules={[SwiperPagination, Autoplay]}
                             pagination={{
                                 el: '.custom-pagination',
                                 clickable: true,
                             }}
                             spaceBetween={16}
                             slidesPerView={1}
+                            autoplay={{
+                                delay: 5000, // 5 seconds
+                                disableOnInteraction: false, // keeps auto-rotating even after user interacts
+                            }}
                         >
                             {sliders.map((slide, index) => (
                                 <SwiperSlide key={index}>
@@ -763,21 +777,19 @@ export default function ViewPointPage() {
 
                         {/* Inline styles for pagination bullets */}
                         <style>{`
-    .custom-pagination .swiper-pagination-bullet {
-      width: 20px;
-      height: 4px;
-      background-color: #ccc;
-      opacity: 1;
-      border-radius: 2px;
-      transition: background-color 0.3s ease;
-    }
-
-    .custom-pagination .swiper-pagination-bullet-active {
-      background-color: #155392;
-    }
-  `}</style>
+                            .custom-pagination .swiper-pagination-bullet {
+                                width: 20px;
+                                height: 4px;
+                                background-color: #ccc;
+                                opacity: 1;
+                                border-radius: 2px;
+                                transition: background-color 0.3s ease;
+                            }
+                            .custom-pagination .swiper-pagination-bullet-active {
+                                background-color: #155392;
+                            }
+                        `}</style>
                     </div>
-
                 </div>
             </section>
             <section className="bg-gray-100 py-10">
@@ -795,7 +807,7 @@ export default function ViewPointPage() {
                             }}
                             className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !selectedReg && !searchTerm
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
+                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f] hover:cursor-pointer'
                                 }`}
                             disabled={!selectedCat && !selectedCon && !selectedReg && !searchTerm}
                         >
@@ -842,5 +854,5 @@ export default function ViewPointPage() {
                 </div>
             </section>
         </main>
-    )
+    );
 }

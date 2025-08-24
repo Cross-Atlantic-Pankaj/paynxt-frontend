@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
+import { Autoplay } from "swiper/modules";
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useParams } from 'next/navigation';
@@ -362,13 +363,17 @@ export default function B2CPaymentIntelligencePage() {
           {/* Right Slider Section */}
           <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
             <Swiper
-              modules={[Pagination]}
+              modules={[Pagination, Autoplay]}
               pagination={{
                 el: '.custom-pagination',
                 clickable: true,
               }}
               spaceBetween={16}
               slidesPerView={1}
+              autoplay={{
+                delay: 5000, // 5 seconds
+                disableOnInteraction: false, // keeps auto-rotating even after user interacts
+              }}
             >
               {(sliders || []).map((slide, index) => (
                 <SwiperSlide key={index}>

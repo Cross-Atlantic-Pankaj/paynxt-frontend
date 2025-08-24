@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from "swiper/modules";
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import Link from 'next/link';
 import 'swiper/css';
@@ -9,7 +10,6 @@ import 'swiper/css/pagination';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import TileRenderer from '@/components/TileRenderer';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useDebounce } from 'use-debounce'; // Ensure this is installed
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -33,7 +33,6 @@ export default function ViewPointPage() {
     const [searchInput, setSearchInput] = useState(initialSearch); // Keep raw input for display
     const [searchTerm, setSearchTerm] = useState(initialSearch); // Normalized for filtering
     const router = useRouter();
-    const [debouncedSearchInput] = useDebounce(searchInput, 50); // Debounce raw input
 
     const handleTagClick = (tag) => {
         setSearchInput(tag); // Set raw tag for display
@@ -558,10 +557,8 @@ export default function ViewPointPage() {
     };
 
     useEffect(() => {
-        if (debouncedSearchInput !== searchTerm) {
-            handleSearch(searchInput); // Use searchInput directly to ensure latest value
-        }
-    }, [debouncedSearchInput, searchInput, searchTerm, selectedCat, router]);
+        handleSearch(searchInput); // Directly use searchInput
+    }, [searchInput, selectedCat, router]);
 
     return (
         <main className="min-h-screen bg-white">
@@ -628,13 +625,17 @@ export default function ViewPointPage() {
                     </div>
                     <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
                         <Swiper
-                            modules={[SwiperPagination]}
+                            modules={[SwiperPagination, Autoplay]}
                             pagination={{
                                 el: '.custom-pagination',
                                 clickable: true,
                             }}
                             spaceBetween={16}
                             slidesPerView={1}
+                            autoplay={{
+                                delay: 5000, // 5 seconds
+                                disableOnInteraction: false, // keeps auto-rotating even after user interacts
+                            }}
                         >
                             {sliders.map((slide, index) => (
                                 <SwiperSlide key={index}>
