@@ -205,9 +205,10 @@ export default function BlogPage() {
                                     ))} */}
                                     </div>
                                     {banner.summary && (
-                                        <p className="text-md text-white mt-1 mb-8">
-                                            {banner.summary}
-                                        </p>
+                                        <p
+                                            className="text-md text-white mt-1 mb-8"
+                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(banner.summary, { ADD_ATTR: ['style'] }) }}
+                                        />
                                     )}
 
 

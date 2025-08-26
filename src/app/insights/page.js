@@ -16,6 +16,7 @@ import PerformanceMonitor from '@/components/PerformanceMonitor';
 const { Text } = Typography;
 const { Option } = Select;
 const { Panel } = Collapse;
+import DOMPurify from 'dompurify';
 
 export default function ViewPointPage() {
     const router = useRouter();
@@ -105,6 +106,12 @@ export default function ViewPointPage() {
 
         fetchAllData();
     }, []);
+
+    const stripHTML = (html) => {
+        const div = document.createElement('div');
+        div.innerHTML = DOMPurify.sanitize(html, { ALLOWED_TAGS: [] }); // Remove all tags
+        return div.textContent || div.innerText || '';
+    };
 
     const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
@@ -401,7 +408,11 @@ export default function ViewPointPage() {
                                                 <div className="border-b border-gray-400 mb-4"></div>
                                                 <h3 className="text-md font-bold">{blog.title}</h3>
                                                 <p className="text-sm text-gray-700">
-                                                    {blog.summary?.length > 100 ? `${blog.summary.slice(0, 100)}...` : blog.summary}
+                                                    {blog.summary
+                                                        ? stripHTML(blog.summary).length > 100
+                                                            ? `${stripHTML(blog.summary).slice(0, 100)}...`
+                                                            : stripHTML(blog.summary)
+                                                        : ''}
                                                 </p>
                                             </div>
                                         </div>
