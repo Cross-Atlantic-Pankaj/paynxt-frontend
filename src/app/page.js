@@ -800,13 +800,13 @@ export default function HomePage() {
             </section>
           )}
 
-          <section className="flex justify-around max-w-7xl mx-auto py-10 px-20 md:px-8 lg:px-3">
+          <section className="flex justify-around max-w-7xl mx-auto md:py-10 md:px-8 lg:px-3">
             <div className="w-full">
               <div className="grid grid-rows-1 md:grid-cols-3 items-stretch gap-y-12 md:gap-y-0 md:gap-x-2">
                 {/* Featured Research */}
                 <div className="flex-col items-center justify-items-center space-y-5 md:space-y-12 md:block">
-                  <div className="flex justify-around items-center mb-4 w-full">
-                    <h2 className="text-xl font-semibold text-gray-700 pl-14 lg:pl-0 lg:ml-[-40px]">
+                  <div className="flex justify-around items-center mb-4 w-full mt-4 md:mt-0">
+                    <h2 className="!mb-0 text-xl font-semibold text-gray-700 lg:pl-0 lg:ml-[-40px]">
                       Featured
                     </h2>
                     <a
@@ -819,15 +819,15 @@ export default function HomePage() {
                   {featuredResearch.slice(0, 5).map((item, idx) => (
                     <div
                       key={idx}
-                      className="relative flex items-center h-20 w-5/6 py-4 bg-white pl-14">
+                      className="relative flex items-center h-20 w-4/6 py-2 bg-white md:pl-14 md:py-4 md:w-5/6">
                       <img
                         src={item.content.imageurl}
                         alt={item.content.title}
-                        className="absolute left-0 h-20 w-20 bg-gray-100 object-cover -translate-x-1/2 z-20"
+                        className="md:absolute left-0 h-10 w-10 bg-gray-100 object-cover -translate-x-1/2 z-20 md:h-20 md:w-20"
                       />
                       <a
                         href={`/${item.content.url}`}
-                        className="font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200 md:text-base">
+                        className="font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200 text-xs lg:text-base">
                         {item.content.title}
                       </a>
                     </div>
@@ -836,7 +836,7 @@ export default function HomePage() {
 
                 {/* Middle Orange Bar */}
                 <div className="flex justify-center items-center relative">
-                  <div className="w-100 md:w-60 bg-[#FF6B00] md:h-full relative flex flex-col items-center justify-center space-y-2 py-10">
+                  <div className="w-full md:w-60 bg-[#FF6B00] md:h-full relative flex flex-col items-center justify-center space-y-2 py-10">
                     <span className="text-white text-xl md:text-2xl font-bold">
                       Insight.
                     </span>
@@ -851,8 +851,8 @@ export default function HomePage() {
 
                 {/* Insights */}
                 <div className="flex-col items-center justify-items-center space-y-5 md:space-y-12 md:block">
-                  <div className="flex justify-around items-center mb-4 w-full">
-                    <h2 className="text-xl font-semibold text-gray-700 pl-14 lg:pl-0 lg:ml-[-40px]">
+                  <div className="flex justify-around items-center mb-4 w-full mt-4 md:mt-0">
+                    <h2 className="!mb-0 text-xl font-semibold text-gray-700 lg:pl-0 lg:ml-[-40px]">
                       Insights
                     </h2>
                     <a
@@ -865,15 +865,15 @@ export default function HomePage() {
                   {insights.slice(0, 5).map((item, idx) => (
                     <div
                       key={idx}
-                      className="relative flex items-center h-20 w-5/6 pr-4 py-4 bg-white pl-14">
+                      className="relative flex items-center h-20 w-4/6 py-2 bg-white md:pl-14 md:py-4 md:w-5/6">
                       <img
                         src={item.content.imageurl}
                         alt={item.content.title}
-                        className="absolute left-0 h-20 w-20 bg-gray-100 object-cover -translate-x-1/2"
+                        className="md:absolute left-0 h-10 w-10 bg-gray-100 object-cover -translate-x-1/2 z-20 md:h-20 md:w-20"
                       />
                       <a
                         href={`/${item.content.url}`}
-                        className="font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200">
+                        className="font-bold text-gray-800 hover:text-[#FF6B00] transition-colors duration-200 text-xs lg:text-base">
                         {item.content.title}
                       </a>
                     </div>
