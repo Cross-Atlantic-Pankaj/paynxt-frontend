@@ -15,6 +15,7 @@ import slugify from '@/lib/slugify';
 import TileRenderer from '@/components/TileRenderer';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import DOMPurify from 'dompurify';
 // import Head from 'next/head';
 
 export default function BlogPage() {
@@ -324,12 +325,15 @@ export default function BlogPage() {
                                 {isSaved ? 'Remove' : 'Save'}
                             </button>
                         </div>
-                        <p className="text-gray-700 mb-6">{blog.summary}</p>
+                        <div
+                            className="text-gray-700 mb-6 prose"
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.summary) }}
+                        />
 
                         <div className="mb-8">
                             <div
-                                className="text-gray-800 leading-relaxed whitespace-pre-line"
-                                dangerouslySetInnerHTML={{ __html: blog.articlePart1 }}
+                                className="text-gray-800 leading-relaxed prose"
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.articlePart1) }}
                             />
                         </div>
                         {blog.advertisement && (
@@ -354,8 +358,8 @@ export default function BlogPage() {
                         {user ? (
                             <div className="mt-6">
                                 <div
-                                    className="text-gray-800 leading-relaxed whitespace-pre-line article-content"
-                                    dangerouslySetInnerHTML={{ __html: blog.articlePart2 }}
+                                    className="text-gray-800 leading-relaxed prose article-content"
+                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.articlePart2) }}
                                 />
                             </div>
                         ) : (

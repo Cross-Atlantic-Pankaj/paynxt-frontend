@@ -694,7 +694,7 @@ export default function ViewPointPage() {
                             }}
                             className={`px-4 py-2 rounded transition ${!selectedCat && !selectedCon && !selectedReg && !searchTerm && !searchInput
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
+                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f] hover:cursor-pointer'
                                 }`}
                             disabled={!selectedCat && !selectedCon && !selectedReg && !searchTerm && !searchInput}
                         >

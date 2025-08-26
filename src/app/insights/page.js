@@ -422,8 +422,8 @@ export default function ViewPointPage() {
                                         <button
                                             onClick={(e) => handleSaveArticle(blog, e)}
                                             className={`inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border text-sm font-medium transition ${isSaved
-                                                ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500'
-                                                : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500'
+                                                ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500 hover:cursor-pointer'
+                                                : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500 hover:cursor-pointer'
                                                 }`}
                                         >
                                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
