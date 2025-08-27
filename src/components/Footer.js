@@ -45,7 +45,7 @@ const Footer = () => {
             aria-label="Back to top">
             <span>Top</span>
           </button>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center pt-0">
             <div className="flex justify-start items-center">
               <div className="flex flex-col items-center lg:items-start h-full justify-center">
                 <Link href="/">
@@ -58,14 +58,12 @@ const Footer = () => {
                   />
                 </Link>
                 <div className="socialLinks">
-                  <div>HI</div>
-                  <div>HI</div>
-                  <div>HI</div>
+                  {/* Social media links can be uncommented and added here */}
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3">
               <div className="flex pl-10 sm:justify-items-start sm:pl-20 md:justify-center md:pl-0">
                 <div>
                   <div className="text-[#FF6B00] text-lg font-bold mb-4">
@@ -89,7 +87,7 @@ const Footer = () => {
                 </div>
               </div>
 
-              <div className="flex pl-10 sm:justify-items-start">
+              <div className="flex pl-10 sm:justify-items-start md:justify-center sm:pl-0">
                 <div>
                   <div className="text-[#FF6B00] text-lg font-bold mb-4">
                     Solution
