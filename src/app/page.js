@@ -490,7 +490,7 @@ export default function HomePage() {
               <div className="w-2/3 text-left">
                 {banner ? (
                   <div>
-                    <h1 className="text-4xl font-bold text-white mb-6">
+                    <h1 className="text-2xl md:text-4xl font-bold text-white mb-6">
                       {banner.bannerHeading}
                     </h1>
 
