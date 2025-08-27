@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
 import styles from "../styles/Styling.css";
 import { useEffect, useState } from "react";
 
@@ -13,7 +13,7 @@ const Footer = () => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
@@ -35,20 +35,25 @@ const Footer = () => {
   return (
     <>
       {/* Main footer section */}
-      <footer id="footer" className="blueBg pt-25 pb-10">
+      <footer
+        id="footer"
+        className="blueBg pt-10 pb-10">
         <div className="container">
-          <button className="backToTop" onClick={scrollToTop} aria-label="Back to top">
+          <button
+            className="backToTop"
+            onClick={scrollToTop}
+            aria-label="Back to top">
             <span>Top</span>
           </button>
-          <div className="grid grid-rows-1 lg:grid-cols-4 gap-6 items-start pt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center pt-0">
             <div className="flex justify-start items-center">
               <div className="flex flex-col items-center lg:items-start h-full justify-center">
                 <Link href="/">
                   <Image
                     src="/Images/PayNxt_Logo.svg"
                     alt="PayNXT360"
-                    width={150}
-                    height={50}
+                    width={250}
+                    height={150}
                     className="py-10"
                   />
                 </Link>
@@ -58,42 +63,104 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="flex justify-center">
-              <div>
-                <div className="text-[#FF6B00] text-lg font-bold mb-4">Research Databases</div>
-                <ul className="list-none p-0">
-                  {categories.map((cat, index) => (
-                    <li key={index} className="mb-2">
-                      <Link href={`/report-store?category=${encodeURIComponent(cat.name)}`} className="text-white text-sm hover:text-[#FF6B00]">
-                        {cat.name}
+            <div className="grid sm:grid-cols-2 md:grid-cols-3">
+              <div className="flex pl-10 sm:justify-items-start sm:pl-20 md:justify-center md:pl-0">
+                <div>
+                  <div className="text-[#FF6B00] text-lg font-bold mb-4">
+                    Research Databases
+                  </div>
+                  <ul className="list-none p-0">
+                    {categories.map((cat, index) => (
+                      <li
+                        key={index}
+                        className="mb-2">
+                        <Link
+                          href={`/report-store?category=${encodeURIComponent(
+                            cat.name
+                          )}`}
+                          className="text-white text-sm hover:text-[#FF6B00]">
+                          {cat.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="flex pl-10 sm:justify-items-start md:justify-center sm:pl-0">
+                <div>
+                  <div className="text-[#FF6B00] text-lg font-bold mb-4">
+                    Solution
+                  </div>
+                  <ul className="list-none p-0">
+                    <li className="mb-2">
+                      <Link
+                        href="/contact-us"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        Premium Subscription
                       </Link>
                     </li>
-                  ))}
-                </ul>
+                    <li className="mb-2">
+                      <Link
+                        href="/report-store"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        Report Store
+                      </Link>
+                    </li>
+                    <li className="mb-2">
+                      <Link
+                        href="/consulting"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        Consulting
+                      </Link>
+                    </li>
+                    <li className="mb-2">
+                      <Link
+                        href="/insights"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        View Points
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
 
-            <div className="flex justify-center">
-              <div>
-                <div className="text-[#FF6B00] text-lg font-bold mb-4">Solution</div>
-                <ul className="list-none p-0">
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Premium Subscription</Link></li>
-                  <li className="mb-2"><Link href="/report-store" className="text-white text-sm hover:text-[#FF6B00]">Report Store</Link></li>
-                  <li className="mb-2"><Link href="/consulting" className="text-white text-sm hover:text-[#FF6B00]">Consulting</Link></li>
-                  <li className="mb-2"><Link href="/insights" className="text-white text-sm hover:text-[#FF6B00]">View Points</Link></li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <div>
-                <div className="text-[#FF6B00] text-lg font-bold mb-4">Quick Links</div>
-                <ul className="list-none p-0">
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Our Offices</Link></li>
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Sales</Link></li>
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Media</Link></li>
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Career</Link></li>
-                </ul>
+              <div className="flex justify-items-start pl-10 sm:pl-20 md:justify-center md:pl-0">
+                <div>
+                  <div className="text-[#FF6B00] text-lg font-bold mb-4">
+                    Quick Links
+                  </div>
+                  <ul className="list-none p-0">
+                    <li className="mb-2">
+                      <Link
+                        href="/contact-us"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        Our Offices
+                      </Link>
+                    </li>
+                    <li className="mb-2">
+                      <Link
+                        href="/contact-us"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        Sales
+                      </Link>
+                    </li>
+                    <li className="mb-2">
+                      <Link
+                        href="/contact-us"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        Media
+                      </Link>
+                    </li>
+                    <li className="mb-2">
+                      <Link
+                        href="/contact-us"
+                        className="text-white text-sm hover:text-[#FF6B00]">
+                        Career
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -106,8 +173,10 @@ const Footer = () => {
           <div className="flex flex-col lg:flex-row justify-between items-center">
             <div className="text-center lg:text-left">
               <p className="mb-0">
-                © <span>{year}</span> PayNXT360, All rights reserved |{' '}
-                <Link href="/privacy-policy" className="text-[#FF6B00] hover:underline">
+                © <span>{year}</span> PayNXT360, All rights reserved |{" "}
+                <Link
+                  href="/privacy-policy"
+                  className="text-[#FF6B00] hover:underline">
                   Privacy Policy
                 </Link>
               </p>
