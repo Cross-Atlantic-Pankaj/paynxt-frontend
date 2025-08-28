@@ -9,7 +9,7 @@ import { useUser } from "@/context/UserContext";
 import Link from "next/link";
 import { Pagination } from "antd";
 import TileRenderer from "@/components/TileRenderer";
-import "antd/dist/reset.css"; // if you use Ant Design v5+
+import "antd/dist/reset.css";
 import { useRouter } from 'next/navigation';
 
 function ContactSection() {
