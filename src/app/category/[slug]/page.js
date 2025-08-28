@@ -431,9 +431,9 @@ export default function B2CPaymentIntelligencePage() {
             {stats.map((item, index) => (
               <div
                 key={index}
-                className="border-t-12 border-[#155392] bg-gray-100 p-6 text-[#155392]"
+                className="border-t-12 border-[#FF6B00] bg-gray-100 p-6 text-[#155392]"
               >
-                <h3 className="text-3xl text-[#155392] text-center font-extrabold mb-2">{item.title}</h3>
+                <h3 className="text-3xl text-[#155392] text-center mb-2" style={{ fontWeight: 550 }}>{item.title}</h3>
                 <p className="text-md text-center">{item.description}</p>
               </div>
             ))}

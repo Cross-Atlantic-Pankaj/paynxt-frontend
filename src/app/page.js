@@ -666,7 +666,7 @@ export default function HomePage() {
 
           <section className="w-full bg-gray-100">
             <div className="max-w-8xl mx-auto">
-              <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8 gap-y-1">
+              <div className="grid grid-rows-2 md:grid-cols-4 lg:grid-cols-8">
                 {partnerLogos.map((logo, index) => (
                   <div
                     key={index}
