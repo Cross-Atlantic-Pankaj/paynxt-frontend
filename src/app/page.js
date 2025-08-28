@@ -16,14 +16,14 @@ function ContactSection() {
   return (
     <div className="relative z-20">
       <div className="max-w-7xl mx-auto -mb-15">
-        <div className="bg-[#FF6B00] shadow-xl rounded-2xl px-8 py-10 flex md:flex-row flex-col  items-center md:justify-between">
+        <div className="bg-[#FF6B00] shadow-xl rounded-2xl px-8 py-10 flex flex-row md:flex-row items-center md:justify-between">
 
           {/* Left side: Title + Description */}
           <div className="md:text-left md:max-w-xl">
-            <h2 className="text-3xl font-extrabold text-white text-center">
+            <h2 className="text-3xl font-extrabold text-white">
               Want to speak to us directly? 
             </h2>
-            <p className="text-white text-lg mt-2 text-center">
+            <p className="text-white text-lg mt-2">
               Contact us on live chat or fill out a form with your enquiry 
             </p>
           </div>
