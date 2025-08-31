@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import Tile from './Tile';
 
 // Global cache for tile templates to avoid duplicate API calls
@@ -62,11 +62,20 @@ const processBatchRequests = async () => {
     }
 };
 
-const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' }) => {
+const TileRenderer = memo(({ tileTemplateId, fallbackIcon = 'Circle', className = '' }) => {
     const [tileTemplate, setTileTemplate] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Memoize the template ID to prevent unnecessary re-renders
+    const memoizedTemplateId = useMemo(() => {
+        if (typeof tileTemplateId === 'object' && tileTemplateId !== null) {
+            return tileTemplateId._id || tileTemplateId;
+        }
+        return tileTemplateId;
+    }, [tileTemplateId]);
+
+    // Memoize the fetch function to prevent recreation
     const fetchTileTemplate = useCallback(async (id) => {
         // Check cache first
         if (tileTemplateCache.has(id)) {
@@ -88,9 +97,16 @@ const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' 
         });
     }, []);
 
+    // Memoize the loading state to prevent unnecessary updates
+    const shouldShowLoading = useMemo(() => {
+        return loading && !tileTemplate && !error;
+    }, [loading, tileTemplate, error]);
+
     useEffect(() => {
-        if (!tileTemplateId) {
+        if (!memoizedTemplateId) {
+            setTileTemplate(null);
             setLoading(false);
+            setError(null);
             return;
         }
 
@@ -98,6 +114,15 @@ const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' 
         if (typeof tileTemplateId === 'object' && tileTemplateId !== null) {
             setTileTemplate(tileTemplateId);
             setLoading(false);
+            setError(null);
+            return;
+        }
+
+        // Check if we already have this template in cache
+        if (tileTemplateCache.has(memoizedTemplateId)) {
+            setTileTemplate(tileTemplateCache.get(memoizedTemplateId));
+            setLoading(false);
+            setError(null);
             return;
         }
 
@@ -107,7 +132,7 @@ const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' 
                 setLoading(true);
                 setError(null);
                 
-                const template = await fetchTileTemplate(tileTemplateId);
+                const template = await fetchTileTemplate(memoizedTemplateId);
                 setTileTemplate(template);
             } catch (err) {
                 console.error('Error fetching tile template:', err);
@@ -118,36 +143,57 @@ const TileRenderer = ({ tileTemplateId, fallbackIcon = 'Circle', className = '' 
         };
 
         loadTemplate();
-    }, [tileTemplateId, fetchTileTemplate]);
+    }, [memoizedTemplateId, tileTemplateId, fetchTileTemplate]);
 
-    if (loading) {
-        return (
-            <div className={`animate-pulse bg-gray-200 rounded-lg ${className}`} 
-                 style={{ minWidth: 48, minHeight: 48 }} />
-        );
-    }
+    // Memoize the fallback tile to prevent recreation
+    const fallbackTile = useMemo(() => (
+        <Tile 
+            bg="#f8f9fa" 
+            icon={fallbackIcon} 
+            color="#6b7280" 
+            size={32}
+            className={className}
+        />
+    ), [fallbackIcon, className]);
 
-    if (error || !tileTemplate) {
+    // Memoize the loading skeleton to prevent recreation
+    const loadingSkeleton = useMemo(() => (
+        <div 
+            className={`animate-pulse bg-gray-200 rounded-lg ${className}`} 
+            style={{ minWidth: 48, minHeight: 48 }}
+        />
+    ), [className]);
+
+    // Memoize the main tile to prevent recreation
+    const mainTile = useMemo(() => {
+        if (!tileTemplate) return null;
+        
         return (
-            <Tile 
-                bg="#f8f9fa" 
-                icon={fallbackIcon} 
-                color="#6b7280" 
-                size={32}
+            <Tile
+                bg={tileTemplate.backgroundColor || '#f8f9fa'}
+                icon={tileTemplate.iconName || fallbackIcon}
+                color={tileTemplate.iconColor || '#000000'}
+                size={tileTemplate.iconSize || 32}
                 className={className}
             />
         );
+    }, [tileTemplate, fallbackIcon, className]);
+
+    // Early return for loading state
+    if (shouldShowLoading) {
+        return loadingSkeleton;
     }
 
-    return (
-        <Tile
-            bg={tileTemplate.backgroundColor || '#f8f9fa'}
-            icon={tileTemplate.iconName || fallbackIcon}
-            color={tileTemplate.iconColor || '#000000'}
-            size={tileTemplate.iconSize || 32}
-            className={className}
-        />
-    );
-};
+    // Early return for error or no template
+    if (error || !tileTemplate) {
+        return fallbackTile;
+    }
+
+    // Return the main tile
+    return mainTile;
+});
+
+// Add display name for debugging
+TileRenderer.displayName = 'TileRenderer';
 
 export default TileRenderer;

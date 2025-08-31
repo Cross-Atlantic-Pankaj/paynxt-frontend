@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback, memo } from 'react';
 import { Select, Typography, Collapse, Pagination } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from "swiper/modules";
@@ -377,13 +377,13 @@ export default function ViewPointPage() {
         );
     };
 
-    const BlogsGrid = ({ blogs, onLoadMore, canLoadMore }) => (
+    const BlogsGrid = memo(({ blogs, onLoadMore, canLoadMore }) => (
         <div className="w-full">
             <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                 {blogs.map((blog, i) => {
                     const reportUrl = `/report-store/${blog.seo_url}`;
                     return (
-                        <div key={i} className="h-full">
+                        <div key={blog.seo_url || i} className="h-full">
                             <Link
                                 href={reportUrl}
                                 className="bg-white flex flex-col justify-between h-full overflow-hidden block"
@@ -449,7 +449,10 @@ export default function ViewPointPage() {
                 <p className="text-center text-gray-500 mt-4">No reports found for this filter.</p>
             )}
         </div>
-    );
+    ));
+
+    // Add display name for debugging
+    BlogsGrid.displayName = 'BlogsGrid';
 
     const finalFilteredBlogs = useMemo(() => {
         let data = blogs;
@@ -559,6 +562,11 @@ export default function ViewPointPage() {
     useEffect(() => {
         handleSearch(searchInput); // Directly use searchInput
     }, [searchInput, selectedCat, router]);
+
+    // Memoize the onLoadMore function to prevent unnecessary re-renders
+    const handleLoadMore = useCallback(() => {
+        setVisibleCount(prev => prev + 15);
+    }, []);
 
     return (
         <main className="min-h-screen bg-white">
@@ -731,7 +739,7 @@ export default function ViewPointPage() {
                     <div className="col-span-3">
                         <BlogsGrid
                             blogs={visibleBlogs}
-                            onLoadMore={() => setVisibleCount(prev => prev + 15)}
+                            onLoadMore={handleLoadMore}
                             canLoadMore={visibleCount < finalFilteredBlogs.length}
                         />
                     </div>
