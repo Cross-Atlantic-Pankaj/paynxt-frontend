@@ -32,6 +32,12 @@ const Navbar = () => {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname !== pathname.toLowerCase()) {
+      router.replace(pathname.toLowerCase());
+    }
+  }, [pathname, router]);
+
+  useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
 
@@ -221,23 +227,20 @@ const Navbar = () => {
                 aria-label="Toggle mobile menu">
                 <div className="w-6 h-6 flex flex-col justify-center items-center">
                   <span
-                    className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
-                      isMobileMenuOpen
+                    className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${isMobileMenuOpen
                         ? "rotate-45 translate-y-1"
                         : "-translate-y-0.5"
-                    }`}></span>
+                      }`}></span>
 
                   <span
-                    className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5 ${
-                      isMobileMenuOpen ? "opacity-0" : "opacity-100"
-                    }`}></span>
+                    className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5 ${isMobileMenuOpen ? "opacity-0" : "opacity-100"
+                      }`}></span>
 
                   <span
-                    className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
-                      isMobileMenuOpen
+                    className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${isMobileMenuOpen
                         ? "-rotate-45 -translate-y-1"
                         : "translate-y-0.5"
-                    }`}></span>
+                      }`}></span>
                 </div>
               </button>
             </div>
@@ -396,11 +399,10 @@ const Navbar = () => {
                               onClick={() => toggleDropdown(section._id)}
                               className="text-white p-2">
                               <svg
-                                className={`w-4 h-4 transition-transform ${
-                                  openDropdown === section._id
+                                className={`w-4 h-4 transition-transform ${openDropdown === section._id
                                     ? "rotate-180"
                                     : ""
-                                }`}
+                                  }`}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -473,9 +475,8 @@ const Navbar = () => {
 
       {user ? (
         <div
-          className={`paymentsSection ${
-            isCompact ? "compact" : ""
-          } hidden lg:!block`}>
+          className={`paymentsSection ${isCompact ? "compact" : ""
+            } hidden lg:!block`}>
           <div className="container">
             <div className="flex justify-center items-center gap-20 py-2">
               <div className="relative group">
@@ -561,9 +562,8 @@ const Navbar = () => {
         </div>
       ) : (
         <div
-          className={`paymentsSection ${
-            isCompact ? "compact" : ""
-          } hidden lg:!block`}>
+          className={`paymentsSection ${isCompact ? "compact" : ""
+            } hidden lg:!block`}>
           <div className="container">
             <div className="flex justify-center items-center gap-2 py-2 [&>*]:m-0">
               {sections.map((section) => (
