@@ -20,7 +20,7 @@ import DOMPurify from 'dompurify';
 
 export default function BlogPage() {
     const params = useParams();
-    const slug = params?.slug?.replace(/^\/blog-page\//, '');
+    const slug = params?.slug?.replace(/^\/view-point\//, '');
     const { user } = useUser();
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -126,7 +126,7 @@ export default function BlogPage() {
         e.stopPropagation(); // Stop event bubbling to parent Link
         if (!user) {
             toast.error('Please log in to save articles');
-            router.push(`/login?callbackUrl=/blog-page/${blog.slug}`);
+            router.push(`/login?callbackUrl=/view-point/${blog.slug}`);
             return;
         }
 
@@ -302,7 +302,7 @@ export default function BlogPage() {
                         <h1 className="text-2xl font-bold mb-4">{blog.title}</h1>
                         <div className="pt-0 flex gap-2 mb-6">
                             <a
-                                href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://pay-nxt360.vercel.app/blog-page/${blog.slug}`)}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`}
+                                href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://pay-nxt360.vercel.app/view-point/${blog.slug}`)}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
@@ -403,7 +403,7 @@ export default function BlogPage() {
                                     relatedArticles.map((article) => (
                                         <div key={article._id} className="px-4 py-3 group" title={moment(article.date).fromNow()}>
                                             <a
-                                                href={`/blog-page/${article.slug}`} // ✅ Using slug-based URL
+                                                href={`/view-point/${article.slug}`} // ✅ Using slug-based URL
                                                 className="flex items-start gap-2 text-sm text-blue-700 group-hover:text-[#FF6B00]"
                                             >
                                                 {article.tileTemplateId && (

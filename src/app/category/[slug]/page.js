@@ -198,7 +198,7 @@ export default function B2CPaymentIntelligencePage() {
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-rows-1 md:grid-cols-3 gap-6">
           {(blog || []).map((blo, i) => {
-            const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blo.slug}`;
+            const blogUrl = `https://pay-nxt360.vercel.app/view-point/${blo.slug}`;
             const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
               blogUrl
             )}&title=${encodeURIComponent(

@@ -381,7 +381,7 @@ export default function ViewPointPage() {
         <div className="w-full">
             <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                 {blogs.map((blog, i) => {
-                    const reportUrl = `/report-store/${blog.seo_url}`;
+                    const reportUrl = `/reportstore/view/${blog.seo_url}`;
                     return (
                         <div key={blog.seo_url || i} className="h-full">
                             <Link

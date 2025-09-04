@@ -29,7 +29,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: blog.title,
         description: blog.summary,
-        url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/blog-page/${slug}`,
+        url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/view-point/${slug}`,
         images: [
           {
             url: blog.imageIconurl,

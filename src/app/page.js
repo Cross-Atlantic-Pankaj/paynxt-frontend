@@ -276,7 +276,7 @@ export default function HomePage() {
       <div className="w-full">
         <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
           {(blog || []).map((blo, i) => {
-            const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blo.slug}`;
+            const blogUrl = `https://pay-nxt360.vercel.app/view-point/${blo.slug}`;
             const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
               blogUrl
             )}&title=${encodeURIComponent(

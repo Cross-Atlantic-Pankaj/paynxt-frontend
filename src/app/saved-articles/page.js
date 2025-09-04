@@ -343,7 +343,7 @@ export default function SavedArticlesPage() {
       <div className="w-full">
         <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
           {paginatedBlogs.map((blog, i) => {
-            const blogUrl = `https://pay-nxt360.vercel.app/blog-page/${blog.slug}`;
+            const blogUrl = `https://pay-nxt360.vercel.app/view-point/${blog.slug}`;
             const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
               blogUrl
             )}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`;
@@ -351,7 +351,7 @@ export default function SavedArticlesPage() {
             return (
               <div key={i} className="h-full">
                 <div className="bg-white flex flex-col justify-between h-full overflow-hidden">
-                  <Link href={`/blog-page/${blog.slug}`} className="block">
+                  <Link href={`/view-point/${blog.slug}`} className="block">
                     {/* Tile Display - Outside padded container for full width */}
                     <div className="w-full h-40">
                       {(blog.tileTemplateId && blog.tileTemplateId !== null) ? (

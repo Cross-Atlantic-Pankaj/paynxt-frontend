@@ -122,7 +122,7 @@ export default function ReportPage({ params }) {
     const handleSampleRequest = async () => {
         if (!user) {
             // Not logged in → redirect to login
-            router.push(`/login?callbackUrl=/report-store/${report.seo_url}`);
+            router.push(`/login?callbackUrl=/reportstore/view/${report.seo_url}`);
             return;
         }
 
@@ -155,7 +155,7 @@ export default function ReportPage({ params }) {
         if (!user) {
             localStorage.setItem('wishlistSeoUrl', report.seo_url);
             toast.error('Please log in to add to wishlist');
-            router.push(`/login?callbackUrl=/report-store/${report.seo_url}`);
+            router.push(`/login?callbackUrl=/reportstore/view/${report.seo_url}`);
             return;
         }
 
