@@ -334,7 +334,7 @@ export default function ViewPointPage() {
             e.stopPropagation(); // Stop event bubbling to parent Link
             if (!user) {
                 toast.error('Please log in to save articles');
-                router.push('/login?callbackUrl=/view-point');
+                router.push('/login?callbackUrl=/insights');
                 return;
             }
 

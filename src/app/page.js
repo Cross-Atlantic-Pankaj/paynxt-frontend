@@ -11,6 +11,7 @@ import { Pagination } from "antd";
 import TileRenderer from "@/components/TileRenderer";
 import "antd/dist/reset.css"; // if you use Ant Design v5+
 import { useRouter } from 'next/navigation';
+import DOMPurify from 'dompurify';
 
 function ContactSection() {
   return (
@@ -21,10 +22,10 @@ function ContactSection() {
           {/* Left side: Title + Description */}
           <div className="md:text-left md:max-w-xl">
             <h2 className="text-3xl font-extrabold text-white">
-              Want to speak to us directly? 
+              Want to speak to us directly?
             </h2>
             <p className="text-white text-lg mt-2">
-              Contact us on live chat or fill out a form with your enquiry 
+              Contact us on live chat or fill out a form with your enquiry
             </p>
           </div>
 
@@ -177,6 +178,12 @@ export default function HomePage() {
     fetchBlog();
   }, []);
 
+  const stripHTML = (html) => {
+    const div = document.createElement('div');
+    div.innerHTML = DOMPurify.sanitize(html, { ALLOWED_TAGS: [] }); // Remove all tags
+    return div.textContent || div.innerText || '';
+  };
+
   const handleSearch = () => {
     if (!searchTerm.trim()) return;
     router.push(`/report-store?search=${encodeURIComponent(searchTerm)}`);
@@ -325,9 +332,11 @@ export default function HomePage() {
                       <div className="border-b border-gray-400 mb-4"></div>
                       <h3 className="text-md font-bold">{blo.title}</h3>
                       <p className="text-sm text-gray-700">
-                        {blo.summary?.length > 100
-                          ? `${blo.summary.slice(0, 100)}...`
-                          : blo.summary}
+                        {blo.summary
+                          ? stripHTML(blo.summary).length > 100
+                            ? `${stripHTML(blo.summary).slice(0, 100)}...`
+                            : stripHTML(blo.summary)
+                          : ''}
                       </p>
                     </div>
                     <div className="mt-2">

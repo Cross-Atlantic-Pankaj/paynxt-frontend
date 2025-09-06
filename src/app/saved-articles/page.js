@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import TileRenderer from '@/components/TileRenderer';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
+import DOMPurify from 'dompurify';
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -30,6 +31,7 @@ export default function SavedArticlesPage() {
   const { user, isLoading: userLoading } = useUser();
   const router = useRouter();
   const [pageLoadStart, setPageLoadStart] = useState(performance.now());
+  
 
   useEffect(() => {
     if (!user && !userLoading) {
@@ -110,6 +112,12 @@ export default function SavedArticlesPage() {
     fetchSliders();
     fetchSavedBlogs();
   }, [user, userLoading, router]);
+
+  const stripHTML = (html) => {
+    const div = document.createElement('div');
+    div.innerHTML = DOMPurify.sanitize(html, { ALLOWED_TAGS: [] }); // Remove all tags
+    return div.textContent || div.innerText || '';
+  };
 
   const handleSearch = () => {
     setCurrentPage(1); // Reset to page 1 on search
@@ -382,7 +390,11 @@ export default function SavedArticlesPage() {
                         <div className="border-b border-gray-400 mb-4"></div>
                         <h3 className="text-md font-bold">{blog.title}</h3>
                         <p className="text-sm text-gray-700">
-                          {blog.summary?.length > 100 ? `${blog.summary.slice(0, 100)}...` : blog.summary || ''}
+                          {blog.summary
+                            ? stripHTML(blog.summary).length > 100
+                              ? `${stripHTML(blog.summary).slice(0, 100)}...`
+                              : stripHTML(blog.summary)
+                            : ''}
                         </p>
                       </div>
                     </div>

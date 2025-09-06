@@ -186,7 +186,7 @@ const Navbar = () => {
                     </div>
 
                     <button
-                      className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition"
+                      className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition hover:cursor-pointer"
                       onClick={handleLogout}>
                       Logout
                     </button>

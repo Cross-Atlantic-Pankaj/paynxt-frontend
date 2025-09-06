@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import TileRenderer from "@/components/TileRenderer";
 import { message } from 'antd';
+import DOMPurify from 'dompurify';
 
 export default function B2CPaymentIntelligencePage() {
   const { slug } = useParams();
@@ -25,8 +26,9 @@ export default function B2CPaymentIntelligencePage() {
   const router = useRouter();
   const [blogs, setBlogs] = useState([]);
   const [viewBlogs, setViewBlogs] = useState([]);
-  const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 3);
+  // const filteredBlogs = viewBlogs.filter(b => b.is_featured === true).slice(0, 3);
   const [loading, setLoading] = useState(false);
+  const [subcategory, setSubcategory] = useState(null);
 
   const handleTagClick = (tag) => {
     // Navigate to /report-store?search=tagName
@@ -48,7 +50,6 @@ export default function B2CPaymentIntelligencePage() {
       if (Array.isArray(data)) setSliders(data);
       else setSliders([]); // fallback to empty array
     };
-
 
     const fetchSectionThree = async () => {
       const res = await fetch(`/api/category/${slug}/sectionthree`);
@@ -77,9 +78,29 @@ export default function B2CPaymentIntelligencePage() {
     };
 
     const fetchBlog = async () => {
-      const res = await fetch("/api/View-point/ViewBlogs");
-      const data = await res.json();
-      setViewBlogs(data);
+      setLoading(true);
+      try {
+        // Fetch subcategory from category API
+        const categoryRes = await fetch(`/api/category/${slug}`);
+        const { success, subcategory, message: errorMessage } = await categoryRes.json();
+
+        if (!success) {
+          message.error(errorMessage || 'Failed to load category data');
+          return;
+        }
+
+        setSubcategory(subcategory);
+
+        // Fetch all blogs
+        const res = await fetch('/api/View-point/ViewBlogs');
+        const data = await res.json();
+        setViewBlogs(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('Error fetching blogs:', err);
+        message.error('Failed to load blogs');
+      } finally {
+        setLoading(false);
+      }
     };
 
     const fetchWhyPayNxt = async () => {
@@ -111,10 +132,27 @@ export default function B2CPaymentIntelligencePage() {
 
   }, [slug]);
 
+  const stripHTML = (html) => {
+    const div = document.createElement('div');
+    div.innerHTML = DOMPurify.sanitize(html, { ALLOWED_TAGS: [] }); // Remove all tags
+    return div.textContent || div.innerText || '';
+  };
+
   const handleSearch = () => {
     if (!searchTerm.trim()) return;
     router.push(`/report-store?search=${encodeURIComponent(searchTerm)}`);
   };
+
+  const filteredBlogs = viewBlogs
+    .filter(b =>
+      b.is_featured === true &&
+      (subcategory
+        ? (Array.isArray(b.subcategory)
+          ? b.subcategory.includes(subcategory)
+          : b.subcategory === subcategory)
+        : true)
+    )
+    .slice(0, 3);
 
   // Add before <BlogsGrid>:
   { loading && <p className="text-center text-gray-500">Loading featured reports...</p> }
@@ -187,7 +225,7 @@ export default function B2CPaymentIntelligencePage() {
       </div>
       {blogs.length === 0 && (
         <p className="text-center text-gray-500 mt-4">
-          No featured reports found for this category.
+          No featured reports found for this page.
         </p>
       )}
     </div>
@@ -239,17 +277,19 @@ export default function B2CPaymentIntelligencePage() {
                             .replace(",", "")
                           : ""}
                       </p>
-                      {/* <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500">
                         {Array.isArray(blo.subcategory)
                           ? blo.subcategory.join(", ")
                           : blo.subcategory}
-                      </p> */}
+                      </p>
                       <div className="border-b border-gray-400 mb-4"></div>
                       <h3 className="text-md font-bold">{blo.title}</h3>
                       <p className="text-sm text-gray-700">
-                        {blo.summary?.length > 100
-                          ? `${blo.summary.slice(0, 100)}...`
-                          : blo.summary}
+                        {blo.summary
+                          ? stripHTML(blo.summary).length > 100
+                            ? `${stripHTML(blo.summary).slice(0, 100)}...`
+                            : stripHTML(blo.summary)
+                          : ''}
                       </p>
                     </div>
                     <div className="mt-2">
@@ -277,7 +317,7 @@ export default function B2CPaymentIntelligencePage() {
 
         {blog.length === 0 && (
           <p className="text-center text-gray-500 mt-4">
-            No blogs found for this category.
+            No blogs found for this page.
           </p>
         )}
       </div>

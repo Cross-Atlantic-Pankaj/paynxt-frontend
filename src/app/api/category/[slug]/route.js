@@ -6,17 +6,16 @@ import { NextResponse } from 'next/server';
 export async function GET(req, { params }) {
   try {
     await connectDB();
-    const { slug } = params;
+    const slug = params.slug; // Await params.slug is not needed in Next.js 15; directly access it
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = 10; // Adjust page size as needed
+    const limit = 10;
 
-    // Find the navbar link with the matching URL
     const url = `/category/${slug}`;
     const navbarSection = await NavbarSection.findOne(
       { 'links.url': url },
       { 'links.$': 1 }
-    ).populate('links.category');
+    ).populate('links.category links.subcategory');
 
     if (!navbarSection || !navbarSection.links[0]?.category) {
       return NextResponse.json(
@@ -25,13 +24,16 @@ export async function GET(req, { params }) {
       );
     }
 
-    const categoryName = navbarSection.links[0].category.productCategoryName;
+    const category = navbarSection.links[0].category;
+    const subcategory = navbarSection.links[0].subcategory;
 
-    // Fetch featured reports matching the category with pagination
+    const categoryName = category.productCategoryName;
+    const subCategoryName = subcategory ? subcategory.subProductName : null;
+
     const reports = await Repcontent.find({
       Product_category: categoryName,
       report_visible: { $in: [1, 2, 3] },
-      Featured_Report_Status: 1, // Only featured reports
+      Featured_Report_Status: 1,
     })
       .sort({ report_publish_date: -1 })
       .skip((page - 1) * limit)
@@ -47,6 +49,8 @@ export async function GET(req, { params }) {
     return NextResponse.json({
       success: true,
       data: reports,
+      category: categoryName,
+      subcategory: subCategoryName,
       pagination: {
         page,
         limit,
