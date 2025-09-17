@@ -5,6 +5,34 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from "../styles/Styling.css";
 import { useEffect, useState } from "react";
+import { HiPlus, HiMinus } from 'react-icons/hi';
+
+const FooterSection = ({ title, children, defaultOpen = false }) => {
+  const [open, setOpen] = useState(defaultOpen);
+  const id = `${title.replace(/\s+/g, '-').toLowerCase()}-list`;
+  return (
+    <div className="flex md:justify-center w-full md:w-auto">
+      <div className="w-full">
+        <div className="flex items-center justify-between mb-3">
+          <div className="font-semibold uppercase text-white">{title}</div>
+          <button
+            type="button"
+            className="md:hidden text-white"
+            aria-expanded={open}
+            aria-controls={id}
+            onClick={() => setOpen(v => !v)}
+          >
+            {open ? <HiMinus size={20} className="text-lightColor" /> : <HiPlus size={20} className="text-lightColor" />}
+          </button>
+        </div>
+
+        <ul id={id} className={`list-none p-0 ${open ? 'block' : 'hidden'} md:!block`}>
+          {children}
+        </ul>
+      </div>
+    </div>
+  );
+};
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -31,87 +59,80 @@ const Footer = () => {
 
     fetchCategories();
   }, []);
-
+  
   return (
     <>
       {/* Main footer section */}
-      <footer id="footer" className="blueBg pt-25 pb-10">
+      <button className="fixed right-3 bottom-10 bg-themeOrangeColor -rotate-90 cursor-pointer px-3 py-2 uppercase z-40" onClick={scrollToTop} aria-label="Back to top"><span className="text-lightColor">Top</span></button>
+      <footer id="footer" className="bg-themeBlueColor py-6">
         <div className="container">
-          <button className="backToTop" onClick={scrollToTop} aria-label="Back to top">
-            <span>Top</span>
-          </button>
-          <div className="grid grid-rows-1 lg:grid-cols-4 gap-6 items-start pt-10">
-            <div className="flex justify-start items-center">
-              <div className="flex flex-col items-center lg:items-start h-full justify-center">
+          <div className="grid grid-rows-1 lg:grid-cols-4 gap-6 pt-10 mx-3 md:mx-auto">
+            <div className="flex items-center">
                 <Link href="/">
                   <Image
                     src="/Images/PayNxt_Logo.svg"
                     alt="PayNXT360"
                     width={150}
                     height={50}
-                    className="py-10"
+                    className=""
                   />
                 </Link>
-                <div className="socialLinks">
-                  {/* Social media links can be uncommented and added here */}
-                </div>
-              </div>
             </div>
 
-            <div className="flex justify-center">
-              <div>
-                <div className="text-[#FF6B00] text-lg font-bold mb-4">Research Databases</div>
-                <ul className="list-none p-0">
-                  {categories.map((cat, index) => (
-                    <li key={index} className="mb-2">
-                      <Link href={`/report-store?category=${encodeURIComponent(cat.name)}`} className="text-white text-sm hover:text-[#FF6B00]">
-                        {cat.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            <FooterSection title="Research Databases">
+              {categories.map((cat, index) => (
+                <li key={index} className="mb-2">
+                  <Link
+                    href={`/report-store?category=${encodeURIComponent(cat.name)}`}
+                    className="text-lightColor text-sm hover:text-themeOrangeColor"
+                  >
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
+            </FooterSection>
 
-            <div className="flex justify-center">
-              <div>
-                <div className="text-[#FF6B00] text-lg font-bold mb-4">Solution</div>
-                <ul className="list-none p-0">
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Premium Subscription</Link></li>
-                  <li className="mb-2"><Link href="/report-store" className="text-white text-sm hover:text-[#FF6B00]">Report Store</Link></li>
-                  <li className="mb-2"><Link href="/consulting" className="text-white text-sm hover:text-[#FF6B00]">Consulting</Link></li>
-                  <li className="mb-2"><Link href="/insights" className="text-white text-sm hover:text-[#FF6B00]">View Points</Link></li>
-                </ul>
-              </div>
-            </div>
+            <FooterSection title="Solution">
+              <li className="mb-2">
+                <Link href="/contact-us" className="text-lightColor text-sm hover:text-themeOrangeColor">Premium Subscription</Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/report-store" className="text-lightColor text-sm hover:text-themeOrangeColor">Report Store</Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/consulting" className="text-lightColor text-sm hover:text-themeOrangeColor">Consulting</Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/insights" className="text-lightColor text-sm hover:text-themeOrangeColor">View Points</Link>
+              </li>
+            </FooterSection>
 
-            <div className="flex justify-center">
-              <div>
-                <div className="text-[#FF6B00] text-lg font-bold mb-4">Quick Links</div>
-                <ul className="list-none p-0">
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Our Offices</Link></li>
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Sales</Link></li>
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Media</Link></li>
-                  <li className="mb-2"><Link href="/contact-us" className="text-white text-sm hover:text-[#FF6B00]">Career</Link></li>
-                </ul>
-              </div>
-            </div>
+            <FooterSection title="Quick Links">
+              <li className="mb-2">
+                <Link href="/contact-us" className="text-lightColor text-sm hover:text-themeOrangeColor">Our Offices</Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/contact-us" className="text-lightColor text-sm hover:text-themeOrangeColor">Sales</Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/contact-us" className="text-lightColor text-sm hover:text-themeOrangeColor">Media</Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/contact-us" className="text-lightColor text-sm hover:text-themeOrangeColor">Career</Link>
+              </li>
+            </FooterSection>
           </div>
         </div>
       </footer>
 
       {/* Bottom footer section */}
-      <div className="py-3 bg-[#001D3D] text-white text-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row justify-between items-center">
-            <div className="text-center lg:text-left">
-              <p className="mb-0">
-                © <span>{year}</span> PayNXT360, All rights reserved |{' '}
-                <Link href="/privacy-policy" className="text-[#FF6B00] hover:underline">
-                  Privacy Policy
-                </Link>
-              </p>
-            </div>
+      <div className="py-4 bg-[#014478e6] text-sm">
+        <div className="container">
+          <div className="text-lightColor mb-0 mx-3 md:mx-auto">
+            © <span>{year}</span> PayNXT360, All rights reserved |{' '}
+            <Link href="/privacy-policy" className="text-themeOrangeColor hover:text-white">
+              Privacy Policy
+            </Link>
           </div>
         </div>
       </div>

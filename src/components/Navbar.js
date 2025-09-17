@@ -11,6 +11,9 @@ import { useUser } from "../context/UserContext";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useCart } from "@/context/CartContext";
+import { IoClose, IoSearch } from "react-icons/io5";
+import { FaAngleDown } from "react-icons/fa6";
+
 
 const Navbar = () => {
   const { user, logout } = useUser();
@@ -113,9 +116,9 @@ const Navbar = () => {
     <>
       <Toaster position="top-right" />
 
-      <header className="darkHeader">
-        <div className="container py-2">
-          <div className="flex justify-between items-center">
+      <header className="bg-themeBlueColor">
+        <div className="container pt-6">
+          <div className="flex justify-between items-center mx-3 md:mx-auto">
             {/* Logo on the left */}
 
             <div className="flex-shrink-0">
@@ -133,27 +136,27 @@ const Navbar = () => {
             {/* Desktop Navigation */}
 
             <div className="hidden lg:!flex items-center gap-6">
-              <ul className="flex gap-6 text-sm font-medium pt-4 mb-0">
+              <ul className="flex text-sm gap-3 items-center font-medium pt-4 mb-0">
                 <li>
                   <Link
                     href="/"
-                    className="text-white hover:text-[#FF6B00] whitespace-nowrap duration-300">
+                    className="text-white hover:text-themeOrangeColor whitespace-nowrap duration-300">
                     Home
                   </Link>
                 </li>
-
+                <span className="w-1 h-1 rounded-full bg-lightColor block"></span>
                 <li>
                   <Link
                     href="/about-us"
-                    className="text-white hover:text-[#FF6B00] whitespace-nowrap duration-300">
+                    className="text-white hover:text-themeOrangeColor whitespace-nowrap duration-300">
                     About Us
                   </Link>
                 </li>
-
+                <span className="w-1 h-1 rounded-full bg-lightColor block"></span>
                 <li>
                   <Link
                     href="/contact-us"
-                    className="text-white hover:text-[#FF6B00] whitespace-nowrap duration-300">
+                    className="text-white hover:text-themeOrangeColor whitespace-nowrap duration-300">
                     Contact Us
                   </Link>
                 </li>
@@ -186,7 +189,7 @@ const Navbar = () => {
                     </div>
 
                     <button
-                      className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition hover:cursor-pointer"
+                      className="bg-themeOrangeColor text-white px-3 py-1 rounded-xs hover:bg-white hover:text-themeOrangeColor transition text-sm"
                       onClick={handleLogout}>
                       Logout
                     </button>
@@ -194,7 +197,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     href={`/login?callbackUrl=${encodeURIComponent(pathname)}`}
-                    className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition">
+                    className="bg-themeOrangeColor text-white px-3 py-1 rounded-xs hover:bg-white hover:text-themeOrangeColor transition text-sm">
                     Login/Register
                   </Link>
                 )}
@@ -246,17 +249,17 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="w-full border-t border-white my-1"></div>
+          <div className="w-full border-t border-white mt-6"></div>
         </div>
 
         {/* Mobile Menu Overlay */}
 
         {isMobileMenuOpen && (
           <div
-            className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+            className="lg:hidden fixed inset-0 z-50 bg-black/50"
             onClick={toggleMobileMenu}>
             <div
-              className="fixed top-0 right-0 h-full w-80 max-w-full bg-gray-900 shadow-lg overflow-y-auto"
+              className="fixed top-0 right-0 h-full w-80 max-w-full bg-themeBlueColor shadow-lg overflow-y-auto"
               onClick={(e) => e.stopPropagation()}>
               <div className="p-4">
                 {/* Close Button */}
@@ -265,25 +268,14 @@ const Navbar = () => {
                   <button
                     onClick={toggleMobileMenu}
                     className="text-white p-2">
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                      <IoClose className="w-6 h-6 text-white" />
                   </button>
                 </div>
 
                 {/* User Section */}
 
                 {user ? (
-                  <div className="mb-6 pb-4 border-b border-gray-700">
+                  <div className="mb-6 pb-4 border-b border-lightColor">
                     <div className="flex items-center gap-3 mb-4">
                       {renderAvatar(user.user.Firstname)}
 
@@ -293,18 +285,18 @@ const Navbar = () => {
                     </div>
 
                     <button
-                      className="w-full bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
+                      className="w-full bg-themeOrangeColor text-white px-4 py-2 rounded hover:bg-white hover:text-themeOrangeColor transition"
                       onClick={handleLogout}>
                       Logout
                     </button>
                   </div>
                 ) : (
-                  <div className="mb-6 pb-4 border-b border-gray-700">
+                  <div className="mb-6 pb-4 border-b border-lightColor">
                     <Link
                       href={`/login?callbackUrl=${encodeURIComponent(
                         pathname
                       )}`}
-                      className="block w-full bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition text-center"
+                      className="block w-full bg-themeOrangeColor text-white px-4 py-2 rounded hover:bg-white hover:text-themeOrangeColor transition text-center"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       Login/Register
                     </Link>
@@ -316,21 +308,21 @@ const Navbar = () => {
                 <nav className="space-y-2 mb-6">
                   <Link
                     href="/"
-                    className="block text-white hover:text-[#FF6B00] py-2 px-2"
+                    className="block text-white hover:text-themeOrangeColor py-2 px-2"
                     onClick={handleLinkClick}>
                     Home
                   </Link>
 
                   <Link
                     href="/about-us"
-                    className="block text-white hover:text-[#FF6B00] py-2 px-2"
+                    className="block text-white hover:text-themeOrangeColor py-2 px-2"
                     onClick={handleLinkClick}>
                     About Us
                   </Link>
 
                   <Link
                     href="/contact-us"
-                    className="block text-white hover:text-[#FF6B00] py-2 px-2"
+                    className="block text-white hover:text-themeOrangeColor py-2 px-2"
                     onClick={handleLinkClick}>
                     Contact Us
                   </Link>
@@ -342,42 +334,42 @@ const Navbar = () => {
                   <nav className="space-y-2">
                     <Link
                       href="/access-reports"
-                      className="block text-white hover:text-[#FF6B00] py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
                       onClick={handleLinkClick}>
                       Access Reports
                     </Link>
 
                     <Link
                       href="/wishlist"
-                      className="block text-white hover:text-[#FF6B00] py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
                       onClick={handleLinkClick}>
                       Wishlist
                     </Link>
 
                     <Link
                       href="/ask-an-analyst"
-                      className="block text-white hover:text-[#FF6B00] py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
                       onClick={handleLinkClick}>
                       Ask an Analyst
                     </Link>
 
                     <Link
                       href="/report-store"
-                      className="block text-white hover:text-[#FF6B00] py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
                       onClick={handleLinkClick}>
                       Report Store
                     </Link>
 
                     <Link
                       href="/insights"
-                      className="block text-white hover:text-[#FF6B00] py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
                       onClick={handleLinkClick}>
                       Insights
                     </Link>
 
                     <Link
                       href="/saved-articles"
-                      className="block text-white hover:text-[#FF6B00] py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
                       onClick={handleLinkClick}>
                       Saved Articles
                     </Link>
@@ -389,7 +381,7 @@ const Navbar = () => {
                         <div className="flex items-center justify-between">
                           <Link
                             href={section.sectionUrl || "#"}
-                            className="block text-white hover:text-[#FF6B00] py-2 px-2 text-sm font-bold flex-1"
+                            className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium flex-1"
                             onClick={handleLinkClick}>
                             {section.section}
                           </Link>
@@ -398,28 +390,17 @@ const Navbar = () => {
                             <button
                               onClick={() => toggleDropdown(section._id)}
                               className="text-white p-2">
-                              <svg
-                                className={`w-4 h-4 transition-transform ${openDropdown === section._id
+                                <FaAngleDown className={`w-4 h-4 text-lightColor transition-transform ${openDropdown === section._id
                                     ? "rotate-180"
                                     : ""
-                                  }`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 9l-7 7-7-7"
-                                />
-                              </svg>
+                                  }`} />
                             </button>
                           )}
                         </div>
 
                         {section.links.length > 0 &&
                           openDropdown === section._id && (
-                            <div className="ml-4 space-y-1">
+                            <div className="space-y-1 bg-white rounded">
                               {section.links.map((link) => (
                                 <Link
                                   key={link._id}
@@ -433,7 +414,7 @@ const Navbar = () => {
 
                                     handleLinkClick();
                                   }}
-                                  className="block text-gray-300 hover:text-[#FF6B00] py-2 px-2 text-sm">
+                                  className="block text-themeBlueColor hover:text-themeOrangeColor py-2 px-2 text-sm">
                                   {link.title}
                                 </Link>
                               ))}
@@ -446,23 +427,10 @@ const Navbar = () => {
 
                 {/* Search Icon */}
 
-                <div className="mt-6 pt-4 border-t border-gray-700">
-                  <button className="flex items-center gap-2 text-white hover:text-[#FF6B00] py-2 px-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="3">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-
-                    <span>Search</span>
+                <div className="mt-6 pt-4 border-t border-lightColor">
+                  <button className="flex items-center gap-2 text-lightColor hover:text-themeOrangeColor py-2 px-2">
+                    <IoSearch className="w-5 h-5 text-lightColor" />
+                    <span className="text-lightColor">Search</span>
                   </button>
                 </div>
               </div>
@@ -475,14 +443,14 @@ const Navbar = () => {
 
       {user ? (
         <div
-          className={`paymentsSection ${isCompact ? "compact" : ""
+          className={`paymentsSection bg-themeBlueColor ${isCompact ? "compact" : ""
             } hidden lg:!block`}>
-          <div className="container">
+          <div className="container mx-auto">
             <div className="flex justify-center items-center gap-20 py-2">
               <div className="relative group">
                 <Link
                   href="/user"
-                  className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                  className="text-white uppercase text-sm hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
                   onClick={() => handleLinkClick("/user")}>
                   My Account
                 </Link>
@@ -491,7 +459,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/access-reports"
-                  className="text-white uppercase text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                  className="text-white uppercase text-sm hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
                   onClick={() => handleLinkClick("/access-reports")}>
                   Access Reports
                 </Link>
@@ -500,7 +468,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/wishlist"
-                  className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
                   onClick={() => handleLinkClick("/wishlist")}>
                   Wishlist
                 </Link>
@@ -509,7 +477,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/ask-an-analyst"
-                  className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
                   onClick={() => handleLinkClick("/ask-an-analyst")}>
                   Ask an Analyst
                 </Link>
@@ -518,7 +486,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/report-store"
-                  className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
                   onClick={() => handleLinkClick("/report-store")}>
                   Report Store
                 </Link>
@@ -527,7 +495,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/insights"
-                  className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
                   onClick={() => handleLinkClick("/insights")}>
                   Insights
                 </Link>
@@ -536,7 +504,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/saved-articles"
-                  className="text-white text-sm uppercase hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
                   onClick={() => handleLinkClick("/saved-articles")}>
                   Saved Articles
                 </Link>
@@ -562,17 +530,17 @@ const Navbar = () => {
         </div>
       ) : (
         <div
-          className={`paymentsSection ${isCompact ? "compact" : ""
+          className={`paymentsSection bg-themeBlueColor ${isCompact ? "compact" : ""
             } hidden lg:!block`}>
           <div className="container">
-            <div className="flex justify-center items-center gap-2 py-2 [&>*]:m-0">
+            <div className="flex items-center justify-between py-4 [&>*]:m-0">
               {sections.map((section) => (
                 <div
                   key={section._id}
                   className="relative group">
                   <Link
                     href={section.sectionUrl || "#"}
-                    className="text-white text-sm hover:text-[#FF6B00] whitespace-nowrap font-bold payments-link"
+                    className="text-white text-sm hover:text-themeOrangeColor whitespace-nowrap font-medium payments-link"
                     onClick={() => handleLinkClick(section.sectionUrl || "#")}>
                     {section.section}
                   </Link>
@@ -590,7 +558,7 @@ const Navbar = () => {
                               router.refresh();
                             }
                           }}
-                          className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-[#FF6B00] hover:text-white whitespace-nowrap group/link">
+                          className="flex items-center px-4 py-2 text-sm text-gray-800 hover:bg-themeOrangeColor hover:text-white whitespace-nowrap group/link">
                           <div className="underline-container">
                             <span>{link.title}</span>
 

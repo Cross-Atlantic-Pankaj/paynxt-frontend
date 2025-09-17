@@ -2,11 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --themeBlueColor: #014478;
+  --themeOrangeColor: #FB7540;
+  --headingColor: #151515;
+  --paragraphColor: #444444;
+  --borderRadius: 2px;
+  --borderColor: rgba(1,68,120,.1);
+  --darkBorderColor: rgba(1,68,120,.2);
+  --lightColor: rgba(255,255,255,.8);
+}
+
 /* globals.css */
 
 /* Navbar Styles */
 .darkHeader {
-    background-color: #155392;
+    background-color: var(--themeBlueColor);
     color: white;
     position: relative;
     z-index: 999;
@@ -278,9 +289,7 @@
 }
 
 .paymentsSection {
-    background-color: #155392;
     z-index: 1000;
-    padding: 8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
     position: sticky;
@@ -293,25 +302,7 @@
 
 .paymentsSection.compact {
     padding: 5px 0;
-    background-color: rgba(21, 83, 146, 0.95);
     backdrop-filter: blur(5px);
-}
-
-.paymentsSection .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.paymentsSection .flex {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2.5rem;
-    padding: 0;
 }
 
 .paymentsSection ul {
