@@ -93,7 +93,7 @@ export default function BlogPage() {
         fetchBlog();
         fetchConsults();
         fetchFeaturedReports();
-    }, [slug]); // ✅ run once based on slug
+    }, [slug]); 
 
     useEffect(() => {
         const fetchRelatedArticles = async () => {
