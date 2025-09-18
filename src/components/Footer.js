@@ -64,8 +64,8 @@ const Footer = () => {
     <>
       {/* Main footer section */}
       <button className="fixed right-3 bottom-10 bg-themeOrangeColor -rotate-90 cursor-pointer px-3 py-2 uppercase z-40" onClick={scrollToTop} aria-label="Back to top"><span className="text-lightColor">Top</span></button>
-      <footer id="footer" className="bg-themeBlueColor py-6">
-        <div className="container">
+      <footer className="bg-themeBlueColor py-6">
+        <div className="appContainer">
           <div className="grid grid-rows-1 lg:grid-cols-4 gap-6 pt-10 mx-3 md:mx-auto">
             <div className="flex items-center">
                 <Link href="/">
@@ -127,7 +127,7 @@ const Footer = () => {
 
       {/* Bottom footer section */}
       <div className="py-4 bg-[#014478e6] text-sm">
-        <div className="container">
+        <div className="appContainer">
           <div className="text-lightColor mb-0 mx-3 md:mx-auto">
             © <span>{year}</span> PayNXT360, All rights reserved |{' '}
             <Link href="/privacy-policy" className="text-themeOrangeColor hover:text-white">

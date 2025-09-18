@@ -117,8 +117,8 @@ const Navbar = () => {
       <Toaster position="top-right" />
 
       <header className="bg-themeBlueColor">
-        <div className="container pt-6">
-          <div className="flex justify-between items-center mx-3 md:mx-auto">
+        <div className="appContainer pt-6">
+          <div className="flex justify-between items-center">
             {/* Logo on the left */}
 
             <div className="flex-shrink-0">
@@ -445,7 +445,7 @@ const Navbar = () => {
         <div
           className={`paymentsSection bg-themeBlueColor ${isCompact ? "compact" : ""
             } hidden lg:!block`}>
-          <div className="container mx-auto">
+          <div className="appContainer">
             <div className="flex justify-center items-center gap-20 py-2">
               <div className="relative group">
                 <Link
@@ -532,7 +532,7 @@ const Navbar = () => {
         <div
           className={`paymentsSection bg-themeBlueColor ${isCompact ? "compact" : ""
             } hidden lg:!block`}>
-          <div className="container">
+          <div className="appContainer">
             <div className="flex items-center justify-between py-4 [&>*]:m-0">
               {sections.map((section) => (
                 <div
