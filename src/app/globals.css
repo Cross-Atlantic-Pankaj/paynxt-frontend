@@ -99,3 +99,36 @@ input:-webkit-autofill:focus{
   border-radius: 0.5rem;
 }
 
+@utility appContainer {
+  width: 100%;
+  margin-inline: auto;
+
+  /* mobile padding + notched devices */
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+
+  max-width: 100%;
+}
+@media (min-width: 640px) {
+  .appContainer {
+    max-width: 640px;
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+  }
+}
+@media (min-width: 768px) {
+  .appContainer {
+    max-width: 768px;
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
+}
+@media (min-width: 1024px) {
+  .appContainer { max-width: 1150px; }
+}
+@media (min-width: 1280px) {
+  .appContainer { max-width: 1280px; }
+}
+@media (min-width: 1536px) {
+  .appContainer { max-width: 1400px; }
+}

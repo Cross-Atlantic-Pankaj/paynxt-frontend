@@ -86,7 +86,7 @@ const Navbar = () => {
     const firstLetter = name ? name.charAt(0).toUpperCase() : "?";
 
     return (
-      <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">
+      <div className="w-8 h-8 bg-themeOrangeColor text-white rounded-full flex items-center justify-center font-medium">
         {firstLetter}
       </div>
     );
@@ -183,15 +183,15 @@ const Navbar = () => {
                     <div className="flex items-center gap-2">
                       {renderAvatar(user.user.Firstname)}
 
-                      <span className="text-white font-semibold">
+                      <span className="text-white font-medium">
                         {user.user.Firstname}
                       </span>
                     </div>
 
                     <button
-                      className="bg-themeOrangeColor text-white px-3 py-1 rounded-xs hover:bg-white hover:text-themeOrangeColor transition text-sm"
+                      className="bg-themeOrangeColor text-white px-3 py-1 rounded-xs hover:bg-white hover:text-themeOrangeColor transition text-sm cursor-pointer"
                       onClick={handleLogout}>
-                      Logout
+                      <span className="text-white hover:text-themeOrangeColor">Logout</span>
                     </button>
                   </>
                 ) : (
@@ -279,7 +279,7 @@ const Navbar = () => {
                     <div className="flex items-center gap-3 mb-4">
                       {renderAvatar(user.user.Firstname)}
 
-                      <span className="text-white font-semibold">
+                      <span className="text-white font-medium">
                         {user.user.Firstname}
                       </span>
                     </div>
@@ -287,7 +287,7 @@ const Navbar = () => {
                     <button
                       className="w-full bg-themeOrangeColor text-white px-4 py-2 rounded hover:bg-white hover:text-themeOrangeColor transition"
                       onClick={handleLogout}>
-                      Logout
+                      <span className="text-white hover:text-themeOrangeColor">Logout</span>
                     </button>
                   </div>
                 ) : (
@@ -308,21 +308,21 @@ const Navbar = () => {
                 <nav className="space-y-2 mb-6">
                   <Link
                     href="/"
-                    className="block text-white hover:text-themeOrangeColor py-2 px-2"
+                    className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm transition duration-500"
                     onClick={handleLinkClick}>
                     Home
                   </Link>
 
                   <Link
                     href="/about-us"
-                    className="block text-white hover:text-themeOrangeColor py-2 px-2"
+                    className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm transition duration-500"
                     onClick={handleLinkClick}>
                     About Us
                   </Link>
 
                   <Link
                     href="/contact-us"
-                    className="block text-white hover:text-themeOrangeColor py-2 px-2"
+                    className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm transition duration-500"
                     onClick={handleLinkClick}>
                     Contact Us
                   </Link>
@@ -334,42 +334,42 @@ const Navbar = () => {
                   <nav className="space-y-2">
                     <Link
                       href="/access-reports"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
                       onClick={handleLinkClick}>
                       Access Reports
                     </Link>
 
                     <Link
                       href="/wishlist"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
                       onClick={handleLinkClick}>
                       Wishlist
                     </Link>
 
                     <Link
                       href="/ask-an-analyst"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
                       onClick={handleLinkClick}>
                       Ask an Analyst
                     </Link>
 
                     <Link
                       href="/report-store"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
                       onClick={handleLinkClick}>
                       Report Store
                     </Link>
 
                     <Link
                       href="/insights"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
                       onClick={handleLinkClick}>
                       Insights
                     </Link>
 
                     <Link
                       href="/saved-articles"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 uppercase text-sm font-bold"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
                       onClick={handleLinkClick}>
                       Saved Articles
                     </Link>
@@ -446,11 +446,11 @@ const Navbar = () => {
           className={`paymentsSection bg-themeBlueColor ${isCompact ? "compact" : ""
             } hidden lg:!block`}>
           <div className="appContainer">
-            <div className="flex justify-center items-center gap-20 py-2">
+            <div className="flex items-center justify-between py-4">
               <div className="relative group">
                 <Link
                   href="/user"
-                  className="text-white uppercase text-sm hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
+                  className="text-white uppercase text-sm hover:text-themeOrangeColor whitespace-nowrap font-medium transition duration-500 payments-link"
                   onClick={() => handleLinkClick("/user")}>
                   My Account
                 </Link>
@@ -459,7 +459,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/access-reports"
-                  className="text-white uppercase text-sm hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
+                  className="text-white uppercase text-sm hover:text-themeOrangeColor whitespace-nowrap font-medium transition duration-500 payments-link"
                   onClick={() => handleLinkClick("/access-reports")}>
                   Access Reports
                 </Link>
@@ -468,7 +468,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/wishlist"
-                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-medium transition duration-500 payments-link"
                   onClick={() => handleLinkClick("/wishlist")}>
                   Wishlist
                 </Link>
@@ -477,7 +477,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/ask-an-analyst"
-                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-medium transition duration-500 payments-link"
                   onClick={() => handleLinkClick("/ask-an-analyst")}>
                   Ask an Analyst
                 </Link>
@@ -486,7 +486,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/report-store"
-                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-medium transition duration-500 payments-link"
                   onClick={() => handleLinkClick("/report-store")}>
                   Report Store
                 </Link>
@@ -495,7 +495,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/insights"
-                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-medium transition duration-500 payments-link"
                   onClick={() => handleLinkClick("/insights")}>
                   Insights
                 </Link>
@@ -504,7 +504,7 @@ const Navbar = () => {
               <div className="relative group">
                 <Link
                   href="/saved-articles"
-                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-bold payments-link"
+                  className="text-white text-sm uppercase hover:text-themeOrangeColor whitespace-nowrap font-medium transition duration-500 payments-link"
                   onClick={() => handleLinkClick("/saved-articles")}>
                   Saved Articles
                 </Link>
