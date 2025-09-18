@@ -8,6 +8,10 @@ import ClientLayout from '@/components/ClientLayout';
 import 'antd/dist/reset.css';
 import { CartProvider } from '@/context/CartContext';
 
+export const metadata = { title: "PayNXT360", description: "Global Fintech Market Research Reports, Industry Statistics, Analysis PayNXT360" };
+
+
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
