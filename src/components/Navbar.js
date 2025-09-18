@@ -136,7 +136,7 @@ const Navbar = () => {
             {/* Desktop Navigation */}
 
             <div className="hidden lg:!flex items-center gap-6">
-              <ul className="flex text-sm gap-3 items-center font-medium pt-4 mb-0">
+              <ul className="flex text-sm gap-3 items-center font-regular pt-4 mb-0">
                 <li>
                   <Link
                     href="/"
@@ -308,21 +308,21 @@ const Navbar = () => {
                 <nav className="space-y-2 mb-6">
                   <Link
                     href="/"
-                    className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm transition duration-500"
+                    className="block text-white hover:text-themeOrangeColor uppercase font-medium py-2 px-2 text-sm transition duration-500"
                     onClick={handleLinkClick}>
                     Home
                   </Link>
 
                   <Link
                     href="/about-us"
-                    className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm transition duration-500"
+                    className="block text-white hover:text-themeOrangeColor uppercase font-medium py-2 px-2 text-sm transition duration-500"
                     onClick={handleLinkClick}>
                     About Us
                   </Link>
 
                   <Link
                     href="/contact-us"
-                    className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm transition duration-500"
+                    className="block text-white hover:text-themeOrangeColor uppercase font-medium py-2 px-2 text-sm transition duration-500"
                     onClick={handleLinkClick}>
                     Contact Us
                   </Link>
@@ -334,42 +334,42 @@ const Navbar = () => {
                   <nav className="space-y-2">
                     <Link
                       href="/access-reports"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium uppercase transition duration-500"
                       onClick={handleLinkClick}>
                       Access Reports
                     </Link>
 
                     <Link
                       href="/wishlist"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium uppercase transition duration-500"
                       onClick={handleLinkClick}>
                       Wishlist
                     </Link>
 
                     <Link
                       href="/ask-an-analyst"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium uppercase transition duration-500"
                       onClick={handleLinkClick}>
                       Ask an Analyst
                     </Link>
 
                     <Link
                       href="/report-store"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium uppercase transition duration-500"
                       onClick={handleLinkClick}>
                       Report Store
                     </Link>
 
                     <Link
                       href="/insights"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium uppercase transition duration-500"
                       onClick={handleLinkClick}>
                       Insights
                     </Link>
 
                     <Link
                       href="/saved-articles"
-                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium transition duration-500"
+                      className="block text-white hover:text-themeOrangeColor py-2 px-2 text-sm font-medium uppercase transition duration-500"
                       onClick={handleLinkClick}>
                       Saved Articles
                     </Link>

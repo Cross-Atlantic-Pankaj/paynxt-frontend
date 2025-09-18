@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Rubik, Geist_Mono, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { Suspense } from 'react';
 import { UserProvider } from '@/context/UserContext';
@@ -10,10 +10,8 @@ import { CartProvider } from '@/context/CartContext';
 
 export const metadata = { title: "PayNXT360", description: "Global Fintech Market Research Reports, Industry Statistics, Analysis PayNXT360" };
 
-
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const rubikSans = Rubik({
+  variable: '--font-rubik-sans',
   subsets: ['latin'],
 });
 
@@ -22,11 +20,18 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const playfair = Playfair_Display({
+  variable: '--font-playfair',
+  subsets: ['latin'],
+  weight: ['400','500','600','700','800','900'],
+  display: 'swap',
+});
+
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${rubikSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}>
         <CartProvider>
           <Suspense fallback={<div>Loading...</div>}>
             <UserProvider>
