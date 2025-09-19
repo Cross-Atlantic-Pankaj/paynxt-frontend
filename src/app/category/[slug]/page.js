@@ -12,6 +12,8 @@ import Link from "next/link";
 import TileRenderer from "@/components/TileRenderer";
 import { message } from 'antd';
 import DOMPurify from 'dompurify';
+import WhySubscribe from '@/components/whysubscribe';
+import { FaLinkedin } from 'react-icons/fa6';
 
 export default function B2CPaymentIntelligencePage() {
   const { slug } = useParams();
@@ -233,10 +235,11 @@ export default function B2CPaymentIntelligencePage() {
 
   const BlogGrid = ({ blog = [] }) => {
     return (
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-rows-1 md:grid-cols-3 gap-6">
+      <div className="w-full">
+        <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
           {(blog || []).map((blo, i) => {
-            const blogUrl = `https://pay-nxt360.vercel.app/view-point/${blo.slug}`;
+            const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+            const blogUrl = `${base}/view-point/${blo.slug}`;
             const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
               blogUrl
             )}&title=${encodeURIComponent(
@@ -249,7 +252,7 @@ export default function B2CPaymentIntelligencePage() {
                 className="h-full">
                 <Link
                   href={`/blog-page/${blo.slug}`}
-                  className="bg-white flex flex-col justify-between h-full overflow-hidden block hover: transition">
+                  className="bg-white flex flex-col justify-between h-full overflow-hidden block hover:shadow-sm transition duration-500">
                   <div className="w-full h-40">
                     {blo.tileTemplateId ? (
                       <TileRenderer
@@ -259,13 +262,13 @@ export default function B2CPaymentIntelligencePage() {
                       />
                     ) : (
                       <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg">
-                        <span className="text-gray-500 text-sm">
+                        <span className="text-slate-500 text-sm">
                           No template
                         </span>
                       </div>
                     )}
                   </div>
-                  <div className="p-4 flex flex-col justify-between h-full">
+                  <div className="p-4 flex flex-col justify-between">
                     <div>
                       <p className="text-sm leading-tight">
                         {blo.date
@@ -277,14 +280,14 @@ export default function B2CPaymentIntelligencePage() {
                             .replace(",", "")
                           : ""}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-slate-500">
                         {Array.isArray(blo.subcategory)
                           ? blo.subcategory.join(", ")
                           : blo.subcategory}
                       </p>
-                      <div className="border-b border-gray-400 mb-4"></div>
-                      <h3 className="text-md font-bold">{blo.title}</h3>
-                      <p className="text-sm text-gray-700">
+                      <div className="border-b border-borderColor mb-4"></div>
+                      <h3 className="text-md font-semibold leading-6">{blo.title}</h3>
+                      <p className="text-sm text-slate-700">
                         {blo.summary
                           ? stripHTML(blo.summary).length > 100
                             ? `${stripHTML(blo.summary).slice(0, 100)}...`
@@ -298,14 +301,9 @@ export default function B2CPaymentIntelligencePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="mt-4 inline-flex items-center justify-center gap-2 px-1.5 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]">
-                        <svg
-                          className="w-4 h-4"
-                          fill="currentColor"
-                          viewBox="0 0 24 24">
-                          <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.7 8.5 8.7zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
-                        </svg>
-                        Share
+                        className="inline-flex items-center justify-center gap-2 px-2 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]">
+                          <FaLinkedin />
+                          Share
                       </a>
                     </div>
                   </div>
@@ -316,7 +314,7 @@ export default function B2CPaymentIntelligencePage() {
         </div>
 
         {blog.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">
+          <p className="text-center text-slate-500 mt-4">
             No blogs found for this page.
           </p>
         )}
@@ -351,15 +349,15 @@ export default function B2CPaymentIntelligencePage() {
     background: #FF6B00 !important;
   }
 `}</style>
-      <section className="w-full bg-[#155392] py-20 px-8">
-        <div className="flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
+      <section className="w-full bg-darkBorderColor py-20 px-8">
+        <div className="flex flex-col md:!flex-row items-center justify-between gap-8 appContainer mx-auto">
           {/* Left Banner Section */}
-          <div className="w-2/3 text-left">
+          <div className="w-full md:!w-2/3 text-left">
             {banner ? (
               <div>
-                <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
+                <div className="font-playfair text-4xl font-bold text-themeBlueColor mb-6">{banner.bannerTitle}</div>
 
-                <p className="text-md text-white mt-1 mb-8">
+                <p className="text-lg text-salte-800 mb-6">
                   {banner.bannerDescription}
                 </p>
 
@@ -374,13 +372,13 @@ export default function B2CPaymentIntelligencePage() {
                         handleSearch(searchTerm);
                       }
                     }}
-                    className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
+                    className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-slate-700 placeholder-slate-400 focus:outline-none"
                   />
                   <button
                     onClick={() => handleSearch(searchTerm)}
-                    className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white cursor-pointer duration-300"
+                    className="px-6 py-3 rounded-r-sm bg-themeOrangeColor hover:bg-themeBlueColor focus:outline-none cursor-pointer duration-300 font-medium"
                   >
-                    Search
+                    <span className='text-white'>Search</span>
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2 mb-6 mt-4">
@@ -388,7 +386,7 @@ export default function B2CPaymentIntelligencePage() {
                     <span
                       key={index}
                       onClick={() => handleTagClick(tag)}
-                      className="bg-[#FF6B00] text-white text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:opacity-90 duration-300"
+                      className="bg-themeOrangeColor text-white text-sm font-regular uppercase px-3 py-1 rounded-full cursor-pointer hover:opacity-90 duration-300"
                     >
                       {tag}
                     </span>
@@ -401,7 +399,7 @@ export default function B2CPaymentIntelligencePage() {
           </div>
 
           {/* Right Slider Section */}
-          <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
+          <div className="w-full md:!w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit">
             <Swiper
               modules={[Pagination, Autoplay]}
               pagination={{
@@ -417,10 +415,10 @@ export default function B2CPaymentIntelligencePage() {
             >
               {(sliders || []).map((slide, index) => (
                 <SwiperSlide key={index}>
-                  <div className="mb-4 border-b pb-4">
-                    <p className="text-xs text-gray-500 uppercase mb-1">{slide.typeText}</p>
-                    <h3 className="text-lg font-bold text-[#155392]">{slide.title}</h3>
-                    <p className="text-sm text-gray-700 mt-1 mb-2">
+                  <div className="">
+                    <p className="text-xs text-themeOrangeColor uppercase mb-1">{slide.typeText}</p>
+                    <h3 className="text-xl font-semibold text-themeBlueColor">{slide.title}</h3>
+                    <p className="text-sm text-slate-800 mt-1 mb-2">
                       {slide.shortDescription
                         ? (slide.shortDescription.length > 100
                           ? `${slide.shortDescription.slice(0, 100)}...`
@@ -432,7 +430,7 @@ export default function B2CPaymentIntelligencePage() {
                         href={slide.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-white bg-[#155392] hover:bg-[#0e3a6f] px-3 py-1 rounded"
+                        className="text-sm text-white bg-themeBlueColor hover:bg-themeOrangeColor uppercase transition duration-500 px-3 py-1 rounded"
                       >
                         Read More
                       </a>
@@ -465,15 +463,15 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <section className="py-12 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 md:py-24">
+        <div className="appContainer mx-auto">
           <div className="grid grid-rows-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((item, index) => (
               <div
                 key={index}
-                className="border-t-12 border-[#FF6B00] bg-gray-100 p-6 text-[#155392]"
+                className="border-t-12 border-themeOrangeColor bg-slate-50 p-6 text-slate-700"
               >
-                <h3 className="text-3xl text-[#155392] text-center mb-2" style={{ fontWeight: 550 }}>{item.title}</h3>
+                <h3 className="text-3xl text-themeBlueColor text-center mb-2" style={{ fontWeight: 550 }}>{item.title}</h3>
                 <p className="text-md text-center">{item.description}</p>
               </div>
             ))}
@@ -481,9 +479,9 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <div className="">
-        {sectionThree && (
-          <div className="grid grid-rows-1 md:grid-cols-2 bg-gray-100 p-20 items-center">
+      {sectionThree && (
+      <div className="py-16 md:py-24 bg-slate-50">
+          <div className="grid grid-rows-1 md:grid-cols-2 bg-slate-50 appContainer items-center">
             {/* Left Column: Title and Description */}
             <div>
               <h2 className="text-3xl text-black mb-6">{sectionThree.title}</h2>
@@ -502,19 +500,19 @@ export default function B2CPaymentIntelligencePage() {
               />
             </div>
           </div>
-        )}
       </div>
+      )}
 
-      <section className="bg-gray-100 py-10">
-        <div className="max-w-7xl mx-auto px-4 mb-6 mt-10">
-          <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">
+      <section className="py-16 md:py-24">
+        <div className="appContainer">
+          <p className="text-themeOrangeColor text-md font-thin text-center mb-1">
             - latest research -
           </p>
-          <h2 className="text-2xl text-center font-bold text-gray-800 mt-1 uppercase">
+          <div className="text-4xl font-light text-center mb-4">
             Featured Reports in {slug ? slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Category'}
-          </h2>
+          </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
+        <div className="appContainer grid grid-rows-1 md:grid-cols-4 gap-8">
           <div className="col-span-4">
             <BlogsGrid
               blogs={blogs}
@@ -522,7 +520,7 @@ export default function B2CPaymentIntelligencePage() {
             <div className="mt-6 flex justify-center">
               <Link
                 href="/report-store"
-                className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition">
+                className="px-6 py-3 bg-themeOrangeColor text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-themeBlueColor transition duration-300 cursor-pointer">
                 VIEW MORE
               </Link>
             </div>
@@ -530,35 +528,38 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <section className="bg-white py-15 px-4 sm:px-8 lg:px-16">
-        <p className="text-[#FF6B00] text-sm text-center tracking-wide mb-2">
-          - BENEFITS -
-        </p>
-        <h2 className="text-3xl text-center mb-10">{whyPayNxt?.heading}</h2>
+      <section className="bg-slate-50 py-16 md:py-24">
+        <div className="appContainer">
+          <p className="text-themeOrangeColor uppercase text-md font-thin text-center mb-1">
+            - BENEFITS -
+          </p>
+          <div className="text-4xl font-light text-center mb-8">{whyPayNxt?.heading}</div>
 
-        <div className="grid grid-rows-2 md:grid-cols-2 gap-6">
-          {sections.map((section, index) => (
-            <div key={index} className="flex bg-white border border-gray-200 hover:shadow-lg transition-all duration-400 h-70">
-              <img
-                src={section.image}
-                alt={section.title}
-                className="w-17 h-17 ml-9 mt-10 my-auto object-cover"
-              />
-              <div className="p-9 ml-2">
-                <h3 className="text-lg font-semibold mb-10">{section.title}</h3>
-                <p className="text-gray-500">{section.description}</p>
+          <div className="grid grid-rows-2 md:grid-cols-2 gap-6">
+            {sections.map((section, index) => (
+              <div key={index} className="flex bg-white border border-darkBorderColor hover:border-themeBlueColor transition duration-400 p-6 gap-6 items-center">
+                <img
+                  src={section.image}
+                  alt={section.title}
+                  className="w-17 h-17 object-cover"
+                />
+                <div className="">
+                  <h3 className="text-lg font-semibold mb-10">{section.title}</h3>
+                  <p className="text-slate-600">{section.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
-      <section className="bg-gray-100 h-250 py-10 px-6">
-        <div className="max-w-7xl mx-auto">
+
+      <section className="py-16 md:py-24">
+        <div className="appContainer">
           <ul className="space-y-8">
             {sectorDynamics.map((item, index) => (
               <li
                 key={index}
-                className="tiptap text-gray-600 mt-2 text-base leading-[2]"
+                className="text-slate-600 mt-2 text-base leading-6"
                 dangerouslySetInnerHTML={{ __html: item.text }}
               />
             ))}
@@ -566,57 +567,29 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <section className="bg-gray-100 py-10">
-        <div className="max-w-7xl mx-auto px-4 mb-6 mt-2">
-          <p className="text-sm text-center uppercase text-[#FF6B00] tracking-wide">
+      <section className="bg-slate-50 py-16 md:py-24">
+        <div className="appContainer">
+          <p className="text-themeOrangeColor uppercase text-md font-thin text-center mb-1">
             - View Points -
           </p>
-          <h2 className="text-2xl text-center font-bold text-gray-800 mt-1">
+          <div className="text-4xl font-light text-center mb-8">
             Market Dynamics and Key Trends
-          </h2>
+          </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
+        <div className="appContainer px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
           <div className="col-span-4">
             <BlogGrid blog={filteredBlogs || []} />
             <div className="mt-6 flex justify-center">
               <Link
                 href="/insights"
-                className="inline-block px-4 py-3 bg-[#FF6B00] text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition">
+                className="px-6 py-3 bg-themeOrangeColor text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-themeBlueColor transition duration-300 cursor-pointer">
                 READ MORE
               </Link>
             </div>
           </div>
         </div>
       </section>
-
-      <section className="w-full bg-white h-160 py-12 px-6">
-        <div className="max-w-7xl mx-auto grid grid-rows-1 md:grid-cols-[30%_70%] items-center gap-4">
-          {/* Left Section: Text and Button */}
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-gray-800">
-              PayNXT360 Insights
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Sign up for The PayNXT360 Insights, and get a weekly roundup
-              of market events, innovations and data you can trust and use.
-            </p>
-            <a href="/login">
-              <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-300 cursor-pointer">
-                SIGN UP NOW
-              </button>
-            </a>
-          </div>
-
-          {/* Right Section: Image */}
-          <div className="flex justify-center">
-            <img
-              src="/Images/whypay.svg" // make sure your image is at public/images/your-image.jpg
-              alt="Newsletter"
-              className="w-full max-w-4xl"
-            />
-          </div>
-        </div>
-      </section>
+      <WhySubscribe/>
     </main>
   );
 }
