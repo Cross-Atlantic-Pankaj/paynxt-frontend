@@ -17,6 +17,7 @@ const { Text } = Typography;
 const { Option } = Select;
 const { Panel } = Collapse;
 import DOMPurify from 'dompurify';
+import { FaLinkedin } from 'react-icons/fa6';
 
 export default function ViewPointPage() {
     const router = useRouter();
@@ -125,9 +126,9 @@ export default function ViewPointPage() {
         };
 
         return (
-            <div className="bg-gray-100 overflow-hidden">
+            <div className="bg-white overflow-hidden">
                 {/* Title */}
-                <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
+                <div className="bg-themeBlueColor text-white px-4 py-2 font-medium text-lg">
                     Filter by category
                 </div>
 
@@ -137,16 +138,16 @@ export default function ViewPointPage() {
                     activeKey={openKey}
                     onChange={(key) => setOpenKey(key)}
                     expandIconPosition="end"
-                    className="bg-gray-100 border-none shadow-none"
+                    className="border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                            className={`w-6 h-6 flex items-center justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'
                                 }`}
                         >
                             {isActive ? (
-                                <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
+                                <MinusOutlined style={{ fontSize: 12, color: 'themeOrangeColor' }} />
                             ) : (
-                                <PlusOutlined style={{ fontSize: 10, color: 'white' }} />
+                                <PlusOutlined style={{ fontSize: 12, color: 'white' }} />
                             )}
                         </div>
                     )}
@@ -172,9 +173,9 @@ export default function ViewPointPage() {
                                                 e.stopPropagation(); // Prevent collapse toggle
                                                 handleCategoryClick(cat.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
-                                                ? 'bg-[#155392] text-white font-semibold'
-                                                : 'text-gray-800 font-semibold'
+                                            className={`px-0 py-1 rounded cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                                ? 'bg-themeBlueColor text-white font-semibold'
+                                                : 'font-medium text-slate-700'
                                                 }`}
                                         >
                                             {cat.name}
@@ -185,7 +186,7 @@ export default function ViewPointPage() {
                                         {filteredSubcategories.map((sub, idx) => (
                                             <div
                                                 key={idx}
-                                                className="cursor-pointer px-8 py-1 hover:bg-gray-200 text-md text-gray-700"
+                                                className="cursor-pointer px-4 py-1 hover:bg-slate-200 text-md text-slate-700"
                                                 onClick={() => onSelect({ cat: cat.name, sub })}
                                             >
                                                 {sub}
@@ -225,8 +226,8 @@ export default function ViewPointPage() {
         };
 
         return (
-            <div className="bg-gray-100 overflow-hidden mt-4">
-                <div className="bg-[#155392] text-white px-4 py-2 font-semibold text-lg">
+            <div className="bg-white overflow-hidden">
+                <div className="bg-themeBlueColor text-white px-4 py-2 font-medium text-lg">
                     Filter by topic
                 </div>
                 <Collapse
@@ -234,16 +235,16 @@ export default function ViewPointPage() {
                     activeKey={openKey}
                     onChange={(key) => setOpenKey(key)}
                     expandIconPosition="end"
-                    className="bg-gray-100 border-none shadow-none"
+                    className="border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-4 h-4 flex items-center mt-3 justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-gray-100' : 'bg-[#155392]'
+                            className={`w-6 h-6 flex items-center justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'
                                 }`}
                         >
                             {isActive ? (
-                                <MinusOutlined style={{ fontSize: 10, color: '#155392' }} />
+                                <MinusOutlined style={{ fontSize: 12, color: 'themeOrangeColor' }} />
                             ) : (
-                                <PlusOutlined style={{ fontSize: 10, color: 'white' }} />
+                                <PlusOutlined style={{ fontSize: 12, color: 'white' }} />
                             )}
                         </div>
                     )}
@@ -269,7 +270,7 @@ export default function ViewPointPage() {
                                                 e.stopPropagation();
                                                 handleTopicClick(topic.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedTopic?.topic === topic.name && !selectedTopic?.sub
+                                            className={`rounded cursor-pointer flex justify-between items-center ${selectedTopic?.topic === topic.name && !selectedTopic?.sub
                                                 ? 'bg-[#155392] text-white font-semibold'
                                                 : 'text-gray-800 font-semibold'
                                                 }`}
@@ -278,7 +279,7 @@ export default function ViewPointPage() {
                                         </div>
                                     }
                                 >
-                                    <div className="bg-gray-100 p-0">
+                                    <div className="bg-slate-100 p-0">
                                         {filteredSubtopics.map((sub, idx) => (
                                             <div
                                                 key={idx}
@@ -370,7 +371,8 @@ export default function ViewPointPage() {
             <div className="w-full">
                 <div className="grid grid-rows-1 md:grid-cols-3 gap-4">
                     {paginatedBlogs.map((blog, i) => {
-                        const blogUrl = `https://pay-nxt360.vercel.app/view-point/${blog.slug}`;
+                        const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+                        const blogUrl = `${base}/${blog.slug}`;
                         const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
                             blogUrl
                         )}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`;
@@ -388,8 +390,8 @@ export default function ViewPointPage() {
                                                     className="w-full h-40"
                                                 />
                                             ) : (
-                                                <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg">
-                                                    <span className="text-gray-500 text-sm">No template</span>
+                                                <div className="w-full h-40 bg-slate-200 flex items-center justify-center rounded">
+                                                    <span className="text-slate-500 text-sm">No template</span>
                                                 </div>
                                             )}
                                         </div>
@@ -402,12 +404,12 @@ export default function ViewPointPage() {
                                                             .replace(',', '')
                                                         : ''}
                                                 </p>
-                                                <p className="text-sm text-gray-500">
+                                                <p className="text-sm text-slate-500">
                                                     {Array.isArray(blog.subcategory) ? blog.subcategory.join(', ') : blog.subcategory}
                                                 </p>
-                                                <div className="border-b border-gray-400 mb-4"></div>
+                                                <div className="border-b border-darkBorderColor mb-4"></div>
                                                 <h3 className="text-md font-bold">{blog.title}</h3>
-                                                <p className="text-sm text-gray-700">
+                                                <p className="text-sm text-slate-700">
                                                     {blog.summary
                                                         ? stripHTML(blog.summary).length > 100
                                                             ? `${stripHTML(blog.summary).slice(0, 100)}...`
@@ -423,18 +425,15 @@ export default function ViewPointPage() {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={(e) => e.stopPropagation()}
-                                            className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
-                                        >
-                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.2 8.5 8.2zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
-                                            </svg>
-                                            Share
+                                            className="inline-flex items-center justify-center gap-2 px-2 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]">
+                                                <FaLinkedin />
+                                                Share
                                         </a>
                                         <button
                                             onClick={(e) => handleSaveArticle(blog, e)}
                                             className={`inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border text-sm font-medium transition ${isSaved
-                                                ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500 hover:cursor-pointer'
-                                                : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500 hover:cursor-pointer'
+                                                ? 'border-red-500 bg-red-500 !text-white hover:bg-white hover:text-red-500 hover:cursor-pointer'
+                                                : 'border-green-500 bg-green-500 !text-white hover:bg-white hover:!text-green-500 hover:cursor-pointer'
                                                 }`}
                                         >
                                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -601,41 +600,32 @@ export default function ViewPointPage() {
     background: #FF6B00 !important;
   }
 `}</style>
-
-            <section className="w-full bg-[#155392] py-20 px-8">
-                <div className="flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
+            {banner && (
+            <section className="w-full bg-darkBorderColor py-20 px-8">
+                <div className="flex flex-col md:!flex-row items-center justify-between gap-8 appContainer mx-auto">
                     {/* Left Banner Section */}
-                    <div className="w-2/3 text-left">
+                    <div className="w-full md:!w-2/3 text-left">
                         {banner ? (
                             <div>
-                                <h1 className="text-4xl font-bold text-white mb-6">{banner.bannerTitle}</h1>
-                                {/* <div className="flex flex-wrap gap-2 mb-6">
-                  {banner.tags?.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div> */}
-                                <p className="text-md text-white mt-1 mb-8">
+                                <div className="font-playfair text-4xl font-bold text-themeBlueColor mb-6">{banner.bannerTitle}</div>
+
+                                <p className="text-lg text-salte-800 mb-6">
                                     {banner.bannerDescription}
                                 </p>
 
-                                <div className="mt-2 flex items-center">
+                                <div className="mt-2 flex items-center relative">
                                     <input
                                         type="text"
                                         placeholder="Search..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
+                                        className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-slate-700 placeholder-slate-400 focus:outline-none"
                                     />
                                     <button
                                         onClick={handleSearch}
-                                        className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white cursor-pointer duration-300"
+                                        className="px-6 py-3 rounded-r-sm bg-themeOrangeColor hover:bg-themeBlueColor focus:outline-none cursor-pointer duration-300 font-medium"
                                     >
-                                        Search
+                                        <span className='text-white'>Search</span>
                                     </button>
                                 </div>
                             </div>
@@ -645,7 +635,7 @@ export default function ViewPointPage() {
                     </div>
 
                     {/* Right Slider Section */}
-                    <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
+                    <div className="w-full md:!w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit">
                         {Array.isArray(sliders) && sliders.length > 0 ? (
                             <Swiper
                                 modules={[SwiperPagination, Autoplay]}
@@ -662,12 +652,10 @@ export default function ViewPointPage() {
                             >
                                 {sliders.map((slide, index) => (
                                     <SwiperSlide key={index}>
-                                        <div className="mb-4 border-b pb-4">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <p className="text-xs text-gray-500 uppercase">{slide.typeText}</p>
-                                            </div>
-                                            <h3 className="text-lg font-bold text-[#155392]">{slide.title}</h3>
-                                            <p className="text-sm text-gray-700 mt-1 mb-2">
+                                        <div>
+                                            <p className="text-xs text-themeOrangeColor uppercase mb-1">{slide.typeText}</p>
+                                            <h3 className="text-xl font-semibold text-themeBlueColor">{slide.title}</h3>
+                                            <p className="text-sm text-slate-800 mt-1 mb-2">
                                                 {slide.shortDescription && slide.shortDescription.length > 100
                                                     ? `${slide.shortDescription.slice(0, 100)}...`
                                                     : slide.shortDescription}
@@ -677,7 +665,7 @@ export default function ViewPointPage() {
                                                     href={slide.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm text-white bg-[#155392] hover:bg-[#0e3a6f] px-3 py-1 rounded"
+                                                    className="text-sm text-white bg-themeBlueColor hover:bg-themeOrangeColor uppercase transition duration-500 px-3 py-1 rounded"
                                                 >
                                                     Read More
                                                 </a>
@@ -687,7 +675,7 @@ export default function ViewPointPage() {
                                 ))}
                             </Swiper>
                         ) : (
-                            <div className="text-center text-gray-500 py-8">
+                            <div className="text-center text-slate-500 py-8">
                                 <p>No featured content available</p>
                             </div>
                         )}
@@ -714,8 +702,9 @@ export default function ViewPointPage() {
 
                 </div>
             </section>
-            <section className="bg-gray-100 py-10">
-                <div className="max-w-7xl mx-auto px-4 grid grid-rows-1 md:grid-cols-4 gap-8">
+            )}
+            <section className="py-16 md:py-24">
+                <div className="appContainer grid grid-rows-1 md:grid-cols-4 gap-8">
                     <div className="col-span-1 flex flex-col gap-4">
                         <button
                             onClick={() => {
@@ -724,9 +713,9 @@ export default function ViewPointPage() {
                                 setSearchTerm('');
                                 setCurrentPage(1);
                             }}
-                            className={`px-4 py-2 rounded transition ${!selectedCat && !selectedTopic && !searchTerm
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-[#155392] text-[white] hover:bg-[#0e3a6f]'
+                            className={`px-4 py-2 rounded duration-500 transition ${!selectedCat && !selectedTopic && !searchTerm
+                                ? 'bg-darkBorderColor !text-slate-700 cursor-not-allowed'
+                                : 'bg-themeBlueColor !text-white hover:bg-themeOrangeColor cursor-pointer'
                                 }`}
                             disabled={!selectedCat && !selectedTopic && !searchTerm}
                         >
