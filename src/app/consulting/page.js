@@ -55,77 +55,52 @@ export default function ConsultingPage() {
   };
 
   return (
-    <div className="w-full mx-auto">
-      <div className="w-full bg-[#155392] py-20 px-6">
-        <div className="max-w-7xl mx-auto text-left">
-          <h1 className="text-4xl font-bold text-white mb-6">{banner.title}</h1>
-          <p className="text-lg text-white mb-6">{banner.description}</p>
-          {/* <div className="mt-2 flex items-center">
-                        <input
-                            type="text"
-                            placeholder="Search for market intelligence on fintech"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
-                        />
-                        <button
-                            onClick={handleSearch}
-                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300"
-                        >
-                            Search
-                        </button>
-                    </div> */}
-          {/* <div className="flex flex-wrap gap-2 mb-6 mt-4">
-                        {banner.tags.map((tag, index) => (
-                            <span
-                                key={index}
-                                onClick={() => handleTagClick(tag)}
-                                className="bg-white text-[#FF6B00] text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:bg-opacity-80 duration-300"
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                    </div> */}
+    <div className="w-full">
+      <div className="bg-darkBorderColor py-16">
+        <div className="appContainer">
+          <div className="font-playfair text-6xl font-bold text-themeBlueColor mb-6">{banner.title}</div>
+          <p className="text-lg text-salte-800 mb-6">{banner.description}</p>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto space-y-16 py-12">
-        {sections.map((sec, index) => (
-          <div
-            key={index}
-            className={`grid grid-rows-1 md:grid-cols-2 gap-8 items-center ${index % 2 !== 1 ? "md:flex-row-reverse" : ""
-              }`}
-          >
-            {/* Image */}
+      <div className="py-16 md:py-24">
+        <div className="appContainer">
+          {sections.map((sec, index) => (
             <div
-              className={`w-full ${index % 2 !== 1 ? "order-2 md:order-1" : ""
+              key={index}
+              className={`grid grid-rows-1 md:grid-cols-2 gap-8 items-center ${index % 2 !== 1 ? "md:flex-row-reverse" : "!flow-row"
                 }`}
             >
-              <Image
-                src={sec.image}
-                alt={sec.title}
-                width={600}
-                height={400}
-                className="rounded-lg h-80"
-              />
-            </div>
-
-            {/* Text Section */}
-            <div
-              className={`flex flex-col justify-center space-y-4 ${index % 2 !== 0 ? "order-1 md:order-2" : ""
-                }`}
-            >
-              <h2 className="text-2xl font-semibold">{sec.title}</h2>
-              <p className="text-gray-600">{sec.description}</p>
-              <a
-                href={sec.buttonLink}
-                className="inline-block bg-[#FF6B00] rounded-tr-xl rounded-bl-xl text-white px-6 py-3 hover:bg-[#155392] transition-all duration-400 w-fit"
+              {/* Image */}
+              <div
+                className={`w-full ${index % 2 !== 1 ? "order-1 md:order-2" : "order-1 md:order-1"
+                  }`}
               >
-                {sec.buttonText}
-              </a>
+                <Image
+                  src={sec.image}
+                  alt={sec.title}
+                  width={600}
+                  height={400}
+                  className="rounded-lg h-80"
+                />
+              </div>
+
+              {/* Text Section */}
+              <div
+                className={`flex flex-col justify-center space-y-4 ${index % 2 !== 0 ? "order-2 md:order-1" : " "
+                  }`}
+              >
+                <h2 className="text-2xl font-semibold">{sec.title}</h2>
+                <p className="text-slate-700 leading-7">{sec.description}</p>
+                <a
+                  href={sec.buttonLink}
+                  className="inline-block bg-themeOrangeColor rounded-tr-xl rounded-bl-xl text-white px-6 py-3 hover:bg-themeBlueColor transition-all duration-400 w-fit"
+                >
+                  {sec.buttonText}
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
