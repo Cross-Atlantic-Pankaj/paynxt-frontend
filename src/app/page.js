@@ -489,15 +489,15 @@ export default function HomePage() {
                   ? `url(${banner.image})`
                   : undefined,
               }}>
-              <div className="absolute inset-0 bg-black/40"></div>
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(1,68,120,0.8)_0%,rgba(1,44,78,0.8)_35%,rgba(0,0,0,0)_100%)]"></div>
               <div className="relative z-10 flex flex-col lg:flex-row lg:!flex-row justify-between gap-8 appContainer mx-auto items-center">
                 {/* Left Banner Section */}
                 <div className="w-full lg:w-2/3 min-w-0">
                   {banner ? (
                     <div>
-                      <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold font-playfair text-white mb-6">
+                      <div className="text-2xl md:text-5xl font-playfair font-bold text-white mb-6 leading-[1.3em]">
                         {banner.bannerHeading}
-                      </h1>
+                      </div>
 
                       <div className="mt-2 mb-6 md:flex items-center">
                         <div className="bg-white rounded flex p-1 getInsights relative">
@@ -601,11 +601,11 @@ export default function HomePage() {
           <section className="w-full">
             <div className="relative">
               {/* First Row - Stats */}
-              <div className="grid grid-rows-1 md:grid-cols-4 text-center items-start">
+              <div className="grid grid-rows-1 md:grid-cols-4 text-center">
                 {stats.map((stat, index) => (
                   <div
                     key={index}
-                    className="bg-themeOrangeColor px-8 py-12 h-full flex flex-col justify-center relative"
+                    className="bg-themeOrangeColor px-8 py-12 h-full flex flex-col justify-start relative"
                   >
                     {/* Manual divider */}
                     {index < stats.length - 1 && (
@@ -731,7 +731,7 @@ export default function HomePage() {
           )}
 
           {technologyPlatformData.length > 0 && (
-            <section className="w-full py-16 md:py-24 bg-slate-50">
+            <section className="w-full pt-16 bg-slate-50">
               <div className="appContainer">
                 <p className="text-themeOrangeColor text-md font-thin text-center mb-1">
                   - TECHNOLOGY PLATFORM -
@@ -742,7 +742,7 @@ export default function HomePage() {
                     <div
                       key={idx}
                       className="bg-slte-50">
-                      <div className="text-4xl font-light text-center mb-8">
+                      <div className="text-4xl font-light text-center">
                         {platform.title}
                       </div>
                       <img

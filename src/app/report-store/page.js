@@ -426,8 +426,8 @@ export default function ViewPointPage() {
                                         </p>
                                     </div>
                                     <div className="">
-                                        <span className="inline-block px-3 py-1 bg-themeBlueColor text-white text-sm rounded-full hover:bg-themeOrangeColor transition">
-                                            View
+                                        <span className="inline-block px-3 py-1 bg-themeOrangeColor text-white text-sm rounded-full hover:bg-themeBlueColor transition">
+                                            View Details
                                         </span>
                                     </div>
                                 </div>

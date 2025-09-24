@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function ContactPage() {
   const { user, isLoading: userLoading } = useUser();
@@ -25,7 +26,8 @@ export default function ContactPage() {
   const banner = {
     title: "Contact Us",
     description: "PayNXT360's View Point briefs offer data, insights and opinion, enabling companies formulate successful strategies and deliver strong ROI. Register now and get access to several insightful briefs covering emerging business models, consumer insights, and payment market innovation.",
-    tags: ["Fintech", "Payments", "Market Insights", "Consumer Behavior", "Industry Trends"]
+    tags: ["Fintech", "Payments", "Market Insights", "Consumer Behavior", "Industry Trends"],
+    bannerimage: './innerhead.svg',
   };
 
   const handleSearch = () => {
@@ -126,10 +128,27 @@ export default function ContactPage() {
 
   return (
     <div className="w-full">
-      <div className="bg-darkBorderColor py-16">
-          <div className="appContainer">
-              <div className="font-playfair text-6xl font-bold text-themeBlueColor mb-6">{banner.title}</div>
-              <p className="text-lg text-salte-800 mb-6">{banner.description}</p>
+      <div className="bg-darkBorderColor py-6 md:py-0 relative">
+          <div className='md:absolute w-1/3 h-full bg-white right-0 rounded-l-full z-0'></div>
+          <div className="appContainer z-2 relative">
+            <div className="md:flex justify-between items-center gap-10">
+              {/* LEFT: copy */}
+              <div className="w-full md:w-1/2">
+                <h2 className="font-playfair text-6xl font-bold text-themeBlueColor mb-6">
+                  {banner.title}
+                </h2>
+                <p className="text-lg text-salte-800 mb-6">{banner.description}</p>
+              </div>
+
+              {/* RIGHT: image */}
+              <div className="w-full md:w-1/2">
+                <img
+                  src={banner.bannerimage}
+                  alt="Contact illustration"
+                  className="w-full h-full relative md:-right-32"
+                />
+              </div>
+            </div>
           </div>
       </div>
 

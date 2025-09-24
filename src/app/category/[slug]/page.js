@@ -463,7 +463,7 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24">
+      <section className="py-16">
         <div className="appContainer mx-auto">
           <div className="grid grid-rows-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((item, index) => (
@@ -480,7 +480,7 @@ export default function B2CPaymentIntelligencePage() {
       </section>
 
       {sectionThree && (
-      <div className="py-16 md:py-24 bg-slate-50">
+      <div className="py-16 bg-slate-50">
           <div className="grid grid-rows-1 md:grid-cols-2 bg-slate-50 appContainer items-center">
             {/* Left Column: Title and Description */}
             <div>
@@ -503,7 +503,7 @@ export default function B2CPaymentIntelligencePage() {
       </div>
       )}
 
-      <section className="py-16 md:py-24">
+      <section className="py-16">
         <div className="appContainer">
           <p className="text-themeOrangeColor text-md font-thin text-center mb-1">
             - latest research -
@@ -528,7 +528,7 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <section className="bg-slate-50 py-16 md:py-24">
+      <section className="bg-slate-50 py-16">
         <div className="appContainer">
           <p className="text-themeOrangeColor uppercase text-md font-thin text-center mb-1">
             - BENEFITS -
@@ -545,7 +545,7 @@ export default function B2CPaymentIntelligencePage() {
                 />
                 <div className="">
                   <h3 className="text-lg font-semibold mb-10">{section.title}</h3>
-                  <p className="text-slate-600">{section.description}</p>
+                  <p className="text-slate-500 leading-6">{section.description}</p>
                 </div>
               </div>
             ))}
@@ -553,8 +553,9 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24">
+      <section className="py-16">
         <div className="appContainer">
+          <div className="text-4xl font-light text-center mb-8">Sector Snapshot</div>
           <ul className="space-y-8">
             {sectorDynamics.map((item, index) => (
               <li
@@ -567,7 +568,7 @@ export default function B2CPaymentIntelligencePage() {
         </div>
       </section>
 
-      <section className="bg-slate-50 py-16 md:py-24">
+      <section className="bg-slate-50 py-16">
         <div className="appContainer">
           <p className="text-themeOrangeColor uppercase text-md font-thin text-center mb-1">
             - View Points -

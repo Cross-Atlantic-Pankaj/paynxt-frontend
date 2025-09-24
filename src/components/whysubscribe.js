@@ -2,7 +2,7 @@
 const WhySubscribe = () => {
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="py-16">
         <div className="appContainer mx-auto grid grid-rows-1 md:grid-cols-[30%_70%] items-center gap-4">
             {/* Left Section: Text and Button */}
             <div className="space-y-6 text-center md:!text-left">
