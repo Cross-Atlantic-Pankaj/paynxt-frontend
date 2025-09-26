@@ -109,12 +109,12 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="my-20 flex items-center justify-center bg-white">
+    <div className="my-20 flex items-center justify-center">
       <Toaster position="top-right" />
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
+      <div className="w-full max-w-xl p-16 space-y-8 border border-themeBlueColor">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">Reset Password</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <div className="text-4xl font-playfair font-bold mb-3 text-themeBlueColor text-center">Reset Password</div>
+          <p className="mb-6 text-slate-700 text-md leading-6 text-center">
             {step === 1 ? 'Enter your email to receive OTP' : 'Enter OTP and new password'}
           </p>
         </div>
@@ -122,23 +122,27 @@ export default function ForgotPasswordPage() {
         {step === 1 ? (
           <form onSubmit={handleSendOTP} className="mt-8 space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <input
                 type="email"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             {error && <div className="text-red-500 text-sm">{error}</div>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            >
-              {loading ? 'Sending...' : 'Send OTP'}
-            </button>
+            <div className='text-center'>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-8 py-4 bg-themeBlueColor text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-themeOrangeColor transition cursor-pointer duration-500"
+              >
+                <span className='text-white'>
+                  {loading ? 'Sending...' : 'Send OTP'}
+                </span>
+              </button>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleResetPassword} className="mt-8 space-y-6">

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function ContactPage() {
   const { user, isLoading: userLoading } = useUser();
@@ -25,7 +26,8 @@ export default function ContactPage() {
   const banner = {
     title: "Contact Us",
     description: "PayNXT360's View Point briefs offer data, insights and opinion, enabling companies formulate successful strategies and deliver strong ROI. Register now and get access to several insightful briefs covering emerging business models, consumer insights, and payment market innovation.",
-    tags: ["Fintech", "Payments", "Market Insights", "Consumer Behavior", "Industry Trends"]
+    tags: ["Fintech", "Payments", "Market Insights", "Consumer Behavior", "Industry Trends"],
+    bannerimage: './innerhead.svg',
   };
 
   const handleSearch = () => {
@@ -125,204 +127,200 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="w-full bg-[#155392] py-20 px-6">
-        <div className="max-w-7xl mx-auto text-left">
-          <h1 className="text-4xl font-bold text-white mb-6">{banner.title}</h1>
-          <p className="text-lg text-white mb-6">{banner.description}</p>
-          {/* <div className="mt-2 flex items-center">
-                        <input
-                            type="text"
-                            placeholder="Search for market intelligence on fintech"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
-                        />
-                        <button
-                            onClick={handleSearch}
-                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300"
-                        >
-                            Search
-                        </button>
-                    </div> */}
-          {/* <div className="flex flex-wrap gap-2 mb-6 mt-4">
-                        {banner.tags.map((tag, index) => (
-                            <span
-                                key={index}
-                                onClick={() => handleTagClick(tag)}
-                                className="bg-white text-[#FF6B00] text-sm font-semibold px-3 py-1 rounded-full cursor-pointer hover:bg-opacity-80 duration-300"
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                    </div> */}
-        </div>
-      </div>
-      <div className="w-full max-w-2xl bg-white/80 p-8">
-        <h1 className="text-md text-center uppercase text-[#FF6B00] mb-2">- Get in Touch -</h1>
-        <h2 className="text-center mb-6 text-3xl">Send your query to PayNXT360</h2>
-        <p className="text-center text-gray-500 mb-6 text-sm">
-          Please complete the form below and we will be in touch as soon as we can
-        </p>
+    <div className="w-full">
+      <div className="bg-darkBorderColor py-6 md:py-0 relative">
+          <div className='md:absolute w-1/3 h-full bg-white right-0 rounded-l-full z-0'></div>
+          <div className="appContainer z-2 relative">
+            <div className="md:flex justify-between items-center gap-10">
+              {/* LEFT: copy */}
+              <div className="w-full md:w-1/2">
+                <h2 className="font-playfair text-6xl font-bold text-themeBlueColor mb-6">
+                  {banner.title}
+                </h2>
+                <p className="text-lg text-salte-800 mb-6">{banner.description}</p>
+              </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block font-medium text-gray-700 mb-1">
-              What would you like to talk to us about? *
-            </label>
-            <select
-              name="topic"
-              value={form.topic}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            >
-              <option>Please Select </option>
-              <option>Consulting</option>
-              <option>Demo and sales</option>
-              <option>Media and PR</option>
-              <option>Business Development / Content Distribution</option>
-              <option>Other</option>
-            </select>
+              {/* RIGHT: image */}
+              <div className="w-full md:w-1/2">
+                <img
+                  src={banner.bannerimage}
+                  alt="Contact illustration"
+                  className="w-full h-full relative md:-right-32"
+                />
+              </div>
+            </div>
           </div>
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className='appContainer'>
+        <div className="max-w-3xl py-16 md:py-24 mx-auto">
+          <p className="text-themeOrangeColor text-md font-thin text-center !mb-2 uppercase">- Get in Touch -</p>
+          <div className="text-4xl font-light text-center mb-4">Send your query to PayNXT360</div>
+          <p className="text-slate-600 text-center leading-7 !mb-8">Please complete the form below and we will be in touch as soon as we can</p>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block font-medium text-gray-700 mb-1">First Name *</label>
-              <input
-                type="text"
-                name="firstName"
-                value={form.firstName}
+              <label className="block font-medium text-slate-700 mb-1">
+                What would you like to talk to us about? *
+              </label>
+              <select
+                name="topic"
+                value={form.topic}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              />
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+              >
+                <option>Please Select </option>
+                <option>Consulting</option>
+                <option>Demo and sales</option>
+                <option>Media and PR</option>
+                <option>Business Development / Content Distribution</option>
+                <option>Other</option>
+              </select>
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-medium text-slate-700 mb-1">First Name *</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={form.firstName}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block font-medium text-slate-700 mb-1">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={form.lastName}
+                  onChange={handleChange}
+                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="block font-medium text-gray-700 mb-1">Last Name</label>
+              <label className="block font-medium text-slate-700 mb-1">Company Name *</label>
               <input
                 type="text"
-                name="lastName"
-                value={form.lastName}
+                name="companyName"
+                value={form.companyName}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                required
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block font-medium text-gray-700 mb-1">Company Name *</label>
-            <input
-              type="text"
-              name="companyName"
-              value={form.companyName}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
+            <div>
+              <label className="block font-medium text-slate-700 mb-1">Job Title *</label>
+              <input
+                type="text"
+                name="jobTitle"
+                value={form.jobTitle}
+                onChange={handleChange}
+                required
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+              />
+            </div>
 
-          <div>
-            <label className="block font-medium text-gray-700 mb-1">Job Title *</label>
-            <input
-              type="text"
-              name="jobTitle"
-              value={form.jobTitle}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
+            <div>
+              <label className="block font-medium text-slate-700 mb-1">Email Address *</label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+              />
+            </div>
 
-          <div>
-            <label className="block font-medium text-gray-700 mb-1">Email Address *</label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
+            <div>
+              <label className="block font-medium text-slate-700 mb-1">Message *</label>
+              <textarea
+                name="message"
+                value={form.message}
+                onChange={handleChange}
+                required
+                rows="4"
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none resize-none"
+              />
+            </div>
 
-          <div>
-            <label className="block font-medium text-gray-700 mb-1">Message *</label>
-            <textarea
-              name="message"
-              value={form.message}
-              onChange={handleChange}
-              required
-              rows="4"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none"
-            />
-          </div>
+            <div>
+              <label className="block font-medium text-slate-700 mb-1">
+                The answer is ({captcha.num1} + {captcha.num2} = ?)
+              </label>
+              <input
+                type="number"
+                name="captchaAnswer"
+                value={form.captchaAnswer}
+                onChange={handleChange}
+                required
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+              />
+            </div>
 
-          <div>
-            <label className="block font-medium text-gray-700 mb-1">
-              The answer is ({captcha.num1} + {captcha.num2} = ?)
-            </label>
-            <input
-              type="number"
-              name="captchaAnswer"
-              value={form.captchaAnswer}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
+            <div className="flex items-center space-x-2 gap-2">
+              <input
+                type="checkbox"
+                name="notRobot"
+                id='notRobot'
+                checked={form.notRobot}
+                onChange={handleChange}
+                className="w-5 h-5 border-darkBorderColor rounded focus:ring-themeBlueColor"
+              />
+              <label className="text-slate-700" name="notRobot">I am not a robot</label>
+            </div>
 
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="notRobot"
-              checked={form.notRobot}
-              onChange={handleChange}
-              className="w-5 h-5 border-gray-300 rounded focus:ring-blue-400"
-            />
-            <label className="text-gray-700">I am not a robot</label>
-          </div>
+            <div className='text-center mt-6'>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-8 py-4 bg-themeOrangeColor text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-themeBlueColor transition cursor-pointer duration-500"
+              >
+                <span className='text-white flex gap-3'>{loading ? 'Sending...' : <>Submit <FaPaperPlane /></>}</span>
+              </button>
+            </div>
+          </form>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl"
-          >
-            {loading ? 'Sending...' : <>Submit <FaPaperPlane /></>}
-          </button>
-        </form>
-
-        {status && <p className="mt-4 text-center text-sm font-medium">{status}</p>}
+          {status && <p className="mt-4 text-center text-sm font-medium">{status}</p>}
+        </div>
       </div>
 
-      <div className="mt-10 grid grid-rows-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 text-center">
-        <div className="flex flex-col items-center">
-          <img src="/Images/office1.svg" alt="Head Office" className="w-16 h-16 mb-3" />
-          <h3 className="text-lg font-semibold uppercase">England</h3>
-          <p className="text-sm text-[#FF6B00]">europe@paynxt360.com</p>
-          <p className="text-sm text-gray-500">25 Milcote Drive, Sutton Coldfield West Midlands, B73 6 QJ</p>
-        </div>
+      <div className='appContainer'>
+        <div className="mb-16 grid grid-rows-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 text-center">
+          <div className="flex flex-col items-center">
+            <img src="/Images/office1.svg" alt="Head Office" className="h-20 mb-3" />
+            <h3 className="text-lg font-semibold uppercase">England</h3>
+            <p className="text-sm text-themeOrangeColor">europe@paynxt360.com</p>
+            <p className="text-sm text-slate-600">25 Milcote Drive, Sutton Coldfield West Midlands, B73 6 QJ</p>
+          </div>
 
-        <div className="flex flex-col items-center">
-          <img src="/Images/office2.svg" alt="Branch Office" className="w-16 h-16 mb-3" />
-          <h3 className="text-lg font-semibold uppercase">Oregon</h3>
-          <p className="text-sm text-[#FF6B00]">us@paynxt360.com</p>
-          <p className="text-sm text-gray-500">Columbia Blvd Suite C15-544670 Portland, Oregon, 97217</p>
-        </div>
+          <div className="flex flex-col items-center">
+            <img src="/Images/office2.svg" alt="Branch Office" className="h-20 mb-3" />
+            <h3 className="text-lg font-semibold uppercase">Oregon</h3>
+            <p className="text-sm text-themeOrangeColor">us@paynxt360.com</p>
+            <p className="text-sm text-slate-600">Columbia Blvd Suite C15-544670 Portland, Oregon, 97217</p>
+          </div>
 
-        <div className="flex flex-col items-center">
-          <img src="/Images/office3.svg" alt="Support Center" className="w-16 h-16 mb-3" />
-          <h3 className="text-lg font-semibold uppercase">Bangalore</h3>
-          <p className="text-sm text-[#FF6B00]">info@paynxt360.com</p>
-          <p className="text-sm text-gray-500">Site #13, Reliaable Lifestyle, Kasavanahalli Main Road, Bangalore - 102</p>
-        </div>
+          <div className="flex flex-col items-center">
+            <img src="/Images/office3.svg" alt="Support Center" className="h-20 mb-3" />
+            <h3 className="text-lg font-semibold uppercase">Bangalore</h3>
+            <p className="text-sm text-themeOrangeColor">info@paynxt360.com</p>
+            <p className="text-sm text-slate-600">Site #13, Reliaable Lifestyle, Kasavanahalli Main Road, Bangalore - 102</p>
+          </div>
 
-        <div className="flex flex-col items-center">
-          <img src="/Images/office4.svg" alt="Asia Office" className="w-20 h-20 mb-3" />
-          <h3 className="text-lg font-semibold uppercase">Mumbai</h3>
-          <p className="text-sm text-[#FF6B00]">info@paynxt360.com</p>
-          <p className="text-sm text-gray-500">Suite 801, Aster Tower, Gen A.K. Vaidya Marg, Malad East, Mumbai - 400097</p>
+          <div className="flex flex-col items-center">
+            <img src="/Images/office4.svg" alt="Asia Office" className="h-20  mb-3" />
+            <h3 className="text-lg font-semibold uppercase">Mumbai</h3>
+            <p className="text-sm text-themeOrangeColor">info@paynxt360.com</p>
+            <p className="text-sm text-slate-600">Suite 801, Aster Tower, Gen A.K. Vaidya Marg, Malad East, Mumbai - 400097</p>
+          </div>
         </div>
       </div>
     </div>

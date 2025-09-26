@@ -15,8 +15,9 @@
   --color-themeBlueColor: #014478;
   --color-themeOrangeColor: #FB7540;
   --color-headingColor: #151515;
-  --color-darkBorderColor: rgba(1,68,120,.2);
   --color-lightColor: rgba(255,255,255,.8);
+  --color-borderColor: rgba(1,68,120,.1);
+  --color-darkBorderColor: rgba(1,68,120,.2);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,7 +30,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-rubik-sans);
 }
 
 html {
@@ -99,3 +100,57 @@ input:-webkit-autofill:focus{
   border-radius: 0.5rem;
 }
 
+@utility appContainer {
+  width: 100%;
+  margin-inline: auto;
+
+  /* mobile padding + notched devices */
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+
+  max-width: 100%;
+}
+@media (min-width: 640px) {
+  .appContainer {
+    max-width: 640px;
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+  }
+}
+@media (min-width: 768px) {
+  .appContainer {
+    max-width: 768px;
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
+}
+@media (min-width: 1024px) {
+  .appContainer { max-width: 1150px; }
+}
+@media (min-width: 1280px) {
+  .appContainer { max-width: 1280px; }
+}
+@media (min-width: 1536px) {
+  .appContainer { max-width: 1400px; }
+}
+
+.font-playfair { font-family: var(--font-playfair), ui-serif, Georgia, 'Times New Roman', serif; }
+
+.getInsights:before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    bottom: -20px;
+    width: 100%;
+    height: 46px;
+    background-color: rgba(255, 255, 255, .1);
+    z-index: -1;
+}
+
+.blueSVG img {
+    filter: invert(11%) sepia(87%) saturate(4793%) hue-rotate(194deg) brightness(86%) contrast(103%);
+}
+
+.blueSVG:hover img {
+    filter: invert(99%) sepia(0%) saturate(7497%) hue-rotate(229deg) brightness(96%) contrast(105%);
+}

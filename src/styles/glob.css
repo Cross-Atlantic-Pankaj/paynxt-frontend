@@ -12,25 +12,12 @@
   --darkBorderColor: rgba(1,68,120,.2);
   --lightColor: rgba(255,255,255,.8);
 }
-
-/* globals.css */
-
-/* Navbar Styles */
-.darkHeader {
-    background-color: var(--themeBlueColor);
-    color: white;
-    position: relative;
-    z-index: 999;
-    width: 100%;
-    padding-bottom: 10px;
-}
   
 .sticky {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes slideDown {
@@ -41,13 +28,7 @@
         transform: translateY(0);
     }
 }
-
-.container {
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-}
-  
+/*
 .menuToggler {
     display: flex;
     flex-direction: column;
@@ -125,37 +106,9 @@
 .transition {
     transition: all 0.3s ease-in-out;
 }
-  
+*/
 /* Footer Styles */
-.blueBg {
-  background-color: #155392;
-  color: white;
-  width: 100%;
-  position: relative;
-  bottom: 0;
-}
-
-#footer {
-  font-size: 14px;
-  width: 100%;
-  position: relative;
-}
-
-#footer .container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 0 0 0;
-}
-
-#footer .row {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-  align-items: stretch;
-  min-height: 200px;
-  padding: 0 2rem;
-}
-
+/*
 #footer .col-xl-4,
 #footer .col-xl-3,
 #footer .col-xl-2,
@@ -334,8 +287,9 @@
     font-size: 0.85rem;
     padding: 3px 0;
 }
-
+*/
 /* Add padding to the main content to prevent overlap */
+
 main {
     padding-top: 0;
 }

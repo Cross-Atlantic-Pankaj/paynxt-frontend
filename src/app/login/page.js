@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import toast, { Toaster } from 'react-hot-toast';
 import 'animate.css';
+import { FaLinkedinIn } from 'react-icons/fa6';
 
 export default function LoginPage() {
   const pathname = usePathname();
@@ -73,94 +74,92 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="py-16 md:py-24">
       <Toaster position="top-right" />
-      <div className="w-full max-w-5xl flex shadow-2xl rounded-2xl overflow-hidden bg-white transform transition-all duration-500 hover:scale-[1.01]">
-        {/* Left: Login */}
-        <div className="w-1/2 bg-white p-12 flex flex-col justify-center animate__animated animate__fadeInLeft">
-          <h2 className="text-3xl font-extrabold mb-3 text-gray-800 tracking-tight">Log in to Your Account</h2>
-          <p className="mb-6 text-gray-500 text-sm font-medium">
-            Log in to your account so you can continue building and editing your onboarding flows.
-          </p>
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
-              <input
-                type="email"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-300"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-              <input
-                type="password"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-300"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <label className="flex items-center text-sm text-gray-600 font-medium">
+      <div className="appContainer">
+        <div className="flex flex-col md:!flex-row border border-themeBlueColor overflow-hidden bg-white transform transition-all duration-500">
+          {/* Left: Login */}
+          <div className="w-full md:!w-1/2 bg-white pt-12 md:py-48 px-12 flex flex-col justify-center animate__animated animate__fadeInLeft">
+            <div className="text-4xl font-playfair font-bold mb-3 text-themeBlueColor text-center">Log in to Your Account</div>
+            <p className="mb-6 text-slate-500 text-md leading-6 text-center">Log in to your account so you can continue building and editing your onboarding flows.</p>
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
                 <input
-                  type="checkbox"
-                  className="mr-2 h-4 w-4 text-orange-500 focus:ring-orange-400 border-gray-300 rounded"
-                  checked={remember}
-                  onChange={() => setRemember(!remember)}
+                  type="email"
+                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
-                Remember me
-              </label>
-              <a href="/forgot-password" className="text-sm text-orange-500 hover:text-orange-600 transition-colors font-medium">
-                Forgot password
-              </a>
-            </div>
-            {error && <div className="text-red-500 text-sm font-medium animate__animated animate__shakeX">{error}</div>}
-            <div className="flex items-center justify-center">
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+                <input
+                  type="password"
+                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="flex gap-2 items-center text-sm text-gray-600 font-medium">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4"
+                    checked={remember}
+                    onChange={() => setRemember(!remember)}
+                  />
+                  <span>Remember me</span>
+                </label>
+                <a href="/forgot-password" className="text-sm text-themeOrangeColor hover:text-themeBlueColor transition font-medium duration-500">
+                  Forgot password
+                </a>
+              </div>
+              {error && <div className="text-red-500 text-sm font-medium animate__animated animate__shakeX">{error}</div>}
+              <div className="flex items-center justify-center">
+                <button
+                  type="submit"
+                  className="px-8 py-4 bg-themeOrangeColor text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-themeBlueColor transition cursor-pointer duration-500"
+                  disabled={loading}
+                >
+                  <span className='text-white'>{loading ? 'Logging in...' : 'LOG IN'}</span>
+                </button>
+              </div>
+            </form>
+            <div className="my-6 text-center text-slate-500 text-sm font-medium">-OR-</div>
+            <div className='text-center'>
               <button
-                type="submit"
-                className="w-36 bg-orange-500 text-[white] py-3 rounded-lg font-bold text-sm hover:bg-orange-600 transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 disabled:opacity-50 hover:cursor-pointer"
-                disabled={loading}
+                onClick={handleLinkedInLogin}
+                className="px-8 py-4 bg-[#0E76A8] text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-themeOrangeColor transition cursor-pointer duration-500"
               >
-                {loading ? 'Logging in...' : 'LOG IN'}
+                <span className='text-white flex gap-3'>
+                  <FaLinkedinIn /> LINKEDIN LOG IN
+                </span>
               </button>
             </div>
-          </form>
-          <div className="my-6 text-center text-gray-400 text-sm font-medium">-OR-</div>
-          <button
-            onClick={handleLinkedInLogin}
-            className="flex items-center justify-center w-full bg-[#0077b5] text-[white] py-3 rounded-lg font-bold text-sm hover:bg-[#005983] transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer"
-          >
-            <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm15.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39v4.58h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v4.72z" />
-            </svg>
-            LINKEDIN LOG IN
-          </button>
-        </div>
-        {/* Right: Signup */}
-        <div className="w-1/2 bg-gradient-to-br from-[#054B7D] to-[#0a6aa3] text-white p-12 flex flex-col justify-center items-center animate__animated animate__fadeInRight">
-          <h2 className="text-4xl font-extrabold mb-4 text-center tracking-tight">Don't have an account Yet?</h2>
-          <p className="mb-8 text-sm text-center font-medium">
-            By creating an account with our store, you will be able to move through the checkout process faster, store multiple shipping addresses, view and track your orders in your account and more.
-          </p>
-          <button
-            onClick={() => router.push('/signup')}
-            className="w-36 bg-orange-500 text-white py-3 rounded-lg font-bold text-sm hover:bg-orange-600 transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 hover:cursor-pointer"
-          >
-            SIGN UP
-          </button>
-          <div className="text-center text-gray-200 text-sm my-6 font-medium">-OR-</div>
-          <button
-            onClick={handleLinkedInLogin}
-            className="flex items-center justify-center w-full bg-[#2176ae] text-white py-3 rounded-lg font-bold text-sm hover:bg-[#005983] transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer"
-          >
-            <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm15.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39v4.58h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v4.72z" />
-            </svg>
-            LINKEDIN SIGN UP
-          </button>
+          </div>
+          {/* Right: Signup */}
+          <div className="w-full md:!w-1/2 bg-themeBlueColor text-white py-12 md:py-48 px-12 flex flex-col justify-center items-center animate__animated animate__fadeInRight">
+            <div className="text-4xl font-playfair font-bold mb-3 text-white text-center">Don't have an account Yet?</div>
+            <p className="mb-6 text-lightColor text-md leading-6 text-center">By creating an account with our store, you will be able to move through the checkout process faster, store multiple shipping addresses, view and track your orders in your account and more.</p>
+            <button
+              onClick={() => router.push('/signup')}
+              className="px-8 py-4 bg-themeOrangeColor text-white text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-white hover:!text-themeOrangeColor transition cursor-pointer duration-500"
+            >SIGN UP</button>
+            <div className="text-center text-gray-200 text-sm my-6 font-medium">-OR-</div>
+            <div className='text-center'>
+              <button
+                onClick={handleLinkedInLogin}
+                className="px-8 py-4 bg-[#0E76A8] text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-themeOrangeColor transition cursor-pointer duration-500"
+              >
+                <span className='text-white flex gap-3'>
+                  <FaLinkedinIn /> LINKEDIN LOG IN
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -16,6 +16,8 @@ import TileRenderer from '@/components/TileRenderer';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import DOMPurify from 'dompurify';
+import WhySubscribe from '@/components/whysubscribe';
+import { FaLinkedin } from 'react-icons/fa6';
 // import Head from 'next/head';
 
 export default function BlogPage() {
@@ -185,28 +187,18 @@ export default function BlogPage() {
     background: #FF6B00 !important;
   }
 `}</style>
-
-                <section className="w-full bg-[#155392] py-20 px-8">
-                    <div className="flex flex-row justify-between gap-8 max-w-7xl mx-auto items-start">
+                {banner && (
+                <section className="w-full bg-darkBorderColor py-20 px-8">
+                    <div className="flex flex-col md:!flex-row items-center justify-between gap-8 appContainer mx-auto">
                         {/* Left Banner Section */}
-                        <div className="w-2/3 text-left">
+                        <div className="w-full md:!w-2/3 text-left">
                             {banner ? (
                                 <div>
-                                    <h1 className="text-3xl font-bold text-white mb-6">{banner.title}</h1>
+                                    <div className="font-playfair text-4xl font-bold text-themeBlueColor mb-6">{banner.title}</div>
 
-                                    <div className="flex flex-wrap gap-2 mb-6">
-                                        {/* {banner.tags.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-white text-[#155392] text-sm font-semibold px-3 py-1 rounded-full"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))} */}
-                                    </div>
+                                    
                                     {banner.summary && (
-                                        <p
-                                            className="text-md text-white mt-1 mb-8"
+                                        <p className="text-lg text-salte-800 mb-6"
                                             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(banner.summary, { ADD_ATTR: ['style'] }) }}
                                         />
                                     )}
@@ -219,12 +211,12 @@ export default function BlogPage() {
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                            className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-[#155392] placeholder-[#155392] border border-[white] focus:outline-none focus:ring-2 focus:ring-white"
+                                            className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-slate-700 placeholder-slate-400 focus:outline-none"
                                         />
                                         <button
                                             onClick={handleSearch}
-                                            className="px-6 py-3 rounded-r-sm bg-[#FF6B00] text-[white] border border-[white] hover:bg-[#155392] hover:text-white focus:outline-none focus:ring-2 focus:ring-white duration-300 cursor-pointer">
-                                            Search
+                                            className="px-6 py-3 rounded-r-sm bg-themeOrangeColor hover:bg-themeBlueColor focus:outline-none cursor-pointer duration-300 font-medium">
+                                            <span className='text-white'>Search</span>
                                         </button>
                                     </div>
                                 </div>
@@ -234,7 +226,7 @@ export default function BlogPage() {
                         </div>
 
                         {/* Right Slider Section */}
-                        <div className="w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit max-h-[500px]">
+                        <div className="w-full md:!w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit">
                             <Swiper
                                 modules={[Pagination, Autoplay]}
                                 pagination={{
@@ -250,10 +242,10 @@ export default function BlogPage() {
                             >
                                 {sliders.map((slide, index) => (
                                     <SwiperSlide key={index}>
-                                        <div className="mb-4 border-b pb-4">
-                                            <p className="text-xs text-gray-500 uppercase mb-1">{slide.typeText}</p>
-                                            <h3 className="text-lg font-bold text-[#155392]">{slide.title}</h3>
-                                            <p className="text-sm text-gray-700 mt-1 mb-2">
+                                        <div className="">
+                                            <p className="text-xs text-themeOrangeColor uppercase mb-1">{slide.typeText}</p>
+                                            <h3 className="text-xl font-semibold text-themeBlueColor">{slide.title}</h3>
+                                            <p className="text-sm text-slate-800 mt-1 mb-2">
                                                 {slide.shortDescription.length > 100
                                                     ? `${slide.shortDescription.slice(0, 100)}...`
                                                     : slide.shortDescription}
@@ -263,7 +255,7 @@ export default function BlogPage() {
                                                     href={slide.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm text-white bg-[#155392] hover:bg-[#0e3a6f] px-3 py-1 rounded"
+                                                    className="text-sm text-white bg-themeBlueColor hover:bg-themeOrangeColor uppercase transition duration-500 px-3 py-1 rounded"
                                                 >
                                                     Read More
                                                 </a>
@@ -295,29 +287,26 @@ export default function BlogPage() {
 
                     </div>
                 </section>
-
-                <div className="max-w-7xl mx-auto py-10 flex flex-row gap-8">
+                )}
+                <div className="appContainer py-10 flex flex-row gap-8">
                     {/* Left 3/4 */}
                     <div className="w-3/4">
-                        <h1 className="text-2xl font-bold mb-4">{blog.title}</h1>
+                        <h1 className="text-2xl font-semibold mb-4">{blog.title}</h1>
                         <div className="pt-0 flex gap-2 mb-6">
                             <a
                                 href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://pay-nxt360.vercel.app/view-point/${blog.slug}`)}&title=${encodeURIComponent(blog.title)}&summary=${encodeURIComponent(blog.summary)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]"
-                            >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zm-9 19H7v-9h3v9zm-1.5-10.3c-.97 0-1.75-.78-1.75-1.75S7.53 5.2 8.5 5.2s1.75.78 1.75 1.75S9.47 8.2 8.5 8.2zM20 19h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39V19h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59V19z" />
-                                </svg>
-                                Share
+                                className="inline-flex items-center justify-center gap-2 px-2 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]">
+                                    <FaLinkedin />
+                                    Share
                             </a>
                             <button
                                 onClick={(e) => handleSaveArticle(blog, e)}
                                 className={`inline-flex items-center justify-center gap-2 px-3 py-1 rounded-sm border text-sm font-medium transition ${isSaved
-                                    ? 'border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500 hover:cursor-pointer'
-                                    : 'border-green-500 bg-green-500 text-white hover:bg-white hover:text-green-500 hover:cursor-pointer'
+                                    ? 'border-red-500 bg-red-500 !text-white hover:bg-white hover:text-red-500 hover:cursor-pointer'
+                                    : 'border-green-500 bg-green-500 !text-white hover:bg-white hover:!text-green-500 hover:cursor-pointer'
                                     }`}
                             >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -327,29 +316,29 @@ export default function BlogPage() {
                             </button>
                         </div>
                         <div
-                            className="text-gray-700 mb-6 prose"
+                            className="text-slate-700 mb-6 text-md prose leading-6"
                             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.summary) }}
                         />
 
                         <div className="mb-8">
                             <div
-                                className="text-gray-800 leading-relaxed prose"
+                                className="text-slate-700 text-md prose leading-6 prose"
                                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.articlePart1) }}
                             />
                         </div>
                         {blog.advertisement && (
-                            <div className="bg-gray-100 border border-gray-300 p-4 rounded shadow">
-                                <h3 className="text-lg font-semibold text-blue-800 mb-2">
+                            <div className="bg-borderColor p-4 rounded">
+                                <h3 className="text-lg font-semibold text-themeBlueColor mb-2">
                                     {blog.advertisement.title}
                                 </h3>
-                                <p className="text-sm text-gray-600 mb-2">
+                                <p className="text-sm text-slate-600 mb-2">
                                     {blog.advertisement.description}
                                 </p>
                                 <a
                                     href={blog.advertisement.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-blue-600 underline text-sm"
+                                    className="text-themeOrangeColor hover:themeBlueColor transition duration-500 text-sm"
                                 >
                                     Visit Advertisement
                                 </a>
@@ -364,24 +353,24 @@ export default function BlogPage() {
                                 />
                             </div>
                         ) : (
-                            <div className="bg-orange-100 border border-orange-300 p-4 rounded mt-6 text-center">
-                                <p className="text-md text-gray-700 font-semibold mb-2">
+                            <div className="bg-darkBorderColor p-4 rounded mt-6 text-center">
+                                <p className="text-lg text-slate-700 font-semibold !mb-1">
                                     Register to view more
                                 </p>
-                                <p className="text-sm text-gray-700 mb-2">
+                                <p className="text-sm text-slate-700 !mb-4">
                                     It's free and takes only a minute!
                                 </p>
-                                <div className="flex justify-center gap-4 mt-2">
+                                <div className="flex justify-center gap-4 mt-4">
                                     <Link
                                         href={`/login?callbackUrl=${encodeURIComponent(pathname)}`}
-                                        className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                                        className="px-6 py-3 bg-themeOrangeColor text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-themeBlueColor transition duration-300 cursor-pointer"
                                     >
                                         Sign In
                                     </Link>
 
                                     <Link
                                         href={`/signup?callbackUrl=${encodeURIComponent(pathname)}`}
-                                        className="text-white bg-green-600 px-4 py-2 rounded hover:bg-green-700 text-sm"
+                                        className="px-6 py-3 bg-themeBlueColor text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-themeOrangeColor transition duration-300 cursor-pointer"
                                     >
                                         Register Now
                                     </Link>
@@ -394,9 +383,9 @@ export default function BlogPage() {
                     {/* Right 1/4 */}
                     <div className="w-1/4">
                         <div className="w-full lg:w-1/4">
-                            <h2 className="bg-[#155392] text-white text-lg px-4 py-2 font-bold mb-2">Related Articles</h2>
+                            <h2 className="bg-themeBlueColor text-white text-lg px-4 py-2 font-bold mb-2">Related Articles</h2>
 
-                            <div className="bg-white border border-gray-200 ">
+                            <div className="bg-white border border-borderColor ">
                                 {relatedArticles.length === 0 ? (
                                     <p className="text-gray-500 text-sm px-4 py-2">No related articles found.</p>
                                 ) : (
@@ -429,10 +418,10 @@ export default function BlogPage() {
                             Consult With Us
                         </h2> */}
                             {consults.length === 0 ? (
-                                <p className="text-gray-500 text-sm">No consult options available.</p>
+                                <p className="text-slate-500 text-sm">No consult options available.</p>
                             ) : (
                                 consults.map((consult) => (
-                                    <div key={consult._id} className="bg-[#155392] border border-gray-200 p-4 mb-4 rounded shadow-sm">
+                                    <div key={consult._id} className="bg-themeBlueColor p-4 mb-4 rounded">
                                         <p className="text-xl text-white text-center mb-3">{consult.description}</p>
                                         <h3 className="text-4xl font-semibold text-center text-white mb-1">{consult.title}</h3>
                                         <div className="flex justify-center mt-4">
@@ -440,7 +429,7 @@ export default function BlogPage() {
                                                 href={consult.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-block text-center font-semibold text-white bg-[#FF6B00] hover:bg-[white] hover:text-[#FF6B00] px-4 py-2 rounded-tr-xl rounded-bl-xl text-sm transition-colors duration-300"
+                                                className="px-6 py-3 bg-themeOrangeColor text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-white hover:!text-themeBlueColor transition duration-300 cursor-pointer"
                                             >
                                                 CONSULT NOW
                                             </a>
@@ -452,16 +441,16 @@ export default function BlogPage() {
                         </div>
                     </div>
                 </div>
-
-                <div className="mt-10 w-full">
-                    <h2 className="text-2xl font-semibold bg-gray-300 mb-4 text-black px-20 py-10">FEATURED REPORTS</h2>
-
+                
+                {featuredReports?.length > 0 && (
+                <div className="w-full bg-slate-50 py-10">
+                    <div className='appContainer'>
+                        <h2 className="text-2xl font-semibold text-center text-themeBlueColor">FEATURED REPORTS</h2>
                     {featuredReports.length === 0 ? (
                         <p className="text-gray-500 text-sm">No featured reports found.</p>
                     ) : (
                         <Swiper
-                            modules={[Navigation, Pagination]}
-                            navigation
+                            modules={[Pagination]}
                             pagination={{ clickable: true }}
                             spaceBetween={20}
                             className="w-full"
@@ -471,13 +460,13 @@ export default function BlogPage() {
                                     const chunk = report.blogs.slice(chunkIndex * 3, chunkIndex * 3 + 3);
                                     return (
                                         <SwiperSlide key={`${index}-${chunkIndex}`}>
-                                            <div className="grid grid-cols-3 gap-6 px-20 py-10">
+                                            <div className="grid grid-cols-3 gap-6 py-10">
                                                 {chunk.map((blog, idx) => (
                                                     <div
                                                         key={idx}
-                                                        className="border border-gray-200 p-4 bg-white flex flex-col justify-between"
+                                                        className="p-8 rounded bg-white"
                                                     >
-                                                        <div className="flex justify-center items-center">
+                                                        <div className="flex justify-center items-center mb-8">
                                                             {blog.tileTemplateId ? (
                                                                 <TileRenderer
                                                                     tileTemplateId={blog.tileTemplateId}
@@ -492,16 +481,16 @@ export default function BlogPage() {
                                                                 />
                                                             )}
                                                         </div>
-                                                        <h3 className="text-lg text-center font-semibold mt-10 text-[#155392]">
+                                                        <h3 className="text-lg text-center font-semibold text-themeBlueColor h-15 overflow-hidden">
                                                             {blog.blogName}
                                                         </h3>
-                                                        <p className="text-sm text-gray-600 mt-2">{blog.description}</p>
+                                                        <p className="text-sm text-slate-600 mt-2">{blog.description}</p>
                                                         <div className="flex justify-center">
                                                             <a
                                                                 href={"/google.com"}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="mt-4 w-fit inline-block text-center font-semibold text-white bg-[#FF6B00] hover:text-white hover:bg-[#155392] px-5 py-3 rounded-tr-xl rounded-bl-xl text-sm transition-colors"
+                                                                className="mt-4 w-fit inline-block text-center font-semibold text-white bg-themeOrangeColor hover:text-white hover:bg-themeBlueColor px-5 py-3 rounded-tr-xl rounded-bl-xl text-sm transition duration-500"
                                                             >
                                                                 VIEW DETAILS
                                                             </a>
@@ -517,37 +506,10 @@ export default function BlogPage() {
                         </Swiper>
                     )}
                 </div>
+                </div>
+                )}
 
-
-                <section className="w-full bg-gray-100 h-160 py-12 px-6">
-                    <div className="max-w-7xl mx-auto grid grid-rows-1 md:grid-cols-[30%_70%] items-center gap-4">
-
-                        {/* Left Section: Text and Button */}
-                        <div className="space-y-6">
-                            <h2 className="text-3xl font-bold text-gray-800">
-                                PayNXT360 Insights
-                            </h2>
-                            <p className="text-gray-600 text-lg">
-                                Sign up for The PayNXT360 Insights, and get a weekly roundup of market events, innovations and data you can trust and use.
-                            </p>
-                            <a href="/login">
-                                <button className="px-6 py-3 bg-[#FF6B00] text-[white] font-semibold rounded-tr-xl rounded-bl-xl hover:bg-[#155392] transition duration-300 cursor-pointer">
-                                    SIGN UP NOW
-                                </button>
-                            </a>
-                        </div>
-
-                        {/* Right Section: Image */}
-                        <div className="flex justify-center">
-                            <img
-                                src="/Images/whypay.svg" // make sure your image is at public/images/your-image.jpg
-                                alt="Newsletter"
-                                className="w-full max-w-4xl"
-                            />
-                        </div>
-
-                    </div>
-                </section>
+                <WhySubscribe/>
             </main>
         </>
     );
