@@ -162,7 +162,7 @@ export default function ViewPointPage() {
                                                 e.stopPropagation();
                                                 handleCategoryClick(cat.name);
                                             }}
-                                            className={`px-0 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                            className={`px-0 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedCat?.cat === cat.name && !selectedCat?.sub
                                                 ? 'bg-[#155392] text-white font-semibold'
                                                 : 'text-slate-800 font-medium'
                                                 }`}
@@ -253,7 +253,7 @@ export default function ViewPointPage() {
                                                 e.stopPropagation();
                                                 handleCountryClick(con.name);
                                             }}
-                                            className={`px-0 py-1 rounded cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
+                                            className={`px-0 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedCon?.con === con.name && !selectedCon?.sub
                                                 ? 'bg-themeBlueColor text-white font-semibold'
                                                 : 'text-slate-800 font-medium'
                                                 }`}
@@ -341,7 +341,7 @@ export default function ViewPointPage() {
                                             e.stopPropagation();
                                             handleRegionClick(reg.name);
                                         }}
-                                        className={`px-0 py-1 rounded cursor-pointer flex justify-between items-center ${selectedReg?.reg === reg.name && !selectedReg?.sub
+                                        className={`px-0 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedReg?.reg === reg.name && !selectedReg?.sub
                                             ? 'bg-themeBlueColor text-white font-semibold'
                                             : 'text-slate-800 font-semibold'
                                             }`}
@@ -417,7 +417,10 @@ export default function ViewPointPage() {
                                         <p className="text-sm text-slate-500">{blog.Product_sub_Category}</p>
                                         <div className="border-b border-borderColor mb-4"></div>
                                         <h3 className="text-md font-semibold leading-6">
-                                            {blog.report_title.split(' - ')[0]}
+                                            {blog.report_title.split(' - ')[0].length > 100
+                                                ? blog.report_title.split(' - ')[0].slice(0, 100) + "…"
+                                                : blog.report_title.split(' - ')[0]
+                                            }
                                         </h3>
                                         <p className="text-sm text-slate-700">
                                             {blog.report_summary?.length > 100
@@ -586,93 +589,93 @@ export default function ViewPointPage() {
                 }
             `}</style>
             {banner && (
-            <section className="w-full bg-darkBorderColor py-20 px-8">
-                <div className="flex flex-col md:!flex-row items-center justify-between gap-8 appContainer mx-auto">
-                    <div className="w-full md:!w-2/3 text-left">
-                        {banner ? (
-                            <div>
-                                <div className="font-playfair text-4xl font-bold text-themeBlueColor mb-6">{banner.bannerTitle}</div>
-                                <p className="text-lg text-salte-800 mb-6">{banner.bannerDescription}</p>
-                                <div className="mt-2 flex items-center relative">
-                                    <input
-                                        type="text"
-                                        placeholder="Search..."
-                                        value={searchInput}
-                                        onChange={(e) => {
-                                            setSearchInput(e.target.value); // Keep raw input
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                console.log('Enter pressed with:', searchInput);
-                                                handleSearch(searchInput);
-                                            }
-                                        }}
-                                        className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-slate-700 placeholder-slate-400 focus:outline-none"
-                                    />
-                                    <button
-                                        onClick={() => handleSearch(searchInput)}
-                                        className="px-6 py-3 rounded-r-sm bg-themeOrangeColor hover:bg-themeBlueColor focus:outline-none cursor-pointer duration-300 font-medium"
-                                    >
-                                        <span className='text-white'>Search</span>
-                                    </button>
-                                </div>
-
-                                <div className="flex flex-wrap gap-2 mt-4 mb-6">
-                                    {banner.tags?.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            onClick={() => handleTagClick(tag)}
-                                            className="bg-themeOrangeColor text-white uppercase text-sm font-medium px-3 py-1 rounded-full cursor-pointer hover:opacity-80 duration-300"
+                <section className="w-full bg-darkBorderColor py-20 px-8">
+                    <div className="flex flex-col md:!flex-row items-center justify-between gap-8 appContainer mx-auto">
+                        <div className="w-full md:!w-2/3 text-left">
+                            {banner ? (
+                                <div>
+                                    <div className="font-playfair text-4xl font-bold text-themeBlueColor mb-6">{banner.bannerTitle}</div>
+                                    <p className="text-lg text-salte-800 mb-6">{banner.bannerDescription}</p>
+                                    <div className="mt-2 flex items-center relative">
+                                        <input
+                                            type="text"
+                                            placeholder="Search..."
+                                            value={searchInput}
+                                            onChange={(e) => {
+                                                setSearchInput(e.target.value); // Keep raw input
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                    console.log('Enter pressed with:', searchInput);
+                                                    handleSearch(searchInput);
+                                                }
+                                            }}
+                                            className="w-full max-w-md px-4 py-3 rounded-l-sm bg-white text-slate-700 placeholder-slate-400 focus:outline-none"
+                                        />
+                                        <button
+                                            onClick={() => handleSearch(searchInput)}
+                                            className="px-6 py-3 rounded-r-sm bg-themeOrangeColor hover:bg-themeBlueColor focus:outline-none cursor-pointer duration-300 font-medium"
                                         >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <p className="text-white">Loading banner...</p>
-                        )}
-                    </div>
-                    <div className="w-full md:!w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit">
-                        <Swiper
-                            modules={[SwiperPagination, Autoplay]}
-                            pagination={{
-                                el: '.custom-pagination',
-                                clickable: true,
-                            }}
-                            spaceBetween={16}
-                            slidesPerView={1}
-                            autoplay={{
-                                delay: 5000, // 5 seconds
-                                disableOnInteraction: false, // keeps auto-rotating even after user interacts
-                            }}
-                        >
-                            {sliders.map((slide, index) => (
-                                <SwiperSlide key={index}>
-                                    <div>
-                                        <p className="text-xs text-themeOrangeColor uppercase mb-1">{slide.typeText}</p>
-                                        <h3 className="text-xl font-semibold text-themeBlueColor">{slide.title}</h3>
-                                        <p className="text-sm text-slate-800 mt-1 mb-2">
-                                            {slide.shortDescription.length > 100
-                                                ? `${slide.shortDescription.slice(0, 100)}...`
-                                                : slide.shortDescription}
-                                        </p>
-                                        <div className="flex justify-end">
-                                            <a
-                                                href={slide.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm text-white bg-themeBlueColor hover:bg-themeOrangeColor uppercase transition duration-500 px-3 py-1 rounded"
-                                            >
-                                                Read More
-                                            </a>
-                                        </div>
+                                            <span className='text-white'>Search</span>
+                                        </button>
                                     </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                        <div className="custom-pagination flex justify-center gap-2 mt-4"></div>
-                        <style>{`
+
+                                    <div className="flex flex-wrap gap-2 mt-4 mb-6">
+                                        {banner.tags?.map((tag, index) => (
+                                            <span
+                                                key={index}
+                                                onClick={() => handleTagClick(tag)}
+                                                className="bg-themeOrangeColor text-white uppercase text-sm font-medium px-3 py-1 rounded-full cursor-pointer hover:opacity-80 duration-300"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-white">Loading banner...</p>
+                            )}
+                        </div>
+                        <div className="w-full md:!w-1/3 bg-white rounded-lg shadow-lg p-4 h-fit">
+                            <Swiper
+                                modules={[SwiperPagination, Autoplay]}
+                                pagination={{
+                                    el: '.custom-pagination',
+                                    clickable: true,
+                                }}
+                                spaceBetween={16}
+                                slidesPerView={1}
+                                autoplay={{
+                                    delay: 5000, // 5 seconds
+                                    disableOnInteraction: false, // keeps auto-rotating even after user interacts
+                                }}
+                            >
+                                {sliders.map((slide, index) => (
+                                    <SwiperSlide key={index}>
+                                        <div>
+                                            <p className="text-xs text-themeOrangeColor uppercase mb-1">{slide.typeText}</p>
+                                            <h3 className="text-xl font-semibold text-themeBlueColor">{slide.title}</h3>
+                                            <p className="text-sm text-slate-800 mt-1 mb-2">
+                                                {slide.shortDescription.length > 100
+                                                    ? `${slide.shortDescription.slice(0, 100)}...`
+                                                    : slide.shortDescription}
+                                            </p>
+                                            <div className="flex justify-end">
+                                                <a
+                                                    href={slide.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm text-white bg-themeBlueColor hover:bg-themeOrangeColor uppercase transition duration-500 px-3 py-1 rounded"
+                                                >
+                                                    Read More
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                            <div className="custom-pagination flex justify-center gap-2 mt-4"></div>
+                            <style>{`
                             .custom-pagination .swiper-pagination-bullet {
                                 width: 20px;
                                 height: 4px;
@@ -685,9 +688,9 @@ export default function ViewPointPage() {
                                 background-color: #155392;
                             }
                         `}</style>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
             )}
             <section className="py-16 md:py-24">
                 <div className="appContainer grid grid-rows-1 md:grid-cols-4 gap-8">

@@ -225,7 +225,7 @@ export default function ViewPointPage() {
                                                 e.stopPropagation(); // Prevent collapse toggle
                                                 handleCategoryClick(cat.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                            className={`px-4 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedCat?.cat === cat.name && !selectedCat?.sub
                                                 ? 'bg-[#155392] text-white font-semibold'
                                                 : 'text-gray-800 font-semibold'
                                                 }`}
@@ -324,7 +324,7 @@ export default function ViewPointPage() {
                                                 e.stopPropagation(); // Prevent collapse toggle
                                                 handleCountryClick(con.name);
                                             }}
-                                            className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedCon?.con === con.name && !selectedCon?.sub
+                                            className={`px-4 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedCon?.con === con.name && !selectedCon?.sub
                                                 ? 'bg-[#155392] text-white font-semibold'
                                                 : 'text-gray-800 font-semibold'
                                                 }`}
@@ -419,7 +419,7 @@ export default function ViewPointPage() {
                                             e.stopPropagation(); // Prevent collapse toggle
                                             handleRegionClick(reg.name);
                                         }}
-                                        className={`px-4 py-1 rounded-2xl cursor-pointer flex justify-between items-center ${selectedReg?.reg === reg.name && !selectedReg?.sub
+                                        className={`px-4 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedReg?.reg === reg.name && !selectedReg?.sub
                                             ? 'bg-[#155392] text-white font-semibold'
                                             : 'text-gray-800 font-semibold'
                                             }`}
@@ -506,7 +506,12 @@ export default function ViewPointPage() {
                                                 </p>
                                                 <p className="text-sm text-gray-500">{blog.Product_sub_Category}</p>
                                                 <div className="border-b border-gray-400 mb-4"></div>
-                                                <h3 className="text-md font-bold">{blog.report_title.split(' - ')[0]}</h3>
+                                                <h3 className="text-md font-semibold leading-6">
+                                                    {blog.report_title.split(' - ')[0].length > 100
+                                                        ? blog.report_title.split(' - ')[0].slice(0, 100) + "…"
+                                                        : blog.report_title.split(' - ')[0]
+                                                    }
+                                                </h3>
                                                 <p className="text-sm text-gray-700">
                                                     {blog.report_summary?.length > 100
                                                         ? `${blog.report_summary.slice(0, 100)}...`
