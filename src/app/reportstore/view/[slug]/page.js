@@ -336,7 +336,7 @@ export default function ReportPage() {
               <button
                 onClick={handleSearch}
                 className="px-6 py-3 rounded-r-sm bg-themeOrangeColor hover:bg-themeBlueColor focus:outline-none cursor-pointer duration-300 font-medium">
-                    <span className='text-white'>Search</span>
+                <span className='text-white'>Search</span>
               </button>
             </div>
           </div>
@@ -366,22 +366,22 @@ export default function ReportPage() {
         </div>
 
         <div className="md:hidden">
-            <select
+          <select
             className="w-full border border-darkBorderColor rounded py-2 px-3"
             onChange={(e) => {
-                const id = e.target.value;
-                if (!id) return;
-                document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+              const id = e.target.value;
+              if (!id) return;
+              document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
             }}
             defaultValue=""
-            >
+          >
             <option value="" disabled>Select section</option>
             {sections.map((sec) => (
-                <option key={sec.key} value={sec.key}>{sec.title}</option>
+              <option key={sec.key} value={sec.key}>{sec.title}</option>
             ))}
-            </select>
-            <br/>
-            <br/>
+          </select>
+          <br />
+          <br />
         </div>
 
         <div className="grid grid-cols-1 md:!grid-cols-10 gap-4">
@@ -389,7 +389,7 @@ export default function ReportPage() {
             {sections.map((sec) => (
               <div key={sec.key} id={sec.key}>
                 <Collapse
-                  
+
                   defaultActiveKey={[]}
                   expandIconPosition="end"
                   expandIcon={({ isActive }) => (
@@ -460,13 +460,12 @@ export default function ReportPage() {
                         <section className="py-6 px-2 bg-white">
                           {deliverables.length > 0 ? (
                             <div
-                              className={`grid gap-6 ${
-                                deliverables.length === 1
-                                  ? 'md:grid-cols-1'
-                                  : deliverables.length === 2
+                              className={`grid gap-6 ${deliverables.length === 1
+                                ? 'md:grid-cols-1'
+                                : deliverables.length === 2
                                   ? 'md:grid-cols-2'
                                   : 'md:grid-cols-3'
-                              }`}
+                                }`}
                             >
                               {deliverables.map((item, idx) => (
                                 <div
@@ -568,9 +567,30 @@ export default function ReportPage() {
                   </a>
                 </div>
                 <div className="mt-4">
-                  <a
-                    href="/checkout"
-                    className="flex items-center justify-center gap-2 text-center font-semibold text-themeBlueColor bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-4xl text-sm transition-colors duration-300"
+                  <button
+                    onClick={() => {
+                      const alreadyInCart = cartItems.some(
+                        (item) => item.title === report.report_title
+                      );
+
+                      if (alreadyInCart) {
+                        // Already in cart → go straight to checkout
+                        // toast.success('Report already in cart! Redirecting to checkout...');
+                        router.push('/checkout');
+                        return;
+                      }
+
+                      // Not in cart → add it first
+                      addToCart({
+                        title: report.report_title,
+                        price: report.single_user_dollar_price,
+                        summary: report.report_summary,
+                      });
+
+                      // toast.success('Added to cart! Taking you to checkout...');
+                      router.push('/checkout');
+                    }}
+                    className="flex items-center justify-center gap-2 text-center font-semibold text-themeBlueColor bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-4xl text-sm transition-colors duration-300 cursor-pointer"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64">
                       <path
@@ -583,7 +603,7 @@ export default function ReportPage() {
                       />
                     </svg>
                     <span>PayPal Checkout</span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -620,97 +640,97 @@ export default function ReportPage() {
           </div>
         </div>
       </section>
-        
-        {advs.length > 0 && (
-      <section className="w-full py-16 md:py-24 bg-slate-50">
-        <div className="appContainer">
-          {advs.map((item, idx) => (
-            <div key={idx}>
-              <p className="text-themeOrangeColor text-md text-center tracking-wide mb-1">
-                - ADVANTAGES -
-              </p>
-              <div className="text-4xl font-light text-center mb-8">
-                {item.title}
-              </div>
-              <div className="grid grid-rows-1 md:grid-cols-3 items-start gap-8">
-                {item.sections.map((section, index) => (
-                  <div
-                    key={index}
-                    className="bg-white p-8 h-72 border-5 border-themeBlueColor flex flex-col p-4"
-                  >
-                    <div className="flex items-start mb-6">
-                      <img
-                        src={section.image}
-                        alt={section.imageTitle}
-                        className="w-12 h-12 object-contain mr-2"
-                      />
-                    </div>
-                    <h3 className="text-2xl font-semibold text-black mb-2">
-                      {section.imageTitle}
-                    </h3>
-                    <p className="text-sm text-gray-600">{section.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-        )}
-        
-        {strengths.length > 0 && (
-      <section className="w-full py-16 md:py-24">
-        <div className="appContainer">
-          {strengths.map((item, idx) => (
-            <div key={idx}>
-              <p className="text-themeOrangeColor text-md text-center tracking-wide mb-1">
-                - OUR STRENGTH -
-              </p>
+
+      {advs.length > 0 && (
+        <section className="w-full py-16 md:py-24 bg-slate-50">
+          <div className="appContainer">
+            {advs.map((item, idx) => (
+              <div key={idx}>
+                <p className="text-themeOrangeColor text-md text-center tracking-wide mb-1">
+                  - ADVANTAGES -
+                </p>
                 <div className="text-4xl font-light text-center mb-8">
                   {item.title}
                 </div>
-              <div className="grid grid-rows-1 md:grid-cols-3 items-start">
-                {item.sections.map((section, index) => (
-                  <div key={index} className="p-8">
-                    <img
-                      src={section.image}
-                      alt={section.imageTitle}
-                      className="mx-auto h-24 mb-4 object-contain"
-                    />
-                    <h3 className="text-xl font-semibold text-slate-800 mb-2 text-center">
-                      {section.imageTitle}
-                    </h3>
-                    <p className="text-md text-slate-600 text-center leading-6">
-                      {section.description}
-                    </p>
-                  </div>
-                ))}
+                <div className="grid grid-rows-1 md:grid-cols-3 items-start gap-8">
+                  {item.sections.map((section, index) => (
+                    <div
+                      key={index}
+                      className="bg-white p-8 h-72 border-5 border-themeBlueColor flex flex-col p-4"
+                    >
+                      <div className="flex items-start mb-6">
+                        <img
+                          src={section.image}
+                          alt={section.imageTitle}
+                          className="w-12 h-12 object-contain mr-2"
+                        />
+                      </div>
+                      <h3 className="text-2xl font-semibold text-black mb-2">
+                        {section.imageTitle}
+                      </h3>
+                      <p className="text-sm text-gray-600">{section.description}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-        )}
+            ))}
+          </div>
+        </section>
+      )}
 
-        {partnerLogos && (
-          <section className="w-full bg-slate-50">
-            <div className="w-full px-4 sm:px-0">
-              <div className="grid [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))] gap-1 place-items-center">
-                {partnerLogos.map((logo, i) => (
-                  <div key={i} className="flex w-full items-center justify-center">
-                    <img
-                      src={logo.imageUrl}
-                      alt={logo.altText || `Logo ${i + 1}`}
-                      className="max-h-full w-auto object-contain grayscale hover:grayscale-0 transition duration-300"
-                      loading="lazy"
-                    />
-                  </div>
-                ))}
+      {strengths.length > 0 && (
+        <section className="w-full py-16 md:py-24">
+          <div className="appContainer">
+            {strengths.map((item, idx) => (
+              <div key={idx}>
+                <p className="text-themeOrangeColor text-md text-center tracking-wide mb-1">
+                  - OUR STRENGTH -
+                </p>
+                <div className="text-4xl font-light text-center mb-8">
+                  {item.title}
+                </div>
+                <div className="grid grid-rows-1 md:grid-cols-3 items-start">
+                  {item.sections.map((section, index) => (
+                    <div key={index} className="p-8">
+                      <img
+                        src={section.image}
+                        alt={section.imageTitle}
+                        className="mx-auto h-24 mb-4 object-contain"
+                      />
+                      <h3 className="text-xl font-semibold text-slate-800 mb-2 text-center">
+                        {section.imageTitle}
+                      </h3>
+                      <p className="text-md text-slate-600 text-center leading-6">
+                        {section.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            ))}
+          </div>
+        </section>
+      )}
 
-          </section>
-        )}
+      {partnerLogos && (
+        <section className="w-full bg-slate-50">
+          <div className="w-full px-4 sm:px-0">
+            <div className="grid [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))] gap-1 place-items-center">
+              {partnerLogos.map((logo, i) => (
+                <div key={i} className="flex w-full items-center justify-center">
+                  <img
+                    src={logo.imageUrl}
+                    alt={logo.altText || `Logo ${i + 1}`}
+                    className="max-h-full w-auto object-contain grayscale hover:grayscale-0 transition duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </section>
+      )}
 
       <Modal
         title={customModalContent.title}

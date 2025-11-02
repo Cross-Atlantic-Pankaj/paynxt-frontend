@@ -427,3 +427,12 @@ main {
 .paymentsSection .group .group\/link:hover .underline-container::after {
   background-color: #155392; /* Matches white text on hover */
 }
+
+.prose ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
+.prose ul li {
+  margin-bottom: 0.5rem;
+}

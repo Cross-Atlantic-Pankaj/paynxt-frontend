@@ -47,7 +47,7 @@ export async function POST(req) {
     if (existingUser) {
       await PendingUser.findByIdAndDelete(pendingUser._id);
       return NextResponse.json(
-        { error: 'User already exists' },
+        { error: 'User already exists. If you have forgotten the password, please reset the password by clicking on “Forgot Password” link' },
         { status: 400 }
       );
     }

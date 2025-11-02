@@ -6,6 +6,8 @@ import { useUser } from '@/context/UserContext';
 import toast, { Toaster } from 'react-hot-toast';
 import 'animate.css';
 import { FaLinkedinIn } from 'react-icons/fa6';
+import { CountryDropdown } from 'react-country-region-selector';
+import { ChevronDown } from 'lucide-react';
 
 function isCorporateEmail(email) {
   const publicDomains = [
@@ -37,6 +39,56 @@ export default function SignupPage() {
   const [otp, setOtp] = useState('');
   const [otpError, setOtpError] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
+  const [countrySearch, setCountrySearch] = useState('');
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
+
+  const countries = [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
+    "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain",
+    "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria",
+    "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada",
+    "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros",
+    "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark",
+    "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador",
+    "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji",
+    "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece",
+    "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras",
+    "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel",
+    "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati",
+    "Korea, North", "Korea, South", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos",
+    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania",
+    "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta",
+    "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
+    "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia",
+    "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria",
+    "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama",
+    "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
+    "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia",
+    "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe",
+    "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore",
+    "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Sudan",
+    "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria",
+    "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga",
+    "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda",
+    "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay",
+    "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+  ];
+
+  const filteredCountries = countries
+    .filter(country =>
+      country.toLowerCase().includes(countrySearch.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Priority: India, US, UK
+      if (a === "India") return -1;
+      if (b === "India") return 1;
+      if (a === "United States") return -1;
+      if (b === "United States") return 1;
+      if (a === "United Kingdom") return -1;
+      if (b === "United Kingdom") return 1;
+      return 0;
+    });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -176,7 +228,7 @@ export default function SignupPage() {
                 Update your personal information, manage preferences, and change password.
               </li>
             </ul>
-            
+
             <div className="flex items-center justify-center">
               <button
                 onClick={() => router.push('/login')}
@@ -186,7 +238,7 @@ export default function SignupPage() {
             <div className="text-center text-gray-200 text-sm my-6 font-medium">-OR-</div>
             <div className='text-center'>
               <button
-              onClick={handleLinkedInAuth}
+                onClick={handleLinkedInAuth}
                 className="px-8 py-4 bg-[#0E76A8] text-md font-medium rounded-tr-xl rounded-bl-xl hover:bg-themeOrangeColor transition cursor-pointer duration-500"
               >
                 <span className='text-white flex gap-3'>
@@ -194,7 +246,7 @@ export default function SignupPage() {
                 </span>
               </button>
             </div>
-            
+
           </div>
           {/* Right: Signup */}
           <div className="w-1/2 bg-white p-12 flex flex-col justify-center animate__animated animate__fadeInRight">
@@ -243,7 +295,7 @@ export default function SignupPage() {
                   </div>
                   <div className="flex gap-4">
                     <div className="w-1/2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-.5">Password</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-.5">Password</label>
                       <input
                         type="password"
                         name="password"
@@ -255,7 +307,7 @@ export default function SignupPage() {
                       />
                     </div>
                     <div className="w-1/2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-.5">Confirm Password</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-.5">Confirm Password</label>
                       <input
                         type="password"
                         name="confirmPassword"
@@ -280,7 +332,7 @@ export default function SignupPage() {
                   </div>
                   <div className="flex gap-4">
                     <div className="w-1/2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-.5">Company Name</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-.5">Company Name</label>
                       <input
                         type="text"
                         name="companyName"
@@ -291,7 +343,7 @@ export default function SignupPage() {
                       />
                     </div>
                     <div className="w-1/2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-.5">Phone Number</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-.5">Phone Number</label>
                       <input
                         type="text"
                         name="phoneNumber"
@@ -302,19 +354,53 @@ export default function SignupPage() {
                       />
                     </div>
                   </div>
-                  <div>
+                  <div className="relative">
                     <label className="block text-sm font-semibold text-gray-700 mb-.5">Country</label>
-                    <input
-                      type="text"
-                      name="country"
-                      placeholder="Country"
-                      className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
-                      value={form.country}
-                      onChange={handleChange}
-                    />
-                    </div>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search or select a country"
+                        className="w-full border border-darkBorderColor rounded p-3 pr-10 focus:border-themeBlueColor transition duration-500 focus:outline-none placeholder-gray-400"
+                        value={form.country ? form.country : countrySearch}
+                        onChange={(e) => {
+                          setCountrySearch(e.target.value);
+                          setForm(prev => ({ ...prev, country: '' }));
+                          setIsCountryOpen(true);
+                        }}
+                        onFocus={() => setIsCountryOpen(true)}
+                        onBlur={() => setTimeout(() => setIsCountryOpen(false), 200)}
+                      />
+                      <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
 
-                    <div className='mb-6'>
+                      {isCountryOpen && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-darkBorderColor rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
+                          {filteredCountries.length === 0 ? (
+                            <div className="p-3 text-gray-500 text-sm">No countries found</div>
+                          ) : (
+                            filteredCountries.map((country) => (
+                              <div
+                                key={country}
+                                className="p-3 hover:bg-orange-50 cursor-pointer text-gray-700 text-sm transition"
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => {
+                                  setForm(prev => ({ ...prev, country }));
+                                  setCountrySearch('');
+                                  setIsCountryOpen(false);
+                                }}
+                              >
+                                {country}
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {form.country && !countrySearch && (
+                      <div className="mt-1 text-xs text-themeBlueColor">Selected: {form.country}</div>
+                    )}
+                  </div>
+
+                  <div className='mb-6'>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
                       <input
                         type="checkbox"
@@ -405,4 +491,4 @@ export default function SignupPage() {
       </div>
     </div>
   );
-}
+} 

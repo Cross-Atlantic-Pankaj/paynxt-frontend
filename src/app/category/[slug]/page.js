@@ -302,8 +302,8 @@ export default function B2CPaymentIntelligencePage() {
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className="inline-flex items-center justify-center gap-2 px-2 py-1 rounded-xs border border-[#0077B5] bg-[#0077B5] text-white text-sm font-medium transition hover:bg-[white] hover:text-[#0077B5]">
-                          <FaLinkedin />
-                          Share
+                        <FaLinkedin />
+                        Share
                       </a>
                     </div>
                   </div>
@@ -480,7 +480,7 @@ export default function B2CPaymentIntelligencePage() {
       </section>
 
       {sectionThree && (
-      <div className="py-16 bg-slate-50">
+        <div className="py-16 bg-slate-50">
           <div className="grid grid-rows-1 md:grid-cols-2 bg-slate-50 appContainer items-center">
             {/* Left Column: Title and Description */}
             <div>
@@ -500,7 +500,7 @@ export default function B2CPaymentIntelligencePage() {
               />
             </div>
           </div>
-      </div>
+        </div>
       )}
 
       <section className="py-16">
@@ -558,11 +558,9 @@ export default function B2CPaymentIntelligencePage() {
           <div className="text-4xl font-light text-center mb-8">Sector Snapshot</div>
           <ul className="space-y-8">
             {sectorDynamics.map((item, index) => (
-              <li
-                key={index}
-                className="text-slate-600 mt-2 text-base leading-6"
-                dangerouslySetInnerHTML={{ __html: item.text }}
-              />
+              <li key={index} className="text-slate-600 mt-2 text-base leading-6">
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: item.text }} />
+              </li>
             ))}
           </ul>
         </div>
@@ -590,7 +588,7 @@ export default function B2CPaymentIntelligencePage() {
           </div>
         </div>
       </section>
-      <WhySubscribe/>
+      <WhySubscribe />
     </main>
   );
 }
