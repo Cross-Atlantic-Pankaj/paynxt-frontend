@@ -87,7 +87,7 @@ export default function LoginPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
                 <input
                   type="email"
-                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -97,7 +97,7 @@ export default function LoginPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
                 <input
                   type="password"
-                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                  className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required

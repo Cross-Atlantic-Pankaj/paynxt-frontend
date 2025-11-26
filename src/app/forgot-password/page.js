@@ -126,7 +126,7 @@ export default function ForgotPasswordPage() {
               <input
                 type="email"
                 required
-                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none bg-transparent dark-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -155,7 +155,7 @@ export default function ForgotPasswordPage() {
             <input
               type="text"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 bg-transparent dark-input"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
@@ -164,7 +164,7 @@ export default function ForgotPasswordPage() {
               <input
                 type="password"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 bg-transparent dark-input"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />

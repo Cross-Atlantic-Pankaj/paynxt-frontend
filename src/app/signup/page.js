@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import toast, { Toaster } from 'react-hot-toast';
@@ -41,39 +41,30 @@ export default function SignupPage() {
   const [signupEmail, setSignupEmail] = useState('');
   const [countrySearch, setCountrySearch] = useState('');
   const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [countries, setCountries] = useState([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
 
-  const countries = [
-    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
-    "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain",
-    "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
-    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria",
-    "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada",
-    "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros",
-    "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark",
-    "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador",
-    "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji",
-    "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece",
-    "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras",
-    "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel",
-    "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati",
-    "Korea, North", "Korea, South", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos",
-    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania",
-    "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta",
-    "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
-    "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia",
-    "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria",
-    "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama",
-    "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
-    "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia",
-    "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe",
-    "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore",
-    "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Sudan",
-    "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria",
-    "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga",
-    "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda",
-    "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay",
-    "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
-  ];
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch('/api/countries');
+        const data = await res.json();
+        if (res.ok) {
+          setCountries(data);
+        } else {
+          console.error('Failed to fetch countries:', data);
+          toast.error('Failed to load countries');
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+        toast.error('Failed to load countries');
+      } finally {
+        setCountriesLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
 
   const filteredCountries = countries
     .filter(country =>
@@ -262,7 +253,7 @@ export default function SignupPage() {
                         type="text"
                         name="Firstname"
                         placeholder="First Name"
-                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                         value={form.Firstname}
                         onChange={handleChange}
                         required
@@ -274,7 +265,7 @@ export default function SignupPage() {
                         type="text"
                         name="Lastname"
                         placeholder="Last Name"
-                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                         value={form.Lastname}
                         onChange={handleChange}
                         required
@@ -287,7 +278,7 @@ export default function SignupPage() {
                       type="email"
                       name="email"
                       placeholder="Email"
-                      className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                      className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                       value={form.email}
                       onChange={handleChange}
                       required
@@ -300,7 +291,7 @@ export default function SignupPage() {
                         type="password"
                         name="password"
                         placeholder="Password"
-                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                         value={form.password}
                         onChange={handleChange}
                         required
@@ -312,7 +303,7 @@ export default function SignupPage() {
                         type="password"
                         name="confirmPassword"
                         placeholder="Confirm Password"
-                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                         value={form.confirmPassword}
                         onChange={handleChange}
                         required
@@ -325,7 +316,7 @@ export default function SignupPage() {
                       type="text"
                       name="jobTitle"
                       placeholder="Job Title"
-                      className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                      className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                       value={form.jobTitle}
                       onChange={handleChange}
                     />
@@ -337,7 +328,7 @@ export default function SignupPage() {
                         type="text"
                         name="companyName"
                         placeholder="Company Name"
-                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                         value={form.companyName}
                         onChange={handleChange}
                       />
@@ -348,7 +339,7 @@ export default function SignupPage() {
                         type="text"
                         name="phoneNumber"
                         placeholder="Phone Number"
-                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none"
+                        className="w-full border border-darkBorderColor rounded p-3 focus:border-themeBlueColor transition duration-500 focus:outline-none text-black"
                         value={form.phoneNumber}
                         onChange={handleChange}
                       />
@@ -360,7 +351,7 @@ export default function SignupPage() {
                       <input
                         type="text"
                         placeholder="Search or select a country"
-                        className="w-full border border-darkBorderColor rounded p-3 pr-10 focus:border-themeBlueColor transition duration-500 focus:outline-none placeholder-gray-400"
+                        className="w-full border border-darkBorderColor rounded p-3 pr-10 focus:border-themeBlueColor transition duration-500 focus:outline-none placeholder-gray-400 text-black"
                         value={form.country ? form.country : countrySearch}
                         onChange={(e) => {
                           setCountrySearch(e.target.value);
@@ -374,7 +365,9 @@ export default function SignupPage() {
 
                       {isCountryOpen && (
                         <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-darkBorderColor rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
-                          {filteredCountries.length === 0 ? (
+                          {countriesLoading ? (
+                            <div className="p-3 text-gray-500 text-sm">Loading countries...</div>
+                          ) : filteredCountries.length === 0 ? (
                             <div className="p-3 text-gray-500 text-sm">No countries found</div>
                           ) : (
                             filteredCountries.map((country) => (
@@ -471,7 +464,7 @@ export default function SignupPage() {
                 <input
                   type="text"
                   placeholder="Enter OTP"
-                  className="w-full max-w-xs border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-300 mb-4"
+                  className="w-full max-w-xs border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-300 mb-4 text-black"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   required

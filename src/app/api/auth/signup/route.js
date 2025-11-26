@@ -38,7 +38,10 @@ export async function POST(req) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'User with this email or phone number already exists' },
+        {
+          error:
+            'User already exists. If you have forgotten the password, please reset the password by clicking on "Forgot Password" link.'
+        },
         { status: 400 }
       );
     }

@@ -101,7 +101,15 @@ export default function ViewPointPage() {
 
         // Set initial category and search from URL
         if (initialCategory) {
-            setSelectedCat({ cat: decodeURIComponent(initialCategory) });
+            const initialSubcategory = searchParams.get('subcategory') || '';
+            if (initialSubcategory) {
+                setSelectedCat({ 
+                    cat: decodeURIComponent(initialCategory),
+                    sub: decodeURIComponent(initialSubcategory)
+                });
+            } else {
+                setSelectedCat({ cat: decodeURIComponent(initialCategory) });
+            }
         }
         setSearchInput(initialSearch); // Keep raw input for display
         setSearchTerm(initialSearch.trim().replace(/\s+/g, ' ').toLowerCase()); // Normalize for filtering
@@ -110,15 +118,32 @@ export default function ViewPointPage() {
     const CategoryFilter = ({ categories, selectedCat, onSelect, blogs }) => {
         const [openKey, setOpenKey] = useState(null);
 
-        const handleCategoryClick = (catName) => {
+        const handleCategoryClick = (catName, e) => {
+            e.stopPropagation();
             if (selectedCat?.cat === catName && !selectedCat?.sub) {
                 onSelect(null);
+                setOpenKey(null);
                 router.push('/report-store');
             } else {
                 onSelect({ cat: catName });
+                setOpenKey(catName); // Open the panel to show subcategories
                 router.push(`/report-store?category=${encodeURIComponent(catName)}`);
             }
         };
+
+        const handleSubcategoryClick = (catName, subName) => {
+            onSelect({ cat: catName, sub: subName });
+            router.push(`/report-store?category=${encodeURIComponent(catName)}&subcategory=${encodeURIComponent(subName)}`);
+        };
+
+        // Auto-open panel if category is selected
+        useEffect(() => {
+            if (selectedCat?.cat) {
+                setOpenKey(selectedCat.cat);
+            } else {
+                setOpenKey(null);
+            }
+        }, [selectedCat]);
 
         return (
             <div className="bg-white overflow-hidden">
@@ -134,10 +159,10 @@ export default function ViewPointPage() {
                     className="border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-6 h-6 flex items-center justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'}`}
+                            className={`w-6 h-6 flex items-center justify-center rounded-none transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'}`}
                         >
                             {isActive ? (
-                                <MinusOutlined style={{ fontSize: 12, color: 'themeOrangeColor' }} />
+                                <MinusOutlined style={{ fontSize: 12, color: 'white' }} />
                             ) : (
                                 <PlusOutlined style={{ fontSize: 12, color: 'white' }} />
                             )}
@@ -152,35 +177,40 @@ export default function ViewPointPage() {
                             filteredSubcategories.length > 0 ||
                             blogs.some((blog) => blog.Product_category === cat.name)
                         ) {
+                            const isCategorySelected = selectedCat?.cat === cat.name && !selectedCat?.sub;
+                            const isSubcategorySelected = selectedCat?.cat === cat.name && selectedCat?.sub;
                             return (
                                 <Panel
                                     key={cat.name}
                                     className="!bg-gray-100 !border-0"
                                     header={
                                         <div
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleCategoryClick(cat.name);
-                                            }}
-                                            className={`px-0 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedCat?.cat === cat.name && !selectedCat?.sub
+                                            onClick={(e) => handleCategoryClick(cat.name, e)}
+                                            className={`py-2 rounded-xs cursor-pointer flex items-center justify-between px-3 ${isCategorySelected
                                                 ? 'bg-[#155392] text-white font-semibold'
                                                 : 'text-slate-800 font-medium'
                                                 }`}
                                         >
-                                            {cat.name}
+                                            <span className="flex-1 text-left">{cat.name}</span>
                                         </div>
                                     }
                                 >
                                     <div className="bg-slate-100 p-0">
-                                        {filteredSubcategories.map((sub, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="cursor-pointer px-4 py-1 hover:bg-slate-200 text-md text-slate-700"
-                                                onClick={() => onSelect({ cat: cat.name, sub })}
-                                            >
-                                                {sub}
-                                            </div>
-                                        ))}
+                                        {filteredSubcategories.map((sub, idx) => {
+                                            const isSubSelected = isSubcategorySelected && selectedCat?.sub === sub;
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className={`cursor-pointer px-4 py-1 hover:bg-slate-200 text-md ${isSubSelected
+                                                        ? 'bg-[#155392] text-white font-semibold'
+                                                        : 'text-slate-700'
+                                                        }`}
+                                                    onClick={() => handleSubcategoryClick(cat.name, sub)}
+                                                >
+                                                    {sub}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </Panel>
                             );
@@ -225,10 +255,10 @@ export default function ViewPointPage() {
                     className="border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-6 h-6 flex items-center justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'}`}
+                            className={`w-6 h-6 flex items-center justify-center rounded-none transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'}`}
                         >
                             {isActive ? (
-                                <MinusOutlined style={{ fontSize: 12, color: 'themeOrangeColor' }} />
+                                <MinusOutlined style={{ fontSize: 12, color: 'white' }} />
                             ) : (
                                 <PlusOutlined style={{ fontSize: 12, color: 'white' }} />
                             )}
@@ -253,12 +283,12 @@ export default function ViewPointPage() {
                                                 e.stopPropagation();
                                                 handleCountryClick(con.name);
                                             }}
-                                            className={`px-0 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedCon?.con === con.name && !selectedCon?.sub
+                                            className={`py-2 rounded-xs cursor-pointer flex items-center justify-between px-3 ${selectedCon?.con === con.name && !selectedCon?.sub
                                                 ? 'bg-themeBlueColor text-white font-semibold'
                                                 : 'text-slate-800 font-medium'
                                                 }`}
                                         >
-                                            {con.name}
+                                            <span className="flex-1 text-left">{con.name}</span>
                                         </div>
                                     }
                                 >
@@ -316,10 +346,10 @@ export default function ViewPointPage() {
                     className="border-none shadow-none"
                     expandIcon={({ isActive }) => (
                         <div
-                            className={`w-6 h-6 flex items-center justify-center rounded-full transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'}`}
+                            className={`w-6 h-6 flex items-center justify-center rounded-none transition-all duration-300 ${isActive ? 'bg-themeOrangeColor' : 'bg-themeBlueColor'}`}
                         >
                             {isActive ? (
-                                <MinusOutlined style={{ fontSize: 12, color: 'themeOrangeColor' }} />
+                                <MinusOutlined style={{ fontSize: 12, color: 'white' }} />
                             ) : (
                                 <PlusOutlined style={{ fontSize: 12, color: 'white' }} />
                             )}
@@ -341,12 +371,12 @@ export default function ViewPointPage() {
                                             e.stopPropagation();
                                             handleRegionClick(reg.name);
                                         }}
-                                        className={`px-0 py-1 rounded-xs cursor-pointer flex justify-between items-center px-3 ${selectedReg?.reg === reg.name && !selectedReg?.sub
+                                        className={`py-2 rounded-xs cursor-pointer flex items-center justify-between px-3 ${selectedReg?.reg === reg.name && !selectedReg?.sub
                                             ? 'bg-themeBlueColor text-white font-semibold'
                                             : 'text-slate-800 font-semibold'
                                             }`}
                                     >
-                                        {reg.name}
+                                        <span className="flex-1 text-left">{reg.name}</span>
                                     </div>
                                 }
                             >
