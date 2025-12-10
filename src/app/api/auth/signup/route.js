@@ -29,11 +29,13 @@ export async function POST(req) {
 
     await connectDB();
 
-    const query = [{ email }];
+    // Check if user exists with BOTH email AND phoneNumber (both must match)
+    // Only consider a user as existing if both email and phoneNumber match
+    const query = { email };
     if (phoneNumber) {
-      query.push({ phoneNumber });
+      query.phoneNumber = phoneNumber;
     }
-    const existingUser = await User.findOne({ $or: query });
+    const existingUser = await User.findOne(query);
 
 
     if (existingUser) {
