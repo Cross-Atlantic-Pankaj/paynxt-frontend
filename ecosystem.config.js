@@ -9,16 +9,17 @@ module.exports = {
       script: 'node_modules/next/dist/bin/next',
       args: 'start',
       cwd: '/home/ubuntu/paynxt-frontend',
-      instances: 'max', // Use all available CPU cores
-      exec_mode: 'cluster',
+      instances: 1, // Use single instance for small servers (t2/t3.small)
+      exec_mode: 'fork', // Fork mode uses less memory than cluster
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
+        NODE_OPTIONS: '--max-old-space-size=1536', // Limit Node.js memory to 1.5GB
       },
       // Auto-restart configuration
       autorestart: true,
       watch: false,
-      max_memory_restart: '1G',
+      max_memory_restart: '800M', // Restart if memory exceeds 800MB (lower for small servers)
       
       // Logging
       error_file: '/home/ubuntu/paynxt-frontend/logs/pm2-error.log',

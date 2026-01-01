@@ -5,11 +5,11 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   
-  // Image optimization
+  // Image optimization (reduced sizes for smaller builds)
   images: {
     formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [640, 750, 1080, 1200, 1920], // Reduced sizes to save memory
+    imageSizes: [16, 32, 64, 96, 128, 256], // Reduced sizes
     minimumCacheTTL: 60,
   },
 
@@ -57,9 +57,21 @@ const nextConfig = {
   // Output configuration for production
   output: 'standalone',
   
-  // Experimental features for better performance
-  experimental: {
-    optimizeCss: true,
+  // Experimental features (disabled optimizeCss to reduce build memory usage)
+  // experimental: {
+  //   optimizeCss: true, // Disabled - uses more memory during build
+  // },
+  
+  // Webpack optimizations for smaller memory footprint
+  webpack: (config, { isServer, dev }) => {
+    if (!isServer && !dev) {
+      // Optimize client-side bundle
+      config.optimization = {
+        ...config.optimization,
+        minimize: true,
+      };
+    }
+    return config;
   },
 };
 

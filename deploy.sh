@@ -43,9 +43,10 @@ git pull origin main || git pull origin master
 echo -e "${GREEN}📦${NC} Installing dependencies..."
 pnpm install --frozen-lockfile --production=false
 
-# Build the application
-echo -e "${GREEN}🔨${NC} Building production application..."
-NODE_ENV=production pnpm build
+# Build the application with memory limits (critical for small servers)
+echo -e "${GREEN}🔨${NC} Building production application with memory limits..."
+echo -e "${YELLOW}ℹ${NC}  This may take a few minutes on small servers..."
+NODE_OPTIONS="--max-old-space-size=1536" NODE_ENV=production pnpm build
 
 # Create logs directory if it doesn't exist
 mkdir -p logs
